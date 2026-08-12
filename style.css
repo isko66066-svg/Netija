@@ -115,6 +115,9 @@ a {
     font-weight: 600;
     color: #19191B;
 }
+.sign__button {
+    margin-left: 100px;
+}
 
 
 
@@ -132,6 +135,7 @@ a {
     border: none;
     cursor: pointer;
     padding: 0;
+    margin-left: 20px;
 }
 .burger span {
     display: block;
