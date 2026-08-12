@@ -47,6 +47,8 @@ a {
     font-weight: 600;
     letter-spacing: -0.47px;
     line-height: 1.4;
+    white-space: nowrap;
+
 }
 .header__list-link.active {
     color: #19191B;
