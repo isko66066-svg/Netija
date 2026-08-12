@@ -1,57 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shield</title>
+    <title>Netija</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="shortcut icon" href="img/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="header">
-        <div class=" main__container">
+        <div class="header__container">
             <nav class="header__nav">
-                <img src="img/Group 2.svg" alt="">
+                <img class="logo" src="./images/logo.svg" alt="">
                 <ul class="header__list">
-                    <li class="header__list-item">
-                        <a class="header__list-link active">Home</a>
-                    </li>
-                    <li class="header__list-item">
-                        <a class="header__list-link" href="/">About us</a>
-                    </li>
-                    <li class="header__list-item">
-                        <a class="header__list-link" href="/">Service</a>
-                    </li>
-                    <li class="header__list-item">
-                        <a class="header__list-link"href="/">Contact us</a>
-                    </li>
+                    <li class="header__list-item"><a class="header__list-link active" href="/">Главная страница</a></li>
+                    <li class="header__list-item"><a class="header__list-link" href="/">Дтм</a></li>
+                    <li class="header__list-item"><a class="header__list-link" href="/">Национальный сертификат</a></li>
                 </ul>
-                <a class="header__button" href="/">Login</a>
+                <div id="googleSignInButton"></div>
+                <div id="userProfile" class="user-profile" style="display: none;">
+                    <img id="userAvatar" class="user-profile__avatar" src="" alt="">
+                    <span id="userName" class="user-profile__name"></span>
+                </div>
+                <button class="burger" id="burgerBtn" aria-label="Меню">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </nav>
         </div>
     </header>
-    <main>
+    
+    <main class="main">
         <section class="hero">
-            <div class="hero__container">
-                <div class="hero__content">
-                    <div class="hero__text">
-                        <h1 class="hero__title">
-                            Fully Managed Cloud & Web Hosting
-                        </h1>
-                        <p class="hero__desc">
-                            Deidcated resources, full root access, & easy scaling. It’s the virtual private server you’ve been cravin
-                        </p>
-                    </div>
-                    <div>
-                        <a class="hero__buttons" href="/">View pricing</a>
-                    </div>
-                </div>
-            </div>
+            <h1 class="hero__title">Готовься к ДТМ и Национальному сертификату с платформой, которая понимает, через что ты проходишь</h1>
+            <p class="hero__subtitle">Тесты с автопроверкой и трекер результатов — всё в одном месте</p>
         </section>
     </main>
+    
+    <script>
+window.onload = function () {
+    google.accounts.id.initialize({
+        client_id: "984110914315-9sok5k93urleertcgtfgtui5tshqfni4.apps.googleusercontent.com",
+        callback: handleGoogleLogin
+    });
+    google.accounts.id.renderButton(
+        document.getElementById("googleSignInButton"),
+        { theme: "outline", size: "large" }
+    );
+};
+
+function handleGoogleLogin(response) {
+    const data = JSON.parse(atob(response.credential.split('.')[1]));
+    
+    document.getElementById('googleSignInButton').style.display = 'none';
+    
+    const userProfile = document.getElementById('userProfile');
+    document.getElementById('userAvatar').src = data.picture;
+    document.getElementById('userName').textContent = data.name;
+    userProfile.style.display = 'flex';
+}
+
+const burgerBtn = document.getElementById('burgerBtn');
+const headerList = document.querySelector('.header__list');
+burgerBtn.addEventListener('click', () => {
+    headerList.classList.toggle('open');
+    burgerBtn.classList.toggle('active');
+});
+</script>
+
+
 </body>
-				</html>
+</html>
