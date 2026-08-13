@@ -155,11 +155,26 @@ a {
 }
 
 @media (max-width: 480px) {
+    .header {
+        padding: 12px 8px;
+    }
+    .header__nav {
+        padding: 8px 10px;
+        gap: 4px;
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+    }
+    .logo {
+        margin-right: 4px;
+        max-width: 220px;
+        height: auto;
+    }
     .burger {
         display: flex;
-    }
-    .header {
-        padding: 0 0;
+        flex-shrink: 0;
+        margin-left: 0;
+        width: 20px;
     }
     .header__list {
         display: none;
@@ -185,11 +200,14 @@ a {
     .header__list-item:last-child {
         border-bottom: none;
     }
-    .header__nav {
-        position: relative;
-    }
     .user-profile__name {
         display: none;
+    }
+    .user-profile {
+        margin-right: 4px;
+    }
+    .sign__button {
+        margin-left: 0; 
     }
     .hero {
         padding: 0 20px;
@@ -201,6 +219,16 @@ a {
     }
     .hero__subtitle {
         font-size: 15px;
+    }
+    .sign__button {
+        margin-left: 0;
+        flex-shrink: 1;
+        min-width: 0;
+        overflow: hidden;
+    }
+    .sign__button > div {
+        transform: scale(0.7);
+        transform-origin: right center;
     }
 }
 
