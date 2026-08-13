@@ -135,3 +135,222 @@
 .timer--warning {
     color: #EF4444;
 }
+
+/* Выпадающий список (Вопросы 33–35) */
+.matching-select {
+    width: 100% !important;
+    max-width: 340px !important;
+    padding: 12px 16px !important;
+    margin-top: 10px !important;
+    font-size: 15px !important;
+    color: #19191B !important;
+    background-color: #ffffff !important;
+    border: 1px solid #E5E7EB !important;
+    border-radius: 10px !important;
+    outline: none !important;
+    cursor: pointer;
+    appearance: none; /* Убирает дефолтную стрелку браузера если нужно */
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2019191B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    background-size: 16px !important;
+}
+
+.matching-select:focus {
+    border-color: #19191B !important;
+}
+
+/* Открытые вопросы — Поля ввода (Вопросы 36–45) */
+.sub-question-item {
+    margin-top: 14px !important;
+}
+
+.sub-question-text {
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    color: #19191B !important;
+    margin-bottom: 8px !important;
+}
+
+.sub-question-input {
+    width: 100% !important;
+    max-width: 300px !important;
+    padding: 10px 14px !important;
+    font-size: 15px !important;
+    color: #19191B !important; /* Цвет вводимого текста */
+    background-color: #ffffff !important; /* Гарантированный белый фон */
+    border: 1px solid #E5E7EB !important;
+    border-radius: 10px !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s ease;
+}
+
+.sub-question-input::placeholder {
+    color: #9CA3AF !important; /* Серый цвет плейсхолдера */
+}
+
+.sub-question-input:focus {
+    border-color: #19191B !important;
+    background-color: #ffffff !important;
+}
+
+/* Картинки в вопросах */
+.question-image {
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 12px 0 !important;
+    border-radius: 8px !important;
+    display: block;
+}
+/* ==========================================
+   СТИЛИ ДЛЯ КАРТОЧЕК И БЛОКА MATCHING
+   ========================================== */
+
+/* Общая карточка вопроса */
+.question-block {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+}
+
+/* Заголовок основного вопроса */
+.question-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+/* Картинка к вопросу */
+.question-image {
+    max-width: 100%;
+    height: auto;
+    max-height: 300px;
+    display: block;
+    margin: 16px auto;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+}
+
+/* Контекст задания (голубой плашка-выделение) */
+.matching-context {
+    background-color: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+    color: #1e40af;
+    margin-bottom: 20px;
+}
+
+/* Отдельная карточка подпункта (33, 34, 35) */
+.matching-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s ease;
+}
+
+.matching-item:hover {
+    border-color: #cbd5e1;
+}
+
+/* На экранах шириной от 640px текст и список встанут в одну строку */
+@media (min-width: 640px) {
+    .matching-item {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .matching-item .sub-question-text {
+        margin-bottom: 0;
+        padding-right: 16px;
+    }
+}
+
+/* Текст подпункта */
+.sub-question-text {
+    font-size: 0.95rem;
+    color: #334155;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Красивый кастомный Выпадающий список (Select) */
+.matching-select {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #0f172a;
+    background-color: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 220px;
+}
+
+.matching-select:hover {
+    border-color: #94a3b8;
+}
+
+.matching-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Подсветка карточки при проверке результатов */
+.question-block.question-correct {
+    border-color: #22c55e;
+    background-color: #f0fdf4;
+}
+
+.question-block.question-incorrect {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+}
+
+/* ==========================================
+   ПОДСВЕТКА ОТВЕТОВ ПОСЛЕ ПРОВЕРКИ
+   ========================================== */
+
+/* Для вопросов с выбором одного ответа (1–32) */
+.option-label.correct-answer {
+    background-color: #dcfce7 !important;
+    border-color: #22c55e !important;
+    color: #15803d !important;
+    font-weight: 600;
+}
+
+.option-label.wrong-answer {
+    background-color: #fee2e2 !important;
+    border-color: #ef4444 !important;
+    color: #b91c1c !important;
+}
+
+/* Текст с правильным ответом для полей ввода (33-45) */
+.correct-hint {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #15803d;
+    font-weight: 600;
+    background-color: #dcfce7;
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-left: 15px;
+}
