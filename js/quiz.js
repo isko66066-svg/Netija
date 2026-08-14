@@ -6,43 +6,24 @@ function initQuiz() {
 
     if (!quizContainer || typeof questions === 'undefined') return;
 
-    let timeLeft = 2 * 60 * 60 + 30 * 60; // 2 часа 30 минут
-    let timerInterval;
-    let isQuizSubmitted = false; // Флаг: завершён ли тест
+    let testSubmitted = false;
 
-    // --- 0. Защита от случайного выхода / обновления / кнопки "Назад" ---
-    function handleBeforeUnload(e) {
-        if (!isQuizSubmitted) {
+    window.addEventListener('beforeunload', function (e) {
+        if (!testSubmitted) {
             e.preventDefault();
-            e.returnValue = ''; // Системное предупреждение браузера
-        }
-    }
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // Перехват кликов по ссылкам (например, "Главное меню")
-    document.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (link && !isQuizSubmitted) {
-            if (link.href && !link.href.includes('#') && !link.href.startsWith('javascript:')) {
-                const confirmLeave = confirm('Вы точно хотите выйти? Прогресс прохождения теста будет утерян.');
-                if (!confirmLeave) {
-                    e.preventDefault(); // Отменяем переход по ссылке
-                } else {
-                    isQuizSubmitted = true;
-                }
-            }
+            e.returnValue = '';
         }
     });
+
+    let timeLeft = 2 * 60 * 60 + 30 * 60;
+    let timerInterval;
 
     function updateTimerDisplay() {
         const hours = Math.floor(timeLeft / 3600);
         const minutes = Math.floor((timeLeft % 3600) / 60);
         const seconds = timeLeft % 60;
         timerEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-        if (timeLeft <= 300) {
-            timerEl.classList.add('timer--warning');
-        }
+        if (timeLeft <= 300) timerEl.classList.add('timer--warning');
     }
 
     function startTimer() {
@@ -50,10 +31,9 @@ function initQuiz() {
         timerInterval = setInterval(() => {
             timeLeft--;
             updateTimerDisplay();
-
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
-                finishQuiz(true); // Автоматическое завершение по истечении времени
+                submitTest();
                 timerEl.textContent = "Время вышло";
             }
         }, 1000);
@@ -61,290 +41,334 @@ function initQuiz() {
 
     startTimer();
 
-    // --- 1. Отрисовка вопросов ---
-    questions.forEach((q, index) => {
-        const questionBlock = document.createElement('div');
-        questionBlock.className = 'question-block';
-        questionBlock.id = `question-block-${index}`;
+    // --- РЕНДЕР ВОПРОСОВ ---
+    questions.forEach((q) => {
+        const block = document.createElement('div');
+        block.className = 'question-block';
+        block.id = `question-block-${q.id}`;
 
-        // Текст вопроса
         const questionText = document.createElement('p');
         questionText.className = 'question-text';
-        questionText.textContent = `${q.id || index + 1}. ${q.question}`;
-        questionBlock.appendChild(questionText);
+        questionText.textContent = `${q.id}. ${q.question}`;
+        block.appendChild(questionText);
 
-        // Картинка к вопросу (если есть)
-        if (q.image && q.image.trim() !== '') {
+        if (q.image) {
             const img = document.createElement('img');
-            img.src = q.image;
-            img.alt = "";
             img.className = 'question-image';
-
-            img.onerror = function() {
-                this.remove();
-            };
-
-            questionBlock.appendChild(img);
+            img.src = q.image;
+            block.appendChild(img);
         }
 
-        // Рендеринг типов вопросов
-        if (!q.type || q.type === 'single_choice') {
-            // ВОПРОСЫ 1–32 (Один вариант)
-            if (q.options) {
-                q.options.forEach((option, optIndex) => {
-                    const label = document.createElement('label');
-                    label.className = 'option-label';
+        if (q.type === 'single_choice') {
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+            q.options.forEach((option, optIndex) => {
+                const label = document.createElement('label');
+                label.className = 'option-label';
 
-                    const input = document.createElement('input');
-                    input.type = 'radio';
-                    input.name = `question-${index}`;
-                    input.value = optIndex;
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = `q-${q.id}`;
+                input.value = optIndex;
 
-                    label.appendChild(input);
-                    label.appendChild(document.createTextNode(option));
-                    questionBlock.appendChild(label);
-                });
-            }
-        } 
-        else if (q.type === 'matching') {
-            // ВОПРОСЫ 33–35 (Соответствие)
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(`${letters[optIndex] || ''}) ${option}`));
+                block.appendChild(label);
+            });
+        }
+
+        if (q.type === 'matching') {
             if (q.context) {
-                const ctx = document.createElement('p');
-                ctx.className = 'matching-context';
-                ctx.innerHTML = `<b>Контекст:</b> ${q.context}`;
-                questionBlock.appendChild(ctx);
+                const context = document.createElement('div');
+                context.className = 'matching-context';
+                context.textContent = q.context;
+                block.appendChild(context);
             }
 
-            if (q.items) {
-                q.items.forEach(item => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'matching-item';
+            q.items.forEach((item) => {
+                const itemBlock = document.createElement('div');
+                itemBlock.className = 'matching-item';
 
-                    const itemText = document.createElement('p');
-                    itemText.className = 'sub-question-text';
-                    itemText.innerHTML = `<b>${item.id})</b> ${item.text}`;
+                const itemText = document.createElement('p');
+                itemText.className = 'sub-question-text';
+                itemText.textContent = `${item.id}. ${item.text}`;
+                itemBlock.appendChild(itemText);
 
-                    const select = document.createElement('select');
-                    select.name = `question-${index}-${item.id}`;
-                    select.className = 'matching-select';
+                const select = document.createElement('select');
+                select.className = 'matching-select';
+                select.dataset.itemId = item.id;
 
-                    const defaultOpt = document.createElement('option');
-                    defaultOpt.value = '';
-                    defaultOpt.textContent = '-- Выберите вариант --';
-                    select.appendChild(defaultOpt);
+                const emptyOption = document.createElement('option');
+                emptyOption.value = '';
+                emptyOption.textContent = 'Выберите ответ';
+                select.appendChild(emptyOption);
 
-                    if (q.optionsPool) {
-                        for (let key in q.optionsPool) {
-                            const opt = document.createElement('option');
-                            opt.value = key;
-                            opt.textContent = `${key}) ${q.optionsPool[key]}`;
-                            select.appendChild(opt);
-                        }
-                    }
-
-                    itemDiv.appendChild(itemText);
-                    itemDiv.appendChild(select);
-                    questionBlock.appendChild(itemDiv);
+                Object.entries(q.optionsPool).forEach(([letter, value]) => {
+                    const opt = document.createElement('option');
+                    opt.value = letter;
+                    opt.textContent = `${letter}) ${value}`;
+                    select.appendChild(opt);
                 });
-            }
-        } 
-        else if (q.type === 'open_ended') {
-            // ВОПРОСЫ 36–45 (Открытые вопросы a и b)
-            if (q.subQuestions) {
-                q.subQuestions.forEach(sub => {
-                    const subDiv = document.createElement('div');
-                    subDiv.className = 'sub-question-item';
 
-                    const subText = document.createElement('p');
-                    subText.className = 'sub-question-text';
-                    subText.innerHTML = `<b>${sub.id})</b> ${sub.text}`;
-
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.name = `question-${index}-${sub.id}`;
-                    input.className = 'sub-question-input';
-                    input.placeholder = 'Введите ответ...';
-                    input.autocomplete = 'off';
-
-                    subDiv.appendChild(subText);
-                    subDiv.appendChild(input);
-                    questionBlock.appendChild(subDiv);
-                });
-            }
+                itemBlock.appendChild(select);
+                block.appendChild(itemBlock);
+            });
         }
 
-        quizContainer.appendChild(questionBlock);
+        if (q.type === 'open_ended') {
+            q.subQuestions.forEach((sub) => {
+                const subBlock = document.createElement('div');
+                subBlock.className = 'sub-question-item';
+
+                const subText = document.createElement('p');
+                subText.className = 'sub-question-text';
+                subText.textContent = sub.text;
+                subBlock.appendChild(subText);
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'sub-question-input';
+                input.placeholder = 'Введите ответ';
+                input.dataset.questionId = q.id;
+                input.dataset.subId = sub.id;
+
+                subBlock.appendChild(input);
+                block.appendChild(subBlock);
+            });
+        }
+
+        quizContainer.appendChild(block);
     });
 
-    // --- 2. Клик на кнопку «Завершить тест» ---
+    // --- ОБРАБОТЧИК КНОПКИ С ПОДТВЕРЖДЕНИЕМ ---
     submitBtn.addEventListener('click', () => {
-        const confirmFinish = confirm('Вы точно хотите завершить тест и узнать результаты?');
-        if (confirmFinish) {
-            finishQuiz(false);
-        }
+        const confirmed = window.confirm('Вы уверены, что хотите завершить тест и проверить результат?');
+        if (!confirmed) return;
+        submitTest();
     });
 
-    // --- Функция завершения и проверки теста ---
-    function finishQuiz(isTimeOut = false) {
+    // --- ШКАЛА ОПРЕДЕЛЕНИЯ УРОВНЯ (МАКСИМУМ 100 БАЛЛОВ) ---
+    function getCertificateGrade(score) {
+        if (score < 44.0) {
+            return { level: 'Сертификат не выдается', passed: false };
+        } else if (score >= 44.0 && score <= 49.99) {
+            return { level: 'C', passed: true };
+        } else if (score >= 50 && score <= 54.99) {
+            return { level: 'C+', passed: true };
+        } else if (score >= 55 && score <= 59.99) {
+            return { level: 'B', passed: true };
+        } else if (score >= 60 && score <= 64.99) {
+            return { level: 'B+', passed: true };
+        } else if (score >= 65 && score <= 69.99) {
+            return { level: 'A', passed: true };
+        } else if (score >= 70) {
+            return { level: 'A+', passed: true };
+        }
+    }
+
+    // --- ПРОВЕРКА ОТВЕТОВ И МАСШТАБИРОВАНИЕ ДО 100 БАЛЛОВ ---
+    function submitTest() {
+        testSubmitted = true;
         clearInterval(timerInterval);
 
-        // Снимаем защиту от закрытия страницы
-        isQuizSubmitted = true;
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-
-        let totalScore = 0;
-        let maxScore = 0;
+        let totalRawScore = 0;
+        let correctFullTasksCount = 0;
+        let totalTasksCount = 0;
         const details = [];
 
-        questions.forEach((q, index) => {
-            let isCorrect = false;
+        questions.forEach((q) => {
+            const block = document.getElementById(`question-block-${q.id}`);
+            let questionCorrect = true;
 
-            // 1. Single Choice (1–32)
-            if (!q.type || q.type === 'single_choice') {
-                maxScore += 1;
-                const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+            if (q.type === 'single_choice') {
+                totalTasksCount++;
+                const questionPoints = q.points !== undefined ? q.points : 1.3;
+                const selected = document.querySelector(`input[name="q-${q.id}"]:checked`);
                 const selectedValue = selected ? parseInt(selected.value) : null;
-                const answered = selectedValue !== null;
-                isCorrect = selectedValue === q.correctAnswer;
-                if (isCorrect) totalScore += 1;
+                const isCorrect = selectedValue === q.correctAnswer;
+                
+                if (isCorrect) {
+                    totalRawScore += questionPoints;
+                    correctFullTasksCount++;
+                } else {
+                    questionCorrect = false;
+                }
 
-                const options = document.querySelectorAll(`input[name="question-${index}"]`);
-                options.forEach((input, optIdx) => {
-                    input.disabled = true;
-                    const label = input.parentElement;
+                details.push({ number: q.id, isCorrect, answered: selectedValue !== null });
 
-                    if (optIdx === q.correctAnswer) {
+                const labels = block.querySelectorAll('.option-label');
+                labels.forEach((label, idx) => {
+                    label.classList.remove('correct-answer', 'wrong-answer');
+                    const input = label.querySelector('input');
+                    if (input) input.disabled = true;
+
+                    if (idx === q.correctAnswer) {
                         label.classList.add('correct-answer');
-                    } else if (optIdx === selectedValue && !isCorrect) {
+                    } else if (idx === selectedValue && !isCorrect) {
                         label.classList.add('wrong-answer');
                     }
                 });
+            }
 
-                details.push({
-                    number: q.id || (index + 1),
-                    isCorrect: isCorrect,
-                    answered: answered
+            if (q.type === 'matching') {
+                const matchingPoints = q.points !== undefined ? q.points : 2.2;
+                let subItemsCorrect = true;
+
+                q.items.forEach((item) => {
+                    totalTasksCount++;
+                    const select = block.querySelector(`select[data-item-id="${item.id}"]`);
+                    const selectedValue = select ? select.value : '';
+                    const isItemCorrect = selectedValue === item.correctAnswer;
+                    
+                    if (!isItemCorrect) {
+                        subItemsCorrect = false;
+                    }
+
+                    details.push({ number: item.id, isCorrect: isItemCorrect, answered: selectedValue !== '' });
+
+                    if (select) {
+                        select.disabled = true;
+                        const existingHint = select.parentElement.querySelector('.correct-hint');
+                        if (existingHint) existingHint.remove();
+
+                        if (!isItemCorrect) {
+                            const hint = document.createElement('span');
+                            hint.className = 'correct-hint';
+                            hint.textContent = `Правильный ответ: ${item.correctAnswer}) ${q.optionsPool[item.correctAnswer]}`;
+                            select.insertAdjacentElement('afterend', hint);
+                        }
+                    }
                 });
-            } 
-            // 2. Matching (33–35)
-            else if (q.type === 'matching') {
-                let blockCorrect = true;
 
-                if (q.items) {
-                    const itemsCount = q.items.length;
-                    maxScore += itemsCount;
-
-                    q.items.forEach(item => {
-                        const select = document.querySelector(`select[name="question-${index}-${item.id}"]`);
-                        const val = select ? select.value : '';
-                        const itemAnswered = (val !== '');
-                        const itemCorrect = (val === item.correctAnswer);
-
-                        if (!itemCorrect) blockCorrect = false;
-
-                        if (select) {
-                            select.disabled = true;
-                            const parent = select.parentElement;
-
-                            if (itemCorrect) {
-                                totalScore += 1;
-                                select.style.borderColor = '#22c55e';
-                                select.style.backgroundColor = '#f0fdf4';
-                            } else {
-                                select.style.borderColor = '#ef4444';
-                                select.style.backgroundColor = '#fef2f2';
-
-                                const hint = document.createElement('span');
-                                hint.className = 'correct-hint';
-                                hint.textContent = `Правильно: ${item.correctAnswer})`;
-                                parent.appendChild(hint);
-                            }
-                        }
-
-                        details.push({
-                            number: item.id,
-                            isCorrect: itemCorrect,
-                            answered: itemAnswered
-                        });
-                    });
+                if (subItemsCorrect) {
+                    totalRawScore += matchingPoints;
+                    correctFullTasksCount++;
+                } else {
+                    questionCorrect = false;
                 }
-                isCorrect = blockCorrect;
-            } 
-            // 3. Open Ended (36–45)
-            else if (q.type === 'open_ended') {
-                let blockCorrect = true;
-                const subCount = q.subQuestions ? q.subQuestions.length : 0;
-                maxScore += subCount;
-
-                if (q.subQuestions) {
-                    q.subQuestions.forEach(sub => {
-                        const input = document.querySelector(`input[name="question-${index}-${sub.id}"]`);
-                        const val = input ? input.value.trim().toLowerCase() : '';
-                        const subAnswered = (val !== '');
-                        const subCorrect = (val === sub.correctAnswer.trim().toLowerCase());
-
-                        if (!subCorrect) blockCorrect = false;
-
-                        if (input) {
-                            input.disabled = true;
-                            const parent = input.parentElement;
-
-                            if (subCorrect) {
-                                totalScore += 1;
-                                input.style.borderColor = '#22c55e';
-                                input.style.backgroundColor = '#f0fdf4';
-                            } else {
-                                input.style.borderColor = '#ef4444';
-                                input.style.backgroundColor = '#fef2f2';
-
-                                const hint = document.createElement('div');
-                                hint.className = 'correct-hint';
-                                hint.textContent = `Правильный ответ: ${sub.correctAnswer}`;
-                                parent.appendChild(hint);
-                            }
-                        }
-
-                        const qNum = q.id || (index + 1);
-                        details.push({
-                            number: `${qNum}${sub.id}`,
-                            isCorrect: subCorrect,
-                            answered: subAnswered
-                        });
-                    });
-                }
-                isCorrect = blockCorrect;
             }
 
-            const block = document.getElementById(`question-block-${index}`);
-            if (block) {
-                block.classList.remove('question-correct', 'question-incorrect');
-                block.classList.add(isCorrect ? 'question-correct' : 'question-incorrect');
+            if (q.type === 'open_ended') {
+                let partACorrect = false;
+                let partBCorrect = false;
+
+                const pointsA = 1.5;
+                const pointsB = 1.7;
+
+                q.subQuestions.forEach((sub) => {
+                    totalTasksCount++;
+                    const input = block.querySelector(`input[data-question-id="${q.id}"][data-sub-id="${sub.id}"]`);
+                    const value = input ? input.value.trim() : '';
+                    const isSubCorrect = value !== '' && value.toLowerCase() === String(sub.correctAnswer).toLowerCase();
+
+                    if (sub.id === 'a' && isSubCorrect) {
+                        totalRawScore += pointsA;
+                        partACorrect = true;
+                    }
+                    if (sub.id === 'b' && isSubCorrect) {
+                        totalRawScore += pointsB;
+                        partBCorrect = true;
+                    }
+
+                    details.push({ number: `${q.id}${sub.id}`, isCorrect: isSubCorrect, answered: value !== '' });
+
+                    if (input) {
+                        input.disabled = true;
+                        const existingHint = input.parentElement.querySelector('.correct-hint');
+                        if (existingHint) existingHint.remove();
+
+                        if (!isSubCorrect) {
+                            const hint = document.createElement('span');
+                            hint.className = 'correct-hint';
+                            hint.textContent = `Правильный ответ: ${sub.correctAnswer}`;
+                            input.insertAdjacentElement('afterend', hint);
+                        }
+                    }
+                });
+
+                if (partACorrect && partBCorrect) {
+                    correctFullTasksCount++;
+                } else {
+                    questionCorrect = false;
+                }
             }
+
+            block.classList.remove('question-correct', 'question-incorrect');
+            block.classList.add(questionCorrect ? 'question-correct' : 'question-incorrect');
         });
 
-        submitBtn.style.display = 'none';
-        renderResultBox(totalScore, maxScore, details);
+        // Переводим набранные баллы в 100-балльную шкалу
+        const maxRawScore = 64.2;
+        let scaledScore = (totalRawScore / maxRawScore) * 100;
+        if (scaledScore > 100) scaledScore = 100;
+
+        const finalScore = Number(scaledScore.toFixed(2));
+        const gradeInfo = getCertificateGrade(finalScore);
+
+        const params = new URLSearchParams(window.location.search);
+        const testId = params.get('id');
+        const storageKey = `result_natcert-${testId}`;
+
+        // Формируем объект текущего результата
+        const currentResult = {
+            score: finalScore,
+            correctCount: correctFullTasksCount,
+            total: totalTasksCount,
+            level: gradeInfo.level
+        };
+
+        // Сохраняем ЛУЧШИЙ результат (сравниваем с прошлым в localStorage)
+        const existingData = localStorage.getItem(storageKey);
+        if (existingData) {
+            const bestResult = JSON.parse(existingData);
+            if (bestResult.score > finalScore) {
+                currentResult.score = bestResult.score;
+                currentResult.correctCount = bestResult.correctCount;
+                currentResult.level = bestResult.level;
+            }
+        }
+
+        localStorage.setItem(storageKey, JSON.stringify(currentResult));
+
+        renderResultBox(finalScore, correctFullTasksCount, totalTasksCount, gradeInfo, details);
         resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        // --- ВАРИАНТ 1: Отправка результатов на сервер ---
-        saveUserResult({
-            score: totalScore,
-            maxScore: maxScore,
-            percent: Math.round((totalScore / maxScore) * 100),
-            date: new Date().toISOString(),
-            testId: typeof CURRENT_TEST_ID !== 'undefined' ? CURRENT_TEST_ID : "natcert-1"
-        });
     }
 
-    // --- 3. Отрисовка блока итогов ---
-    function renderResultBox(totalScore, maxScore, details) {
+    function renderResultBox(score, correctCount, totalCount, gradeInfo, details) {
         resultBox.innerHTML = '';
         resultBox.style.display = 'block';
 
+        const isPassed = gradeInfo.passed;
+        const statusClass = isPassed ? 'result-status--success' : 'result-status--fail';
+        const statusText = isPassed ? '🎉 Поздравляем! Сертификат получен' : '⚠️ Порог не пройден, попробуйте еще раз';
+
         const summary = document.createElement('div');
-        summary.className = 'result-summary';
-        summary.textContent = `Результат: ${totalScore} из ${maxScore} баллов`;
+        summary.className = 'result-summary-card';
+        summary.innerHTML = `
+            <div class="result-header">
+                <h3>Итоги тестирования</h3>
+                <span class="result-status-badge ${statusClass}">${statusText}</span>
+            </div>
+            <div class="result-metrics">
+                <div class="metric-item">
+                    <span class="metric-label">Итоговый балл</span>
+                    <span class="metric-value">${score} 
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Уровень</span>
+                    <span class="metric-value highlight">${gradeInfo.level}</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Заданий верно</span>
+                    <span class="metric-value">${correctCount} <small>/ ${totalCount}</small></span>
+                </div>
+            </div>
+        `;
         resultBox.appendChild(summary);
+
+        const gridTitle = document.createElement('h4');
+        gridTitle.className = 'result-grid-title';
+        gridTitle.textContent = 'Карта ответов по заданиям:';
+        resultBox.appendChild(gridTitle);
 
         const grid = document.createElement('div');
         grid.className = 'result-grid';
@@ -363,29 +387,3 @@ function initQuiz() {
         resultBox.appendChild(grid);
     }
 }
-
-// --- Вспомогательная функция отправки результатов на сервер ---
-async function saveUserResult(resultData) {
-    try {
-        const response = await fetch('/api/save-result.php', { // Измени URL на свой эндпоинт
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-                // Если передаешь JWT-токен:
-                // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(resultData)
-        });
-
-        if (response.ok) {
-            console.log('Результат успешно сохранен в аккаунт!');
-        } else {
-            console.warn('Сервер не смог сохранить результат.');
-        }
-    } catch (error) {
-        console.error('Ошибка сети при сохранении:', error);
-    }
-}
-
-// Запуск при загрузке страницы
-document.addEventListener('DOMContentLoaded', initQuiz);

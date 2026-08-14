@@ -37,61 +37,23 @@
     </header>
 
     <main class="main__natcert" id="main">
-    <h1 class="test-title">Национальный сертификат</h1>
-    <p class="test-subtitle">Выбери тест и начни подготовку</p>
-    <div class="test-cards" id="testCards"></div>
-</main>  
+        <h1 class="test-title">Национальный сертификат</h1>
+        <p class="test-subtitle">Выбери тест и начни подготовку</p>
+        
+        <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">Все</button>
+            <button class="filter-btn" data-filter="2026">2026</button>
+            <button class="filter-btn" data-filter="2025">2025</button>
+            <button class="filter-btn" data-filter="2024">2024</button>
+        </div>
+
+        <div class="test-cards" id="testCards"></div>
+    </main>  
     
     <script src="js/auth.js"></script>
     <script src="js/menu.js"></script>
     <script src="js/natcert_tests-list.js"></script>
     <script src="js/render-cards.js"></script>
     <script src="js/router.js"></script>  
-
-    <!-- Скрипт подгрузки результатов на карточки -->
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const cards = document.querySelectorAll('.test-card');
-            if (!cards.length) return;
-
-            try {
-                // Запрашиваем результаты пользователя с бэкенда
-                const response = await fetch('/api/get-user-results.php');
-                
-                if (!response.ok) return;
-                const results = await response.json(); 
-
-                cards.forEach(card => {
-                    const testId = card.getAttribute('data-test-id');
-                    const statusBox = card.querySelector('.card-status');
-                    const btn = card.querySelector('.btn-card-action');
-
-                    // Находим сохранённый результат для этого теста
-                    const userResult = results.find(r => r.testId === testId);
-
-                    if (userResult && statusBox) {
-                        const isGood = userResult.percent >= 70;
-                        const badgeClass = isGood ? 'card-badge--success' : 'card-badge--warning';
-
-                        // 1. Выводим плашку с баллами
-                        statusBox.innerHTML = `
-                            <div class="card-badge ${badgeClass}">
-                                <span>✓ Результат: ${userResult.score}/${userResult.maxScore} (${userResult.percent}%)</span>
-                            </div>
-                        `;
-
-                        // 2. Меняем кнопку на "Пройти повторно"
-                        if (btn) {
-                            btn.textContent = 'Пройти повторно';
-                            btn.classList.add('completed');
-                        }
-                    }
-                });
-
-            } catch (error) {
-                console.log('Пользователь не авторизован или ошибка сети');
-            }
-        });
-    </script>
 </body>
 </html>

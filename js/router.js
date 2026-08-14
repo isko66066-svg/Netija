@@ -29,8 +29,8 @@ function runPageScripts(url) {
         });
     }
     if (url.includes('natcert-test.html')) {
-        loadScript('js/quiz.js', () => {
-            loadScript('js/quiz-loader.js');
+        loadScript('js/quiz-loader.js', () => {
+            loadScript('js/quiz.js');
         });
     }
 }

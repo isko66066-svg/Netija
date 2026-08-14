@@ -219,6 +219,140 @@ a {
 .progress-fill.warning {
     background-color: #f59e0b;
 }
+/* Стили карточки результатов */
+.result-summary-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    margin-bottom: 24px;
+    border: 1px solid #eaeaea;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.result-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #1a1a1a;
+    font-weight: 700;
+}
+
+.result-status-badge {
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.result-status--success {
+    background: #e6f4ea;
+    color: #137333;
+}
+
+.result-status--fail {
+    background: #fce8e6;
+    color: #c5221f;
+}
+
+.result-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+}
+
+.metric-item {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #f0f0f0;
+}
+
+.metric-label {
+    display: block;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: #222;
+}
+
+.metric-value.highlight {
+    color: #2563eb;
+}
+
+.metric-value small {
+    font-size: 14px;
+    color: #888;
+    font-weight: normal;
+}
+
+.result-grid-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Контейнер для фильтров */
+.filter-container {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    scrollbar-width: none; 
+    width: 100%;
+    max-width: 1200px;
+    overflow-x: auto;
+    margin-left: 490px;
+}
+
+.filter-container::-webkit-scrollbar {
+    display: none; /* Скрыть скроллбар в Chrome/Safari */
+}
+
+/* Сама кнопка-фильтр */
+.filter-btn {
+    background-color: #ffffff;
+    border: 1px solid #d9d9d9;
+    color: #333333;
+    padding: 10px 30px;   /* Увеличь эти цифры: первые (12px) — высота, вторые (24px) — ширина по бокам */
+    border-radius: 50px; 
+    font-size: 16px;      /* Увеличь размер текста (было 14px) */
+    font-weight: 600;     /* Сделай текст чуть жирнее, если нужно */
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* Эффект при наведении */
+.filter-btn:hover {
+    border-color: #b0b0b0;
+    background-color: #f9f9f9;
+}
+
+/* Активная кнопка (выбранный год или категорию) */
+.filter-btn.active {
+    background-color: #1a1a1a; /* Темный фон для активной кнопки (или можешь поставить свой акцентный цвет, например #2563eb) */
+    color: #ffffff;
+    border-color: #1a1a1a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 
 

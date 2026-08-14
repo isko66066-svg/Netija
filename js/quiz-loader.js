@@ -3,7 +3,7 @@ const testId = params.get('id');
 
 const titleEl = document.getElementById('testTitle');
 if (titleEl) {
-    titleEl.textContent = `Национальный сертификат — Тест №${testId}`;
+    titleEl.textContent = `Тест №${testId}`;
 }
 
 const script = document.createElement('script');
