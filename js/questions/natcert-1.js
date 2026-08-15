@@ -16,7 +16,7 @@ const questions = [
     {
         id: 2,
         type: "single_choice",
-        question: "Вычислите: (2,28 − 4 7/20) : 2 1/4 − (1/2 − 1 7/8)",
+        question: "Вычислите: (2,28-4 7/20):2 1/4 -(1/2 - 1 7/8)",
         image: null,
         options: ["0,366", "0,356", "0,455", "0,466"],
         correctAnswer: 2
@@ -99,7 +99,7 @@ const questions = [
         question: "Если cos α = 3/5 (0 < α < π/2) и a = sin α, b = tg α, c = ctg α, расположите a, b, c по возрастанию.",
         image: null,
         options: ["a < b < c", "b < a < c", "c < a < b", "a < c < b"],
-        correctAnswer: 2
+        correctAnswer: 3
     },
     {
         id: 13,
@@ -171,7 +171,7 @@ const questions = [
         question: "Вычислите интеграл: ∫[−1, 1] (1 / (x⁴ + x²)) dx",
         image: null,
         options: ["2 − π/2", "−2 − π/2", "−2 + π/2", "0"],
-        correctAnswer: 3
+        correctAnswer: 1
     },
     {
         id: 22,
@@ -195,7 +195,7 @@ const questions = [
         question: "Сколько из представленных ниже графиков являются функциями?",
         image : "images/28-feb_1-img/1-24.jpg",
         options: ["1", "2", "3", "Все"],
-        correctAnswer: 1
+        correctAnswer: 0   
     },
     {
         id: 25,
@@ -235,7 +235,7 @@ const questions = [
         question: "Треугольник ABC имеет вершины A(1;3), B(5;1), C(4;4). Найдите длину биссектрисы AL.",
         image : "images/28-feb_1-img/1-29.jpg",
         options: ["√(40 − 10√2)", "√(40 − 20√2)", "√(30 − 15√2)", "√(30 − 10√2)"],
-        correctAnswer: 0
+        correctAnswer: 1
     },
     {
         id: 30,

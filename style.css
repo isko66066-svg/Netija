@@ -3,6 +3,10 @@
     padding: 0;
     box-sizing: border-box;
 }
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
 body {
     font-family: poppins, sans-serif;
     background-color: #F8F9FA;
@@ -312,13 +316,11 @@ a {
     display: flex;
     gap: 10px;
     overflow-x: auto;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    scrollbar-width: none; 
+    padding: 0 50px 10px;
+    margin: 0 auto 10px;
+    scrollbar-width: none;
     width: 100%;
-    max-width: 1200px;
-    overflow-x: auto;
-    margin-left: 490px;
+    max-width: 1000px;
 }
 
 .filter-container::-webkit-scrollbar {
@@ -582,6 +584,7 @@ a {
         position: relative;
         width: 100%;
         max-width: 100%;
+        overflow: hidden;
     }
     .logo {
         margin-right: 4px;
@@ -623,9 +626,6 @@ a {
     }
     .user-profile {
         margin-right: 4px;
-    }
-    .sign__button {
-        margin-left: 0; 
     }
     .hero {
         padding: 0 20px;

@@ -149,7 +149,7 @@ function initQuiz() {
     // --- ШКАЛА ОПРЕДЕЛЕНИЯ УРОВНЯ (МАКСИМУМ 100 БАЛЛОВ) ---
     function getCertificateGrade(score) {
         if (score < 44.0) {
-            return { level: 'Сертификат не выдается', passed: false };
+            return { level: 'Не выдается', passed: false };
         } else if (score >= 44.0 && score <= 49.99) {
             return { level: 'C', passed: true };
         } else if (score >= 50 && score <= 54.99) {
