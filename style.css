@@ -575,13 +575,12 @@ a {
         padding: 0 0;
     }
     .header__nav {
-    padding: 8px 10px;
-    gap: 4px;
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-    flex-wrap: nowrap;
+        padding: 8px 10px;
+        gap: 4px;
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        flex-wrap: nowrap;
     }
     .logo {
         margin-right: 4px;
@@ -641,16 +640,10 @@ a {
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    }
-    .sign__button > div {
+}
+.sign__button > div {
     transform: scale(0.7);
     transform-origin: right center;
-    }
-    .burger {
-    display: flex;
-    flex-shrink: 0;
-    margin-left: 0;
-    width: 20px;
     }
     .stats {
         padding: 0 20px;
