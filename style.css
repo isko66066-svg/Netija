@@ -3,10 +3,6 @@
     padding: 0;
     box-sizing: border-box;
 }
-html, body {
-    overflow-x: hidden;
-    max-width: 100%;
-}
 body {
     font-family: poppins, sans-serif;
     background-color: #F8F9FA;
@@ -579,11 +575,13 @@ a {
         padding: 0 0;
     }
     .header__nav {
-        padding: 8px 10px;
-        gap: 4px;
-        position: relative;
-        width: 100%;
-        max-width: 100%;
+    padding: 8px 10px;
+    gap: 4px;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    flex-wrap: nowrap;
     }
     .logo {
         margin-right: 4px;
@@ -638,14 +636,21 @@ a {
         font-size: 15px;
     }
     .sign__button {
-        margin-left: 0;
-        flex-shrink: 1;
-        min-width: 0;
-        overflow: hidden;
+    margin-left: 0;
+    max-width: 40px;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
     }
     .sign__button > div {
-        transform: scale(0.7);
-        transform-origin: right center;
+    transform: scale(0.7);
+    transform-origin: right center;
+    }
+    .burger {
+    display: flex;
+    flex-shrink: 0;
+    margin-left: 0;
+    width: 20px;
     }
     .stats {
         padding: 0 20px;
