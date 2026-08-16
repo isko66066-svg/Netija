@@ -42,7 +42,15 @@ function loadResultsFromStorage() {
         const saved = localStorage.getItem(`result_${testId}`);
         if (!saved) return;
 
-        const result = JSON.parse(saved);
+        let result;
+
+        try {
+            result = JSON.parse(saved);
+        } catch (error) {
+            console.error('Ошибка чтения результата:', error);
+            localStorage.removeItem(`result_${testId}`);
+            return;
+        }
         const statusBox = card.querySelector('.card-status');
         const btn = card.querySelector('.btn-card-action');
 
