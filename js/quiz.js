@@ -4,9 +4,65 @@ function initQuiz() {
     const resultBox = document.getElementById('resultBox');
     const timerEl = document.getElementById('timer');
 
-    if (!quizContainer || typeof questions === 'undefined') return;
+    if (!quizContainer || typeof questions === 'undefined') {
+        console.error('Quiz: quizContainer или questions не найдены');
+        return;
+    }
 
     let testSubmitted = false;
+
+    // =========================================================
+    // MATHJAX
+    // =========================================================
+
+    function renderMath(element) {
+        if (
+            window.MathJax &&
+            typeof window.MathJax.typesetPromise === 'function'
+        ) {
+            return window.MathJax.typesetPromise([element])
+                .catch(error => {
+                    console.error('MathJax error:', error);
+                });
+        }
+
+        return Promise.resolve();
+    }
+
+    async function waitForMathJax() {
+        if (
+            window.MathJax &&
+            typeof window.MathJax.typesetPromise === 'function'
+        ) {
+            return;
+        }
+
+        await new Promise(resolve => {
+            let attempts = 0;
+
+            const check = setInterval(() => {
+                attempts++;
+
+                if (
+                    window.MathJax &&
+                    typeof window.MathJax.typesetPromise === 'function'
+                ) {
+                    clearInterval(check);
+                    resolve();
+                }
+
+                // Не ждём бесконечно
+                if (attempts >= 100) {
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 50);
+        });
+    }
+
+    // =========================================================
+    // ЗАЩИТА ОТ ПЕРЕЗАГРУЗКИ
+    // =========================================================
 
     window.addEventListener('beforeunload', function (e) {
         if (!testSubmitted) {
@@ -15,6 +71,11 @@ function initQuiz() {
         }
     });
 
+    // =========================================================
+    // ТАЙМЕР
+    // 2 ЧАСА 30 МИНУТ — БЕЗ ИЗМЕНЕНИЙ
+    // =========================================================
+
     let timeLeft = 2 * 60 * 60 + 30 * 60;
     let timerInterval;
 
@@ -22,368 +83,1206 @@ function initQuiz() {
         const hours = Math.floor(timeLeft / 3600);
         const minutes = Math.floor((timeLeft % 3600) / 60);
         const seconds = timeLeft % 60;
-        timerEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        if (timeLeft <= 300) timerEl.classList.add('timer--warning');
+
+        if (timerEl) {
+            timerEl.textContent =
+                `${String(hours).padStart(2, '0')}:` +
+                `${String(minutes).padStart(2, '0')}:` +
+                `${String(seconds).padStart(2, '0')}`;
+
+            if (timeLeft <= 300) {
+                timerEl.classList.add('timer--warning');
+            }
+        }
     }
 
     function startTimer() {
         updateTimerDisplay();
+
         timerInterval = setInterval(() => {
             timeLeft--;
+
             updateTimerDisplay();
+
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
+
                 submitTest();
-                timerEl.textContent = "Время вышло";
+
+                if (timerEl) {
+                    timerEl.textContent = 'Время вышло';
+                }
             }
         }, 1000);
     }
 
-    startTimer();
+    // =========================================================
+    // СОЗДАНИЕ ТЕКСТА С MATHJAX
+    // =========================================================
 
-    // --- РЕНДЕР ВОПРОСОВ ---
-    questions.forEach((q) => {
-        const block = document.createElement('div');
-        block.className = 'question-block';
-        block.id = `question-block-${q.id}`;
+    // ВАЖНО: экранируем < и > вне зависимости от контекста, чтобы
+    // браузер не принимал их за начало HTML-тега (например, в "$a<b<c$"),
+    // MathJax корректно распознаёт &lt; и &gt; внутри формул как < и >.
+    function escapeHtmlOutsideMath(text) {
+        if (!text) return '';
+        return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
 
-        const questionText = document.createElement('p');
-        questionText.className = 'question-text';
-        questionText.textContent = `${q.id}. ${q.question}`;
-        block.appendChild(questionText);
+    function createMathText(className, text) {
+        const element = document.createElement('p');
 
-        if (q.image) {
-            const img = document.createElement('img');
-            img.className = 'question-image';
-            img.src = q.image;
-            block.appendChild(img);
-        }
+        element.className = className;
 
-        if (q.type === 'single_choice') {
-            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-            q.options.forEach((option, optIndex) => {
-                const label = document.createElement('label');
-                label.className = 'option-label';
+        // ВАЖНО:
+        // innerHTML нужен вместо textContent,
+        // чтобы MathJax видел $...$, \frac, \sqrt и т.д.
+        element.innerHTML = escapeHtmlOutsideMath(text || '');
 
-                const input = document.createElement('input');
-                input.type = 'radio';
-                input.name = `q-${q.id}`;
-                input.value = optIndex;
+        return element;
+    }
 
-                label.appendChild(input);
-                label.appendChild(document.createTextNode(`${letters[optIndex] || ''}) ${option}`));
-                block.appendChild(label);
-            });
-        }
+    // =========================================================
+    // ПЕРЕВОД LaTeX В ПРОСТОЙ ТЕКСТ
+    // Используется только для <option> внутри <select>,
+    // так как этот тег не поддерживает HTML/MathJax вообще —
+    // браузер показывает там исключительно чистый текст.
+    // =========================================================
+    function latexToPlainText(text) {
+        if (!text) return '';
 
-        if (q.type === 'matching') {
-            if (q.context) {
-                const context = document.createElement('div');
-                context.className = 'matching-context';
-                context.textContent = q.context;
-                block.appendChild(context);
+        let result = String(text);
+
+        // Убираем обёртку $...$ / $$...$$
+        result = result.replace(/\$\$?/g, '');
+
+        // \frac{a}{b} -> a/b
+        result = result.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2');
+
+        // \sqrt{n} -> √n
+        result = result.replace(/\\sqrt\{([^{}]+)\}/g, '√$1');
+        // \sqrtN (без фигурных скобок, например \sqrt3) -> √N
+        result = result.replace(/\\sqrt(\d+)/g, '√$1');
+
+        // \operatorname{tg}/\operatorname{ctg} -> tg/ctg
+        result = result.replace(/\\operatorname\{([^{}]+)\}/g, '$1');
+
+        // Убираем оставшиеся одиночные фигурные скобки после замен
+        result = result.replace(/[{}]/g, '');
+
+        // Убираем экранирование пробелов вида \ 
+        result = result.replace(/\\,|\\ /g, ' ');
+
+        return result.trim();
+    }
+
+    // =========================================================
+    // РЕНДЕР ВОПРОСОВ
+    // =========================================================
+
+    async function renderQuestions() {
+
+        quizContainer.innerHTML = '';
+
+        questions.forEach((q) => {
+
+            // -------------------------------------------------
+            // ОСНОВНОЙ БЛОК
+            // -------------------------------------------------
+
+            const block = document.createElement('div');
+
+            block.className = 'question-block';
+
+            block.id = `question-block-${q.id}`;
+
+            // -------------------------------------------------
+            // ТЕКСТ ВОПРОСА
+            // -------------------------------------------------
+
+            const questionText =
+                createMathText(
+                    'question-text',
+                    `${q.id}. ${q.question || ''}`
+                );
+
+            block.appendChild(questionText);
+
+            // -------------------------------------------------
+            // ДОПОЛНИТЕЛЬНЫЙ ТЕКСТ / SUBTITLE
+            // -------------------------------------------------
+
+            if (q.subtitle) {
+
+                const subtitle =
+                    document.createElement('div');
+
+                subtitle.className =
+                    'question-subtitle';
+
+                subtitle.innerHTML =
+                    escapeHtmlOutsideMath(q.subtitle);
+
+                block.appendChild(subtitle);
             }
 
-            q.items.forEach((item) => {
-                const itemBlock = document.createElement('div');
-                itemBlock.className = 'matching-item';
+            // -------------------------------------------------
+            // КАРТИНКА
+            // -------------------------------------------------
 
-                const itemText = document.createElement('p');
-                itemText.className = 'sub-question-text';
-                itemText.textContent = `${item.id}. ${item.text}`;
-                itemBlock.appendChild(itemText);
+            if (q.image) {
 
-                const select = document.createElement('select');
-                select.className = 'matching-select';
-                select.dataset.itemId = item.id;
+                const img =
+                    document.createElement('img');
 
-                const emptyOption = document.createElement('option');
-                emptyOption.value = '';
-                emptyOption.textContent = 'Выберите ответ';
-                select.appendChild(emptyOption);
+                img.className =
+                    'question-image';
 
-                Object.entries(q.optionsPool).forEach(([letter, value]) => {
-                    const opt = document.createElement('option');
-                    opt.value = letter;
-                    opt.textContent = `${letter}) ${value}`;
-                    select.appendChild(opt);
+                img.src =
+                    q.image;
+
+                img.alt =
+                    `Изображение к заданию ${q.id}`;
+
+                block.appendChild(img);
+            }
+
+            // =================================================
+            // SINGLE CHOICE
+            // =================================================
+
+            if (q.type === 'single_choice') {
+
+                const letters = [
+                    'A',
+                    'B',
+                    'C',
+                    'D',
+                    'E',
+                    'F',
+                    'G',
+                    'H'
+                ];
+
+                q.options.forEach((option, optIndex) => {
+
+                    const label =
+                        document.createElement('label');
+
+                    label.className =
+                        'option-label';
+
+                    // Радиокнопка
+
+                    const input =
+                        document.createElement('input');
+
+                    input.type =
+                        'radio';
+
+                    input.name =
+                        `q-${q.id}`;
+
+                    input.value =
+                        optIndex;
+
+                    label.appendChild(input);
+
+                    // Текст варианта
+
+                    const optionText =
+                        document.createElement('span');
+
+                    optionText.innerHTML =
+                        escapeHtmlOutsideMath(`${letters[optIndex] || ''}) ${option}`);
+
+                    label.appendChild(optionText);
+
+                    block.appendChild(label);
                 });
+            }
 
-                itemBlock.appendChild(select);
-                block.appendChild(itemBlock);
-            });
-        }
+            // =================================================
+            // MATCHING
+            // =================================================
 
-        if (q.type === 'open_ended') {
-            q.subQuestions.forEach((sub) => {
-                const subBlock = document.createElement('div');
-                subBlock.className = 'sub-question-item';
+            if (q.type === 'matching') {
 
-                const subText = document.createElement('p');
-                subText.className = 'sub-question-text';
-                subText.textContent = sub.text;
-                subBlock.appendChild(subText);
+                // Контекст задания
 
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'sub-question-input';
-                input.placeholder = 'Введите ответ';
-                input.dataset.questionId = q.id;
-                input.dataset.subId = sub.id;
+                if (q.context) {
 
-                subBlock.appendChild(input);
-                block.appendChild(subBlock);
-            });
-        }
+                    const context =
+                        document.createElement('div');
 
-        quizContainer.appendChild(block);
-    });
+                    context.className =
+                        'matching-context';
 
-    // --- ОБРАБОТЧИК КНОПКИ С ПОДТВЕРЖДЕНИЕМ ---
-    submitBtn.addEventListener('click', () => {
-        const confirmed = window.confirm('Вы уверены, что хотите завершить тест и проверить результат?');
-        if (!confirmed) return;
-        submitTest();
-    });
+                    context.innerHTML =
+                        escapeHtmlOutsideMath(q.context);
 
-    // --- ШКАЛА ОПРЕДЕЛЕНИЯ УРОВНЯ (МАКСИМУМ 100 БАЛЛОВ) ---
+                    block.appendChild(context);
+                }
+
+                // Подзадания
+
+                q.items.forEach((item) => {
+
+                    const itemBlock =
+                        document.createElement('div');
+
+                    itemBlock.className =
+                        'matching-item';
+
+                    // Текст
+
+                    const itemText =
+                        document.createElement('p');
+
+                    itemText.className =
+                        'sub-question-text';
+
+                    itemText.innerHTML =
+                        escapeHtmlOutsideMath(`${item.id}. ${item.text}`);
+
+                    itemBlock.appendChild(itemText);
+
+                    // Select
+
+                    const select =
+                        document.createElement('select');
+
+                    select.className =
+                        'matching-select';
+
+                    select.dataset.itemId =
+                        item.id;
+
+                    // Пустой вариант
+
+                    const emptyOption =
+                        document.createElement('option');
+
+                    emptyOption.value =
+                        '';
+
+                    emptyOption.textContent =
+                        'Выберите ответ';
+
+                    select.appendChild(
+                        emptyOption
+                    );
+
+                    // Варианты
+
+                    Object.entries(
+                        q.optionsPool || {}
+                    ).forEach(([letter, value]) => {
+
+                        const opt =
+                            document.createElement('option');
+
+                        opt.value =
+                            letter;
+
+                        /*
+                         * ВАЖНО:
+                         * <option> не поддерживает HTML/MathJax —
+                         * браузер показывает только чистый текст.
+                         * Поэтому переводим LaTeX в простой текст
+                         * (например, $64\sqrt3$ -> 64√3) вручную,
+                         * без участия MathJax.
+                         */
+
+                        opt.textContent =
+                            `${letter}) ${latexToPlainText(value)}`;
+
+                        select.appendChild(opt);
+                    });
+
+                    itemBlock.appendChild(select);
+
+                    block.appendChild(itemBlock);
+                });
+            }
+
+            // =================================================
+            // OPEN ENDED
+            // =================================================
+
+            if (q.type === 'open_ended') {
+
+                q.subQuestions.forEach((sub) => {
+
+                    const subBlock =
+                        document.createElement('div');
+
+                    subBlock.className =
+                        'sub-question-item';
+
+                    // Текст подпункта
+
+                    const subText =
+                        document.createElement('p');
+
+                    subText.className =
+                        'sub-question-text';
+
+                    subText.innerHTML =
+                        escapeHtmlOutsideMath(sub.text || '');
+
+                    subBlock.appendChild(subText);
+
+                    // Поле ответа
+
+                    const input =
+                        document.createElement('input');
+
+                    input.type =
+                        'text';
+
+                    input.className =
+                        'sub-question-input';
+
+                    input.placeholder =
+                        'Введите ответ';
+
+                    input.dataset.questionId =
+                        q.id;
+
+                    input.dataset.subId =
+                        sub.id;
+
+                    subBlock.appendChild(input);
+
+                    block.appendChild(subBlock);
+                });
+            }
+
+            quizContainer.appendChild(block);
+        });
+
+        // Ждём MathJax
+
+        await waitForMathJax();
+
+        // Обрабатываем ВСЕ формулы внутри теста
+
+        await renderMath(quizContainer);
+    }
+
+    // =========================================================
+    // КНОПКА ПРОВЕРКИ
+    // =========================================================
+
+    if (submitBtn) {
+
+        submitBtn.addEventListener('click', () => {
+
+            if (testSubmitted) {
+                return;
+            }
+
+            const confirmed =
+                window.confirm(
+                    'Вы уверены, что хотите завершить тест и проверить результат?'
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+            submitTest();
+        });
+
+    } else {
+
+        console.error(
+            'Quiz: кнопка #submitBtn не найдена'
+        );
+    }
+
+    // =========================================================
+    // ШКАЛА 100 БАЛЛОВ
+    // НЕ ИЗМЕНЕНО
+    // =========================================================
+
     function getCertificateGrade(score) {
+
         if (score < 44.0) {
-            return { level: 'Не выдается', passed: false };
-        } else if (score >= 44.0 && score <= 49.99) {
-            return { level: 'C', passed: true };
-        } else if (score >= 50 && score <= 54.99) {
-            return { level: 'C+', passed: true };
-        } else if (score >= 55 && score <= 59.99) {
-            return { level: 'B', passed: true };
-        } else if (score >= 60 && score <= 64.99) {
-            return { level: 'B+', passed: true };
-        } else if (score >= 65 && score <= 69.99) {
-            return { level: 'A', passed: true };
+
+            return {
+                level: 'Не выдается',
+                passed: false
+            };
+
+        } else if (
+            score >= 44.0 &&
+            score <= 49.99
+        ) {
+
+            return {
+                level: 'C',
+                passed: true
+            };
+
+        } else if (
+            score >= 50 &&
+            score <= 54.99
+        ) {
+
+            return {
+                level: 'C+',
+                passed: true
+            };
+
+        } else if (
+            score >= 55 &&
+            score <= 59.99
+        ) {
+
+            return {
+                level: 'B',
+                passed: true
+            };
+
+        } else if (
+            score >= 60 &&
+            score <= 64.99
+        ) {
+
+            return {
+                level: 'B+',
+                passed: true
+            };
+
+        } else if (
+            score >= 65 &&
+            score <= 69.99
+        ) {
+
+            return {
+                level: 'A',
+                passed: true
+            };
+
         } else if (score >= 70) {
-            return { level: 'A+', passed: true };
+
+            return {
+                level: 'A+',
+                passed: true
+            };
         }
     }
 
-    // --- ПРОВЕРКА ОТВЕТОВ И МАСШТАБИРОВАНИЕ ДО 100 БАЛЛОВ ---
+    // =========================================================
+    // ПРОВЕРКА ТЕСТА
+    // СИСТЕМА БАЛЛОВ НЕ ИЗМЕНЕНА
+    // =========================================================
+
     function submitTest() {
+
+        if (testSubmitted) {
+            return;
+        }
+
         testSubmitted = true;
+
         clearInterval(timerInterval);
 
         let totalRawScore = 0;
+
         let correctFullTasksCount = 0;
+
         let totalTasksCount = 0;
+
         const details = [];
 
         questions.forEach((q) => {
-            const block = document.getElementById(`question-block-${q.id}`);
+
+            const block =
+                document.getElementById(
+                    `question-block-${q.id}`
+                );
+
             let questionCorrect = true;
 
+            // =================================================
+            // SINGLE CHOICE
+            // =================================================
+
             if (q.type === 'single_choice') {
+
                 totalTasksCount++;
-                const questionPoints = q.points !== undefined ? q.points : 1.3;
-                const selected = document.querySelector(`input[name="q-${q.id}"]:checked`);
-                const selectedValue = selected ? parseInt(selected.value) : null;
-                const isCorrect = selectedValue === q.correctAnswer;
-                
+
+                // НЕ МЕНЯЕМ
+                const questionPoints =
+                    q.points !== undefined
+                        ? q.points
+                        : 1.3;
+
+                const selected =
+                    document.querySelector(
+                        `input[name="q-${q.id}"]:checked`
+                    );
+
+                const selectedValue =
+                    selected
+                        ? parseInt(selected.value)
+                        : null;
+
+                const isCorrect =
+                    selectedValue ===
+                    q.correctAnswer;
+
                 if (isCorrect) {
-                    totalRawScore += questionPoints;
+
+                    totalRawScore +=
+                        questionPoints;
+
                     correctFullTasksCount++;
+
                 } else {
+
                     questionCorrect = false;
                 }
 
-                details.push({ number: q.id, isCorrect, answered: selectedValue !== null });
-
-                const labels = block.querySelectorAll('.option-label');
-                labels.forEach((label, idx) => {
-                    label.classList.remove('correct-answer', 'wrong-answer');
-                    const input = label.querySelector('input');
-                    if (input) input.disabled = true;
-
-                    if (idx === q.correctAnswer) {
-                        label.classList.add('correct-answer');
-                    } else if (idx === selectedValue && !isCorrect) {
-                        label.classList.add('wrong-answer');
-                    }
+                details.push({
+                    number: q.id,
+                    isCorrect: isCorrect,
+                    answered:
+                        selectedValue !== null
                 });
+
+                // Показываем правильный / неправильный
+
+                if (block) {
+
+                    const labels =
+                        block.querySelectorAll(
+                            '.option-label'
+                        );
+
+                    labels.forEach(
+                        (label, idx) => {
+
+                            label.classList.remove(
+                                'correct-answer',
+                                'wrong-answer'
+                            );
+
+                            const input =
+                                label.querySelector(
+                                    'input'
+                                );
+
+                            if (input) {
+                                input.disabled =
+                                    true;
+                            }
+
+                            // Если правильный
+
+                            if (
+                                q.correctAnswer !== null &&
+                                idx === q.correctAnswer
+                            ) {
+
+                                label.classList.add(
+                                    'correct-answer'
+                                );
+                            }
+
+                            // Если пользователь ошибся
+
+                            else if (
+                                idx === selectedValue &&
+                                !isCorrect
+                            ) {
+
+                                label.classList.add(
+                                    'wrong-answer'
+                                );
+                            }
+                        }
+                    );
+                }
             }
 
+            // =================================================
+            // MATCHING
+            // =================================================
+
             if (q.type === 'matching') {
-                const matchingPoints = q.points !== undefined ? q.points : 2.2;
+
+                // НЕ МЕНЯЕМ
+                const matchingPoints =
+                    q.points !== undefined
+                        ? q.points
+                        : 2.2;
+
                 let subItemsCorrect = true;
 
                 q.items.forEach((item) => {
+
                     totalTasksCount++;
-                    const select = block.querySelector(`select[data-item-id="${item.id}"]`);
-                    const selectedValue = select ? select.value : '';
-                    const isItemCorrect = selectedValue === item.correctAnswer;
-                    
+
+                    const select =
+                        block
+                            ? block.querySelector(
+                                `select[data-item-id="${item.id}"]`
+                            )
+                            : null;
+
+                    const selectedValue =
+                        select
+                            ? select.value
+                            : '';
+
+                    const isItemCorrect =
+                        selectedValue ===
+                        item.correctAnswer;
+
                     if (!isItemCorrect) {
                         subItemsCorrect = false;
                     }
 
-                    details.push({ number: item.id, isCorrect: isItemCorrect, answered: selectedValue !== '' });
+                    details.push({
+                        number: item.id,
+                        isCorrect:
+                            isItemCorrect,
+                        answered:
+                            selectedValue !== ''
+                    });
 
                     if (select) {
-                        select.disabled = true;
-                        const existingHint = select.parentElement.querySelector('.correct-hint');
-                        if (existingHint) existingHint.remove();
+
+                        select.disabled =
+                            true;
+
+                        const parent =
+                            select.parentElement;
+
+                        const oldHint =
+                            parent.querySelector(
+                                '.correct-hint'
+                            );
+
+                        if (oldHint) {
+                            oldHint.remove();
+                        }
 
                         if (!isItemCorrect) {
-                            const hint = document.createElement('span');
-                            hint.className = 'correct-hint';
-                            hint.textContent = `Правильный ответ: ${item.correctAnswer}) ${q.optionsPool[item.correctAnswer]}`;
-                            select.insertAdjacentElement('afterend', hint);
+
+                            const hint =
+                                document.createElement(
+                                    'span'
+                                );
+
+                            hint.className =
+                                'correct-hint';
+
+                            const correctText =
+                                q.optionsPool &&
+                                q.optionsPool[
+                                    item.correctAnswer
+                                ]
+                                    ? q.optionsPool[
+                                        item.correctAnswer
+                                    ]
+                                    : '';
+
+                            hint.innerHTML =
+                                escapeHtmlOutsideMath(
+                                    `Правильный ответ: ` +
+                                    `${item.correctAnswer}) ` +
+                                    `${correctText}`
+                                );
+
+                            select.insertAdjacentElement(
+                                'afterend',
+                                hint
+                            );
+
+                            renderMath(hint);
                         }
                     }
                 });
 
+                // ВАЖНО:
+                // matching получает 2.2 только если
+                // ВСЕ три ответа правильные
+
                 if (subItemsCorrect) {
-                    totalRawScore += matchingPoints;
+
+                    totalRawScore +=
+                        matchingPoints;
+
                     correctFullTasksCount++;
+
                 } else {
+
                     questionCorrect = false;
                 }
             }
 
+            // =================================================
+            // OPEN ENDED
+            // =================================================
+
             if (q.type === 'open_ended') {
+
                 let partACorrect = false;
+
                 let partBCorrect = false;
 
+                // НЕ МЕНЯЕМ
+
                 const pointsA = 1.5;
+
                 const pointsB = 1.7;
 
                 q.subQuestions.forEach((sub) => {
-                    totalTasksCount++;
-                    const input = block.querySelector(`input[data-question-id="${q.id}"][data-sub-id="${sub.id}"]`);
-                    const value = input ? input.value.trim() : '';
-                    const isSubCorrect = value !== '' && value.toLowerCase() === String(sub.correctAnswer).toLowerCase();
 
-                    if (sub.id === 'a' && isSubCorrect) {
-                        totalRawScore += pointsA;
+                    totalTasksCount++;
+
+                    const input =
+                        block
+                            ? block.querySelector(
+                                `input[data-question-id="${q.id}"][data-sub-id="${sub.id}"]`
+                            )
+                            : null;
+
+                    const value =
+                        input
+                            ? input.value.trim()
+                            : '';
+
+                    const correctAnswer =
+                        sub.correctAnswer;
+
+                    /*
+                     * null означает, что правильный ответ
+                     * не задан.
+                     *
+                     * Это НЕ меняет систему подсчёта:
+                     * такой ответ просто не будет правильным.
+                     */
+
+                    const isSubCorrect =
+                        correctAnswer !== null &&
+                        correctAnswer !== undefined &&
+                        value !== '' &&
+                        value.toLowerCase() ===
+                        String(
+                            correctAnswer
+                        ).toLowerCase();
+
+                    // A = 1.5
+
+                    if (
+                        sub.id === 'a' &&
+                        isSubCorrect
+                    ) {
+
+                        totalRawScore +=
+                            pointsA;
+
                         partACorrect = true;
                     }
-                    if (sub.id === 'b' && isSubCorrect) {
-                        totalRawScore += pointsB;
+
+                    // B = 1.7
+
+                    if (
+                        sub.id === 'b' &&
+                        isSubCorrect
+                    ) {
+
+                        totalRawScore +=
+                            pointsB;
+
                         partBCorrect = true;
                     }
 
-                    details.push({ number: `${q.id}${sub.id}`, isCorrect: isSubCorrect, answered: value !== '' });
+                    details.push({
+                        number:
+                            `${q.id}${sub.id}`,
+
+                        isCorrect:
+                            isSubCorrect,
+
+                        answered:
+                            value !== ''
+                    });
 
                     if (input) {
-                        input.disabled = true;
-                        const existingHint = input.parentElement.querySelector('.correct-hint');
-                        if (existingHint) existingHint.remove();
+
+                        input.disabled =
+                            true;
+
+                        const oldHint =
+                            input.parentElement
+                                .querySelector(
+                                    '.correct-hint'
+                                );
+
+                        if (oldHint) {
+                            oldHint.remove();
+                        }
 
                         if (!isSubCorrect) {
-                            const hint = document.createElement('span');
-                            hint.className = 'correct-hint';
-                            hint.textContent = `Правильный ответ: ${sub.correctAnswer}`;
-                            input.insertAdjacentElement('afterend', hint);
+
+                            const hint =
+                                document.createElement(
+                                    'span'
+                                );
+
+                            hint.className =
+                                'correct-hint';
+
+                            if (
+                                correctAnswer !== null &&
+                                correctAnswer !== undefined
+                            ) {
+
+                                hint.innerHTML =
+                                    escapeHtmlOutsideMath(
+                                        `Правильный ответ: ${correctAnswer}`
+                                    );
+
+                            } else {
+
+                                hint.textContent =
+                                    'Правильный ответ не указан';
+                            }
+
+                            input.insertAdjacentElement(
+                                'afterend',
+                                hint
+                            );
+
+                            renderMath(hint);
                         }
                     }
                 });
 
-                if (partACorrect && partBCorrect) {
+                /*
+                 * НЕ МЕНЯЕМ:
+                 * полное задание считается правильным,
+                 * только если A и B правильные.
+                 */
+
+                if (
+                    partACorrect &&
+                    partBCorrect
+                ) {
+
                     correctFullTasksCount++;
+
                 } else {
+
                     questionCorrect = false;
                 }
             }
 
-            block.classList.remove('question-correct', 'question-incorrect');
-            block.classList.add(questionCorrect ? 'question-correct' : 'question-incorrect');
+            // =================================================
+            // СТИЛЬ ВОПРОСА
+            // =================================================
+
+            if (block) {
+
+                block.classList.remove(
+                    'question-correct',
+                    'question-incorrect'
+                );
+
+                block.classList.add(
+                    questionCorrect
+                        ? 'question-correct'
+                        : 'question-incorrect'
+                );
+            }
         });
 
-        // Переводим набранные баллы в 100-балльную шкалу
+        // =====================================================
+        // ПЕРЕВОД В 100-БАЛЛЬНУЮ ШКАЛУ
+        // НЕ ИЗМЕНЕНО
+        // =====================================================
+
         const maxRawScore = 64.2;
-        let scaledScore = (totalRawScore / maxRawScore) * 100;
-        if (scaledScore > 100) scaledScore = 100;
 
-        const finalScore = Number(scaledScore.toFixed(2));
-        const gradeInfo = getCertificateGrade(finalScore);
+        let scaledScore =
+            (totalRawScore / maxRawScore) *
+            100;
 
-        const params = new URLSearchParams(window.location.search);
-        const testId = params.get('id');
-        const storageKey = `result_natcert-${testId}`;
+        if (scaledScore > 100) {
+            scaledScore = 100;
+        }
 
-        // Формируем объект текущего результата
+        const finalScore =
+            Number(
+                scaledScore.toFixed(2)
+            );
+
+        const gradeInfo =
+            getCertificateGrade(
+                finalScore
+            );
+
+        // =====================================================
+        // LOCAL STORAGE
+        // НЕ ИЗМЕНЕНО
+        // =====================================================
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const testId =
+            params.get('id');
+
+        const storageKey =
+            `result_natcert-${testId}`;
+
         const currentResult = {
-            score: finalScore,
-            correctCount: correctFullTasksCount,
-            total: totalTasksCount,
-            level: gradeInfo.level
+
+            score:
+                finalScore,
+
+            correctCount:
+                correctFullTasksCount,
+
+            total:
+                totalTasksCount,
+
+            level:
+                gradeInfo.level
         };
 
-        // Сохраняем ЛУЧШИЙ результат (сравниваем с прошлым в localStorage)
-        const existingData = localStorage.getItem(storageKey);
+        const existingData =
+            localStorage.getItem(
+                storageKey
+            );
+
         if (existingData) {
-            const bestResult = JSON.parse(existingData);
-            if (bestResult.score > finalScore) {
-                currentResult.score = bestResult.score;
-                currentResult.correctCount = bestResult.correctCount;
-                currentResult.level = bestResult.level;
+
+            try {
+
+                const bestResult =
+                    JSON.parse(
+                        existingData
+                    );
+
+                if (
+                    bestResult.score >
+                    finalScore
+                ) {
+
+                    currentResult.score =
+                        bestResult.score;
+
+                    currentResult.correctCount =
+                        bestResult.correctCount;
+
+                    currentResult.level =
+                        bestResult.level;
+                }
+
+            } catch (error) {
+
+                console.error(
+                    'Ошибка localStorage:',
+                    error
+                );
             }
         }
 
-        localStorage.setItem(storageKey, JSON.stringify(currentResult));
+        localStorage.setItem(
+            storageKey,
+            JSON.stringify(
+                currentResult
+            )
+        );
 
-        renderResultBox(finalScore, correctFullTasksCount, totalTasksCount, gradeInfo, details);
-        resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Показываем результат
+
+        renderResultBox(
+            finalScore,
+            correctFullTasksCount,
+            totalTasksCount,
+            gradeInfo,
+            details
+        );
+
+        if (resultBox) {
+
+            resultBox.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
     }
 
-    function renderResultBox(score, correctCount, totalCount, gradeInfo, details) {
+    // =========================================================
+    // РЕЗУЛЬТАТ
+    // =========================================================
+
+    function renderResultBox(
+        score,
+        correctCount,
+        totalCount,
+        gradeInfo,
+        details
+    ) {
+
+        if (!resultBox) {
+            return;
+        }
+
         resultBox.innerHTML = '';
-        resultBox.style.display = 'block';
 
-        const isPassed = gradeInfo.passed;
-        const statusClass = isPassed ? 'result-status--success' : 'result-status--fail';
-        const statusText = isPassed ? '🎉 Поздравляем! Сертификат получен' : '⚠️ Порог не пройден, попробуйте еще раз';
+        resultBox.style.display =
+            'block';
 
-        const summary = document.createElement('div');
-        summary.className = 'result-summary-card';
+        const isPassed =
+            gradeInfo.passed;
+
+        const statusClass =
+            isPassed
+                ? 'result-status--success'
+                : 'result-status--fail';
+
+        const statusText =
+            isPassed
+                ? '🎉 Поздравляем! Сертификат получен'
+                : '⚠️ Порог не пройден, попробуйте еще раз';
+
+        // =====================================================
+        // SUMMARY
+        // =====================================================
+
+        const summary =
+            document.createElement('div');
+
+        summary.className =
+            'result-summary-card';
+
         summary.innerHTML = `
             <div class="result-header">
                 <h3>Итоги тестирования</h3>
-                <span class="result-status-badge ${statusClass}">${statusText}</span>
+
+                <span class="result-status-badge ${statusClass}">
+                    ${statusText}
+                </span>
             </div>
+
             <div class="result-metrics">
+
                 <div class="metric-item">
-                    <span class="metric-label">Итоговый балл</span>
-                    <span class="metric-value">${score} 
+                    <span class="metric-label">
+                        Итоговый балл
+                    </span>
+
+                    <span class="metric-value">
+                        ${score}
+                    </span>
                 </div>
+
                 <div class="metric-item">
-                    <span class="metric-label">Уровень</span>
-                    <span class="metric-value highlight">${gradeInfo.level}</span>
+                    <span class="metric-label">
+                        Уровень
+                    </span>
+
+                    <span class="metric-value highlight">
+                        ${gradeInfo.level}
+                    </span>
                 </div>
+
                 <div class="metric-item">
-                    <span class="metric-label">Заданий верно</span>
-                    <span class="metric-value">${correctCount} <small>/ ${totalCount}</small></span>
+                    <span class="metric-label">
+                        Заданий верно
+                    </span>
+
+                    <span class="metric-value">
+                        ${correctCount}
+                        <small>/ ${totalCount}</small>
+                    </span>
                 </div>
+
             </div>
         `;
-        resultBox.appendChild(summary);
 
-        const gridTitle = document.createElement('h4');
-        gridTitle.className = 'result-grid-title';
-        gridTitle.textContent = 'Карта ответов по заданиям:';
-        resultBox.appendChild(gridTitle);
+        resultBox.appendChild(
+            summary
+        );
 
-        const grid = document.createElement('div');
-        grid.className = 'result-grid';
+        // =====================================================
+        // КАРТА ОТВЕТОВ
+        // =====================================================
+
+        const gridTitle =
+            document.createElement('h4');
+
+        gridTitle.className =
+            'result-grid-title';
+
+        gridTitle.textContent =
+            'Карта ответов по заданиям:';
+
+        resultBox.appendChild(
+            gridTitle
+        );
+
+        const grid =
+            document.createElement('div');
+
+        grid.className =
+            'result-grid';
 
         details.forEach((item) => {
-            const cell = document.createElement('div');
-            cell.className = `result-cell ${item.isCorrect ? 'result-cell--correct' : 'result-cell--incorrect'}`;
-            cell.textContent = item.number;
+
+            const cell =
+                document.createElement('div');
+
+            cell.className =
+                `result-cell ${
+                    item.isCorrect
+                        ? 'result-cell--correct'
+                        : 'result-cell--incorrect'
+                }`;
+
+            cell.textContent =
+                item.number;
+
             if (!item.answered) {
-                cell.classList.add('result-cell--empty');
-                cell.title = 'Вопрос без ответа';
+
+                cell.classList.add(
+                    'result-cell--empty'
+                );
+
+                cell.title =
+                    'Вопрос без ответа';
             }
-            grid.appendChild(cell);
+
+            grid.appendChild(
+                cell
+            );
         });
 
-        resultBox.appendChild(grid);
+        resultBox.appendChild(
+            grid
+        );
+
+        // На случай если в результате есть формулы
+
+        renderMath(resultBox);
     }
+
+    // =========================================================
+    // ЗАПУСК
+    // =========================================================
+
+    renderQuestions();
+
+    startTimer();
 }
