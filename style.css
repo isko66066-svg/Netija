@@ -637,7 +637,7 @@ a {
     }
     .sign__button {
     margin-left: 0;
-    max-width: 40px;
+    max-width: 100px;
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
