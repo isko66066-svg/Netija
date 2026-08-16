@@ -1,3 +1,4 @@
+(function () {
 const params = new URLSearchParams(window.location.search);
 const testId = params.get('id');
 const isValidTestId = /^[1-9]\d*$/.test(testId || '');
@@ -29,3 +30,4 @@ script.onerror = function() {
     }
 };
 document.head.appendChild(script);
+})();

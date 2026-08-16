@@ -1,3 +1,4 @@
+(function () {
 const testCards = document.getElementById('testCards');
 
 if (testCards) {
@@ -97,3 +98,4 @@ filterButtons.forEach(button => {
         });
     });
 });
+})();
