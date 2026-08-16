@@ -6,10 +6,17 @@ async function loadPage(url, pushState = true) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         const newMain = doc.getElementById('main');
-        const newTitle = doc.querySelector('title').textContent;
+        const newTitle = doc.querySelector('title');
+
+        if (!newMain) {
+            throw new Error(`Основной контент не найден: ${url}`);
+        }
         
         document.getElementById('main').innerHTML = newMain.innerHTML;
-        document.title = newTitle;
+
+        if (newTitle) {
+            document.title = newTitle.textContent;
+        }
         
         if (pushState) {
             history.pushState({ url }, '', url);
@@ -29,8 +36,8 @@ function runPageScripts(url) {
         });
     }
     if (url.includes('natcert-test.html')) {
-        loadScript('js/quiz-loader.js', () => {
-            loadScript('js/quiz.js');
+        loadScript('js/quiz.js', () => {
+            loadScript('js/quiz-loader.js');
         });
     }
 }
