@@ -43,7 +43,16 @@ a {
     gap: 40px;
 }
 .header__list-link {
-    transition: 0.3s;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    transition:
+        color 0.25s ease,
+        background-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.2s ease;
     font-weight: 600;
     letter-spacing: -0.47px;
     line-height: 1.4;
@@ -52,9 +61,22 @@ a {
 }
 .header__list-link.active {
     color: #19191B;
+    background-color: #f3f4f6;
 }
-.header__list-link:hover {
+.header__list-link:hover,
+.header__list-link:focus-visible {
     color: #19191B;
+    background-color: #f3f4f6;
+    box-shadow: 0 6px 18px rgba(25, 25, 27, 0.08);
+    transform: translateY(-1px);
+}
+.header__list-link:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(25, 25, 27, 0.08);
+}
+.header__list-link:focus-visible {
+    outline: 2px solid #2D2A7C;
+    outline-offset: 3px;
 }
 .hero {
     max-width: 1000px;

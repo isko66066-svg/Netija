@@ -1,21 +1,34 @@
-window.onload = function () {
+window.addEventListener('load', function () {
+    const signInButton = document.getElementById('googleSignInButton');
+
+    if (!signInButton || !window.google || !google.accounts || !google.accounts.id) {
+        return;
+    }
+
     google.accounts.id.initialize({
         client_id: "984110914315-9sok5k93urleertcgtfgtui5tshqfni4.apps.googleusercontent.com",
         callback: handleGoogleLogin
     });
     google.accounts.id.renderButton(
-        document.getElementById("googleSignInButton"),
+        signInButton,
         { theme: "outline", size: "large" }
     );
-};
+});
 
 function handleGoogleLogin(response) {
     const data = JSON.parse(atob(response.credential.split('.')[1]));
-    
-    document.getElementById('googleSignInButton').style.display = 'none';
-    
+    const signInButton = document.getElementById('googleSignInButton');
     const userProfile = document.getElementById('userProfile');
-    document.getElementById('userAvatar').src = data.picture;
-    document.getElementById('userName').textContent = data.name;
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+
+    if (!signInButton || !userProfile || !userAvatar || !userName) {
+        return;
+    }
+
+    signInButton.style.display = 'none';
+    
+    userAvatar.src = data.picture;
+    userName.textContent = data.name;
     userProfile.style.display = 'flex';
 }
