@@ -10,6 +10,24 @@ async function loadPage(url, pushState = true) {
         
         document.getElementById('main').innerHTML = newMain.innerHTML;
         document.title = newTitle;
+
+        // Закрываем бургер-меню, если оно было открыто
+        const headerList = document.querySelector('.header__list');
+        const burgerBtn = document.getElementById('burgerBtn');
+        if (headerList) headerList.classList.remove('open');
+        if (burgerBtn) burgerBtn.classList.remove('active');
+
+        // Обновляем активную ссылку в меню
+        const links = document.querySelectorAll('.header__list-link');
+        links.forEach(link => {
+            const linkPath = new URL(link.href).pathname;
+            const currentPath = new URL(url, window.location.origin).pathname;
+            if (linkPath === currentPath) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
         
         if (pushState) {
             history.pushState({ url }, '', url);
