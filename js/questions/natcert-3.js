@@ -1,4 +1,4 @@
-const questions = [
+var questions = [
     // --- 1–32: ТЕСТОВЫЕ ВОПРОСЫ (SINGLE CHOICE) ---
      {
         id: 1,

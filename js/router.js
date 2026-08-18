@@ -40,15 +40,84 @@ async function loadPage(url, pushState = true) {
     }
 }
 
+// =========================================================
+// MATHJAX
+// Гарантирует, что MathJax загружен и готов к работе,
+// независимо от того, зашли мы на страницу теста через
+// полную перезагрузку или через SPA-переход (router.js
+// подменяет только innerHTML #main и НЕ трогает <head>,
+// поэтому при SPA-переходе MathJax может отсутствовать).
+// =========================================================
+
+function ensureMathJax(callback) {
+    // MathJax уже загружен и готов
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        callback();
+        return;
+    }
+
+    // Скрипт MathJax уже добавлен в head, но ещё грузится —
+    // просто ждём его готовности, не добавляя дубликат
+    const existingLoader = document.querySelector('script[data-mathjax-loader]');
+    if (existingLoader) {
+        const check = setInterval(() => {
+            if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                clearInterval(check);
+                callback();
+            }
+        }, 50);
+        return;
+    }
+
+    // Конфиг MathJax (дублирует конфиг из <head> natcert-test.html
+    // на случай, если страница была открыта через SPA-переход,
+    // а не напрямую)
+    window.MathJax = {
+        tex: {
+            inlineMath: [
+                ['$', '$'],
+                ['\\(', '\\)']
+            ],
+            displayMath: [
+                ['$$', '$$'],
+                ['\\[', '\\]']
+            ],
+            macros: {
+                tg: "\\operatorname{tg}",
+                ctg: "\\operatorname{ctg}"
+            }
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js';
+    script.async = true;
+    script.dataset.mathjaxLoader = 'true';
+    script.onload = callback;
+    document.head.appendChild(script);
+}
+
+// =========================================================
+// ЗАГРУЗКА СКРИПТОВ СТРАНИЦЫ
+// =========================================================
+
 function runPageScripts(url) {
     if (url.includes('natcert.html')) {
         loadScript('js/natcert_tests-list.js', () => {
             loadScript('js/render-cards.js');
         });
     }
+
     if (url.includes('natcert-test.html')) {
-        loadScript('js/quiz-loader.js', () => {
-            loadScript('js/quiz.js');
+        // Сначала гарантируем готовность MathJax,
+        // и только потом грузим вопросы и логику теста
+        ensureMathJax(() => {
+            loadScript('js/quiz-loader.js', () => {
+                loadScript('js/quiz.js');
+            });
         });
     }
 }
