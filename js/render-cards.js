@@ -1,4 +1,4 @@
-const testCards = document.getElementById('testCards');
+var testCards = document.getElementById('testCards');
 
 if (testCards) {
     testsList.forEach((test) => {

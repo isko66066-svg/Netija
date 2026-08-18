@@ -11,6 +11,11 @@ function initQuiz() {
 
     let testSubmitted = false;
 
+    // Сообщаем роутеру, что активен тест (защита от случайного ухода
+    // со страницы — по клику на ссылку или по кнопке "Назад")
+    window.quizInProgress = true;
+    window.quizSubmitted = false;
+
     // =========================================================
     // MATHJAX
     // =========================================================
@@ -586,6 +591,10 @@ function initQuiz() {
         }
 
         testSubmitted = true;
+
+        // Тест сдан — снимаем защиту от ухода со страницы
+        window.quizSubmitted = true;
+        window.quizInProgress = false;
 
         clearInterval(timerInterval);
 
