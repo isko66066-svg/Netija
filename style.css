@@ -608,8 +608,11 @@ a {
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
     .header__list.open {
-        display: flex;
-    }
+    display: flex;
+    position: absolute;
+    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
     .header__list-item {
         padding: 14px 0;
         border-bottom: 1px solid #f0f0f0;
@@ -636,7 +639,6 @@ a {
     }
     .sign__button {
     margin-left: 0;
-    max-width: 100px;
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;

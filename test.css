@@ -300,6 +300,7 @@
     .test-cards {
         padding: 0 20px;
         grid-template-columns: 1fr;
+        margin-top: 16px;
     }
     .question-block {
         margin: 0 16px 16px;
@@ -307,6 +308,14 @@
     }
     .question-text {
         font-size: 0.95rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+
     }
     .test-submit {
         width: calc(100% - 32px);
