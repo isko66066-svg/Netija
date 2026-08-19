@@ -4,14 +4,24 @@ const db = require("./database");
 const crypto = require("crypto");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(express.json());
 
 /*
  * Проверка работы сервера
  */
+app.get("/", (req, res) => {
+    res.json({
+        status: "ok",
+        service: "Netija Backend"
+    });
+});
+
 app.get("/api/health", (req, res) => {
     res.json({
         ok: true,
@@ -177,8 +187,8 @@ app.post("/api/auth/login", (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
     console.log(
-        `Netija Premium server запущен: http://localhost:${PORT}`
+        `Netija Premium server запущен на порту ${PORT}`
     );
 });
