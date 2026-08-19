@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2898376939409244" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
       .premium-card{max-width:720px;margin:40px auto;padding:28px;border-radius:24px;background:#fff;box-shadow:0 10px 35px rgba(0,0,0,.08);text-align:center}
@@ -73,55 +74,26 @@
 <script src="js/router.js"></script>
 <script type="module">
   import { getPremiumStatus, openPaymePayment } from './js/premium.js';
-
   const button = document.getElementById('buyPremiumButton');
   const status = document.getElementById('premiumStatus');
-
   async function refreshPremium(){
     const user = JSON.parse(localStorage.getItem('netija_user') || 'null');
-    if(!user?.email){
-      button.disabled = true;
-      button.textContent = 'Войдите через Google';
-      return;
-    }
-    button.disabled = false;
-    button.textContent = 'Купить Premium — 10 000 сум';
+    if(!user?.email){ button.disabled=true; button.textContent='Войдите через Google'; return; }
+    button.disabled=false; button.textContent='Купить Premium — 10 000 сум';
     try{
-      const data = await getPremiumStatus();
+      const data=await getPremiumStatus();
       if(data.premium){
-        button.disabled = true;
-        button.textContent = 'Premium уже активен';
-        status.className = 'premium-status premium-ok';
-        status.textContent = data.premiumUntil ? `Активен до ${new Date(data.premiumUntil).toLocaleDateString('ru-RU')}` : 'Premium активен';
-      }else{
-        status.className = 'premium-status';
-        status.textContent = 'Premium не активен';
-      }
-    }catch(e){
-      console.error(e);
-      status.className = 'premium-status premium-error';
-      status.textContent = 'Не удалось проверить статус Premium';
-    }
+        button.disabled=true; button.textContent='Premium уже активен'; status.className='premium-status premium-ok';
+        status.textContent=data.premiumUntil ? `Активен до ${new Date(data.premiumUntil).toLocaleDateString('ru-RU')}` : 'Premium активен';
+      }else{ status.className='premium-status'; status.textContent='Premium не активен'; }
+    }catch(e){ status.className='premium-status premium-error'; status.textContent='Не удалось проверить статус Premium'; }
   }
-
-  button.addEventListener('click', async ()=>{
-    button.disabled = true;
-    button.textContent = 'Создаём заказ...';
-    status.className = 'premium-status';
-    status.textContent = '';
-    try{
-      await openPaymePayment();
-    }catch(e){
-      console.error(e);
-      button.disabled = false;
-      button.textContent = 'Купить Premium — 10 000 сум';
-      status.className = 'premium-status premium-error';
-      status.textContent = e.message === 'LOGIN_REQUIRED' ? 'Сначала войдите через Google' : (e.message || 'Оплата пока не настроена');
-    }
+  button.addEventListener('click',async()=>{
+    button.disabled=true; button.textContent='Создаём заказ...'; status.textContent='';
+    try{ await openPaymePayment(); }
+    catch(e){ button.disabled=false; button.textContent='Купить Premium — 10 000 сум'; status.className='premium-status premium-error'; status.textContent=e.message==='LOGIN_REQUIRED'?'Сначала войдите через Google':(e.message||'Оплата пока не настроена'); }
   });
-
-  window.addEventListener('netija:auth-changed', refreshPremium);
-  refreshPremium();
+  window.addEventListener('netija:auth-changed',refreshPremium); refreshPremium();
 </script>
 </body>
 </html>
