@@ -5,7 +5,7 @@ window.onload = function () {
     });
     google.accounts.id.renderButton(
         document.getElementById("googleSignInButton"),
-        { theme: "outline", size: "large" }
+        { theme: "outline", size: "large", type: "icon" }
     );
 };
 
