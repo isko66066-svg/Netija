@@ -12,17 +12,6 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2898376939409244" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-      .premium-card{max-width:720px;margin:40px auto;padding:28px;border-radius:24px;background:#fff;box-shadow:0 10px 35px rgba(0,0,0,.08);text-align:center}
-      .premium-card h2{margin:0 0 10px;font-size:28px}
-      .premium-card p{margin:8px 0;color:#666}
-      .premium-price{font-size:30px;font-weight:800;margin:18px 0}
-      .premium-button{border:0;border-radius:14px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer;background:#111;color:#fff}
-      .premium-button:disabled{opacity:.55;cursor:not-allowed}
-      .premium-status{margin-top:14px;font-weight:600;min-height:24px}
-      .premium-error{color:#b00020}
-      .premium-ok{color:#167a35}
-    </style>
 </head>
 <body>
     <header class="header">
@@ -82,10 +71,8 @@
     button.disabled=false; button.textContent='Купить Premium — 10 000 сум';
     try{
       const data=await getPremiumStatus();
-      if(data.premium){
-        button.disabled=true; button.textContent='Premium уже активен'; status.className='premium-status premium-ok';
-        status.textContent=data.premiumUntil ? `Активен до ${new Date(data.premiumUntil).toLocaleDateString('ru-RU')}` : 'Premium активен';
-      }else{ status.className='premium-status'; status.textContent='Premium не активен'; }
+      if(data.premium){ button.disabled=true; button.textContent='Premium уже активен'; status.className='premium-status premium-ok'; status.textContent=data.premiumUntil ? `Активен до ${new Date(data.premiumUntil).toLocaleDateString('ru-RU')}` : 'Premium активен'; }
+      else{ status.className='premium-status'; status.textContent='Premium не активен'; }
     }catch(e){ status.className='premium-status premium-error'; status.textContent='Не удалось проверить статус Premium'; }
   }
   button.addEventListener('click',async()=>{
