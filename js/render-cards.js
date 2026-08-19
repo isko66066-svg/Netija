@@ -67,7 +67,7 @@ function loadResultsFromStorage() {
 
 // Фильтр
 
-const filterButtons = document.querySelectorAll('.filter-btn');
+var filterButtons = document.querySelectorAll('.filter-btn');
 
 filterButtons.forEach(button => {
     button.addEventListener('click', () => {

@@ -1,3 +1,31 @@
+// =========================================================
+// ЗАЩИТА ОТ СЛУЧАЙНОГО УХОДА СО СТРАНИЦЫ ТЕСТА
+// window.quizInProgress — true, пока тест идёт и не сдан
+//                          (выставляется в quiz.js)
+// window.quizSubmitted  — true, как только тест сдан
+//                          (выставляется в quiz.js)
+// =========================================================
+
+window.quizInProgress = false;
+window.quizSubmitted = false;
+
+// Если страница была открыта напрямую как natcert-test.html
+// (полная перезагрузка, а не переход через роутер) —
+// запоминаем её адрес сразу, чтобы popstate мог восстановить его
+let currentQuizUrl = window.location.pathname.includes('natcert-test.html')
+    ? window.location.href
+    : null;
+
+function isLeavingActiveQuiz() {
+    return window.quizInProgress === true && window.quizSubmitted !== true;
+}
+
+function confirmLeaveQuiz() {
+    return window.confirm(
+        'Вы уверены, что хотите покинуть тест? Прогресс не будет сохранён.'
+    );
+}
+
 async function loadPage(url, pushState = true) {
     try {
         const response = await fetch(url);
@@ -50,14 +78,11 @@ async function loadPage(url, pushState = true) {
 // =========================================================
 
 function ensureMathJax(callback) {
-    // MathJax уже загружен и готов
     if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
         callback();
         return;
     }
 
-    // Скрипт MathJax уже добавлен в head, но ещё грузится —
-    // просто ждём его готовности, не добавляя дубликат
     const existingLoader = document.querySelector('script[data-mathjax-loader]');
     if (existingLoader) {
         const check = setInterval(() => {
@@ -69,9 +94,6 @@ function ensureMathJax(callback) {
         return;
     }
 
-    // Конфиг MathJax (дублирует конфиг из <head> natcert-test.html
-    // на случай, если страница была открыта через SPA-переход,
-    // а не напрямую)
     window.MathJax = {
         tex: {
             inlineMath: [
@@ -105,19 +127,30 @@ function ensureMathJax(callback) {
 // =========================================================
 
 function runPageScripts(url) {
-    if (url.includes('natcert.html')) {
-        loadScript('js/natcert_tests-list.js', () => {
-            loadScript('js/render-cards.js');
-        });
-    }
 
     if (url.includes('natcert-test.html')) {
-        // Сначала гарантируем готовность MathJax,
-        // и только потом грузим вопросы и логику теста
+        // Заходим на страницу теста — запоминаем url
+        // и включаем защиту от случайного ухода
+        currentQuizUrl = url;
+        window.quizInProgress = true;
+        window.quizSubmitted = false;
+
         ensureMathJax(() => {
             loadScript('js/quiz-loader.js', () => {
                 loadScript('js/quiz.js');
             });
+        });
+        return;
+    }
+
+    // Уходим со страницы теста на любую другую страницу —
+    // защита больше не нужна
+    window.quizInProgress = false;
+    currentQuizUrl = null;
+
+    if (url.includes('natcert.html')) {
+        loadScript('js/natcert_tests-list.js', () => {
+            loadScript('js/render-cards.js');
         });
     }
 }
@@ -133,17 +166,44 @@ function loadScript(src, callback) {
     document.body.appendChild(script);
 }
 
+// =========================================================
+// КЛИКИ ПО ССЫЛКАМ
+// =========================================================
+
 document.addEventListener('click', (e) => {
     const link = e.target.closest('a');
     if (link && link.href && link.href.startsWith(window.location.origin) && !link.hasAttribute('target')) {
         const url = new URL(link.href);
         if (url.pathname.endsWith('.html') || url.search) {
+
+            if (isLeavingActiveQuiz() && !confirmLeaveQuiz()) {
+                e.preventDefault();
+                return;
+            }
+
             e.preventDefault();
+            window.quizInProgress = false;
             loadPage(link.href);
         }
     }
 });
 
-window.addEventListener('popstate', (e) => {
+// =========================================================
+// КНОПКА "НАЗАД" / "ВПЕРЁД" БРАУЗЕРА
+// =========================================================
+
+window.addEventListener('popstate', () => {
+    if (isLeavingActiveQuiz()) {
+        if (!confirmLeaveQuiz()) {
+            // Пользователь передумал — возвращаем адрес теста
+            // обратно в историю. Содержимое #main не трогаем,
+            // тест остаётся как был, ничего не сбрасывается.
+            const restoreUrl = currentQuizUrl || window.location.href;
+            history.pushState({ url: restoreUrl }, '', restoreUrl);
+            return;
+        }
+        window.quizInProgress = false;
+    }
+
     loadPage(window.location.href, false);
 });
