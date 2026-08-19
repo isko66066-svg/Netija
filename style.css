@@ -57,9 +57,12 @@ a {
 }
 .header__list-link.active {
     color: #19191B;
+    border: 1px solid #19191B;
+
 }
 .header__list-link:hover {
     color: #19191B;
+    border: 1px solid #19191B;
 }
 .hero {
     max-width: 1000px;
