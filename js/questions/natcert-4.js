@@ -168,7 +168,7 @@ var questions = [
     {
         id: 20,
         question: "На рисунке изображён график функции $f(x)=ax^3+bx^2+cx+d$. На основании данных рисунка найдите $f(-3)$.",
-        image: "images/1-mart_2-img/4-20.jpg",
+        image: "images/1-mart_2-img/4-20.jpeg",
         type: "single_choice",
         options: ["-14", "-13", "-15", "-16"],
         correctAnswer: 2
@@ -203,7 +203,7 @@ var questions = [
     {
         id: 23,
         question: "Наибольшая сторона треугольника равна 8, а боковые стороны равны $3x-4$ и $2x+1$. Если стороны треугольника — целые числа, найдите периметр треугольника.",
-        image: "images/1-mart_2-img/4-23.jpg",
+        image: "images/1-mart_2-img/4-23.jpeg",
         type: "single_choice",
         options: ["16", "17", "18", "20"],
         correctAnswer: 3
@@ -220,7 +220,7 @@ var questions = [
     {
         id: 25,
         question: "В правильный треугольник $ABC$ вписаны окружности с центрами $O_1$, $O_2$ и $O_3$ равного радиуса. Найдите отношение площади треугольника $ABC$ к площади треугольника $O_1O_2O_3$.",
-        image: "images/1-mart_2-img/4-25.jpg",
+        image: "images/1-mart_2-img/4-25.jpeg",
         type: "single_choice",
         options: ["8", "$4+2\\sqrt3$", "4", "$8+2\\sqrt3$"],
         correctAnswer: 1
@@ -229,7 +229,7 @@ var questions = [
     {
         id: 26,
         question: "В равнобедренном треугольнике $ABC$ $AB=BC$ и $AC=64$. В треугольник вписана окружность радиуса 16, а в неё вписана меньшая окружность радиуса $r$. Найдите $r$.",
-        image: "images/1-mart_2-img/4-26.jpg",
+        image: "images/1-mart_2-img/4-26.jpeg",
         type: "single_choice",
         options: ["2", "4", "6", "12"],
         correctAnswer: 1
@@ -238,7 +238,7 @@ var questions = [
     {
         id: 27,
         question: "На рисунке диагонали $AC$ и $BD$ трапеции $ABCD$ пересекаются в точке $O$. Если площади треугольников $BOC$ и $AOD$ равны соответственно 2 и 8, найдите площадь закрашенной области.",
-        image: "images/1-mart_2-img/4-27.jpg",
+        image: "images/1-mart_2-img/4-27.jpeg",
         type: "single_choice",
         options: ["4", "8", "5", "6"],
         correctAnswer: 0
@@ -247,7 +247,7 @@ var questions = [
     {
         id: 28,
         question: "На рисунке изображён квадрат $ABCD$, а также правильные треугольники $CED$ и $BCP$. Найдите угол $\\angle DKE$.",
-        image: "images/1-mart_2-img/4-28.jpg",
+        image: "images/1-mart_2-img/4-28.jpeg",
         type: "single_choice",
         options: ["$100°$", "$75°$", "$120°$", "$105°$"],
         correctAnswer: 3
@@ -295,7 +295,7 @@ var questions = [
         type: "matching",
 
         question: "Основание призмы — равнобедренная трапеция, в призму можно вписать шар. Основания трапеции равны 8 и 18. Через боковые грани призмы $AA_1D_1D$ и $BB_1C_1C$ проведены параллельные сечения $KK_1N_1N$ и $LL_1M_1M$.",
-        image: "images/1-mart_2-img/4-33_35.jpg",
+        image: "images/1-mart_2-img/4-33_35.jpeg",
 
         items: [
             {
@@ -435,7 +435,7 @@ var questions = [
         type: "open_ended",
 
         question: "Серединные перпендикуляры к сторонам $AC$ и $BC$ треугольника $ABC$ пересекают биссектрисы углов $B$ и $A$ в точках $E$ и $F$ соответственно. Если $\\angle AFO=5°$, $\\angle BEO=10°$ и $AC=3$,",
-        image: "images/1-mart_2-img/4-41.jpg",
+        image: "images/1-mart_2-img/4-41.jpeg",
 
         subQuestions: [
             {
@@ -456,7 +456,7 @@ var questions = [
         type: "open_ended",
 
         question: "Меньшее основание трапеции $ABCD$ равно 56. Из точки $E$ окружности, описанной около трапеции, проведена касательная, параллельная стороне $DC$, и отрезок $EF$, параллельный основаниям трапеции. Если $EF=70$, а радиус окружности равен $14\\sqrt7$,",
-        image: "images/1-mart_2-img/4-42.jpg",
+        image: "images/1-mart_2-img/4-42.jpeg",
 
         subQuestions: [
             {
@@ -477,7 +477,7 @@ var questions = [
         type: "open_ended",
 
         question: "В правильный восьмиугольник вписана окружность, а в эту окружность вписан правильный шестиугольник.",
-        image: "images/1-mart_2-img/4-43.jpg",
+        image: "images/1-mart_2-img/4-43.jpeg",
 
         subQuestions: [
             {
