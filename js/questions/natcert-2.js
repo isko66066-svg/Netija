@@ -425,7 +425,7 @@ var questions = [
             {
                 id: "a",
                 text: "Найдите наибольший отрицательный корень уравнения.",
-                correctAnswer: "-π/4"
+                correctAnswer: "-arctg3"
             },
             {
                 id: "b",
@@ -471,7 +471,7 @@ var questions = [
             {
                 id: "b",
                 text: "Чему равно наибольшее целое значение аргумента на отрезке $[-9;5]$, удовлетворяющее неравенству $f'(x)<0$?",
-                correctAnswer: "-3"
+                correctAnswer: "4"
             }
         ]
     },
@@ -487,12 +487,12 @@ var questions = [
             {
                 id: "a",
                 text: "Найдите $\\frac{a+b+c}{p+q}$.",
-                correctAnswer: "-6"
+                correctAnswer: "-8"
             },
             {
                 id: "b",
                 text: "Найдите площадь закрашенной области.",
-                correctAnswer: "121/18"
+                correctAnswer: "24"
             }
         ]
     },
@@ -508,7 +508,7 @@ var questions = [
             {
                 id: "a",
                 text: "Найдите длину отрезка OD.",
-                correctAnswer: "2√2"
+                correctAnswer: "2"
             },
             {
                 id: "b",
@@ -570,16 +570,12 @@ var questions = [
             {
                 id: "a",
                 text: "Найдите длину медианы треугольника ABC, опущенной на сторону AB.",
-
-                // Автор видео пропустил задачу из-за ошибки в условии.
-                correctAnswer: null
+                correctAnswer: "2"
             },
             {
                 id: "b",
                 text: "Найдите объём пирамиды.",
-
-                // Автор видео пропустил задачу из-за ошибки в условии.
-                correctAnswer: null
+                correctAnswer: "4√11/9"
             }
         ]
     },

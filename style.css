@@ -47,6 +47,10 @@ a {
     transition: 0.3s;
     font-weight: 600;
     letter-spacing: -0.47px;
+    padding: 5px 10px;
+    background-color: #F8F9FA;
+    border: 1px solid #19191B;
+    border-radius: 20px;
     line-height: 1.4;
     white-space: nowrap;
 
