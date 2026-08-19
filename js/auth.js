@@ -1,13 +1,13 @@
-window.onload = function () {
+const BACKEND_URL = "https://netija.onrender.com";
 
-    // Пытаемся восстановить сохранённого пользователя
-    // из прошлого визита, чтобы не спрашивать вход заново
+window.onload = function () {
     const savedUser = localStorage.getItem('netija_user');
 
     if (savedUser) {
         try {
             const data = JSON.parse(savedUser);
             showUserProfile(data);
+            syncBackendUser(data);
         } catch (e) {
             localStorage.removeItem('netija_user');
         }
@@ -18,7 +18,6 @@ window.onload = function () {
         callback: handleGoogleLogin
     });
 
-    // Кнопку показываем, только если пользователь ещё не сохранён
     if (!savedUser) {
         google.accounts.id.renderButton(
             document.getElementById("googleSignInButton"),
@@ -26,7 +25,6 @@ window.onload = function () {
         );
     }
 
-    // Клик по профилю — выход из аккаунта
     const userProfile = document.getElementById('userProfile');
     if (userProfile) {
         userProfile.style.cursor = 'pointer';
@@ -35,29 +33,53 @@ window.onload = function () {
     }
 };
 
+async function syncBackendUser(data) {
+    if (!data?.email) return;
+
+    try {
+        await fetch(`${BACKEND_URL}/api/auth/sync`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: data.email,
+                name: data.name || '',
+                picture: data.picture || ''
+            })
+        });
+    } catch (error) {
+        console.warn('Netija backend недоступен:', error);
+    }
+}
+
 function handleGoogleLogin(response) {
     const data = JSON.parse(atob(response.credential.split('.')[1]));
 
-    // Сохраняем только то, что нужно для отображения профиля —
-    // сам токен (credential) не храним из соображений безопасности
-    localStorage.setItem('netija_user', JSON.stringify({
+    const user = {
         name: data.name,
+        email: data.email,
         picture: data.picture
-    }));
+    };
 
-    showUserProfile(data);
-}
+    localStorage.setItem('netija_user', JSON.stringify(user));
+    showUserProfile(user);
+    syncBackendUser(user);
+};
 
 function showUserProfile(data) {
     const signInBtn = document.getElementById('googleSignInButton');
-    if (signInBtn) {
-        signInBtn.style.display = 'none';
-    }
+    if (signInBtn) signInBtn.style.display = 'none';
 
     const userProfile = document.getElementById('userProfile');
-    document.getElementById('userAvatar').src = data.picture;
-    document.getElementById('userName').textContent = data.name;
-    userProfile.style.display = 'flex';
+    const avatar = document.getElementById('userAvatar');
+    const name = document.getElementById('userName');
+
+    if (avatar) avatar.src = data.picture || '';
+    if (name) name.textContent = data.name || data.email || 'Пользователь';
+    if (userProfile) userProfile.style.display = 'flex';
+
+    window.dispatchEvent(new CustomEvent('netija:auth-changed', {
+        detail: data
+    }));
 }
 
 function logout() {
@@ -65,5 +87,8 @@ function logout() {
     if (!confirmed) return;
 
     localStorage.removeItem('netija_user');
+    window.dispatchEvent(new CustomEvent('netija:auth-changed', {
+        detail: null
+    }));
     location.reload();
 }
