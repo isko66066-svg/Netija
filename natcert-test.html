@@ -70,7 +70,7 @@ window.MathJax = {
                 <div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>
                 <div class="question-grid" id="questionGrid"></div>
                 <button class="check-answers" type="button" onclick="document.getElementById('submitBtn').click()">Проверить ответы</button>
-                <div class="answer-map-panel">
+                <div class="answer-map-panel" id="answerMapPanel" style="display:none;">
                     <h3>Карта ответов по заданиям:</h3>
                     <div class="answer-map-grid" id="answerMapGrid"></div>
                 </div>
@@ -87,64 +87,154 @@ window.MathJax = {
     <script src="js/router.js"></script>
     <script>
     (function () {
+        const EXPECTED_QUESTIONS = 45;
+
         function setupExamNavigation() {
             const grid = document.getElementById('questionGrid');
             const answerMap = document.getElementById('answerMapGrid');
             const container = document.getElementById('quizContainer');
+            const total = document.getElementById('totalQuestions');
             if (!grid || !answerMap || !container) return;
+
             const blocks = Array.from(container.querySelectorAll('.question-block'));
-            if (!blocks.length) { setTimeout(setupExamNavigation, 150); return; }
+
+            // Ждём, пока все 45 заданий реально отрендерятся.
+            if (blocks.length < EXPECTED_QUESTIONS) {
+                setTimeout(setupExamNavigation, 150);
+                return;
+            }
+
             grid.innerHTML = '';
             answerMap.innerHTML = '';
-            blocks.forEach((block, index) => {
+
+            blocks.slice(0, EXPECTED_QUESTIONS).forEach((block, index) => {
                 const text = block.querySelector('.question-text');
                 const match = text && text.textContent.match(/^(\d+)/);
                 const number = match ? match[1] : String(index + 1);
+
                 const button = document.createElement('button');
-                button.type = 'button'; button.className = 'question-number'; button.textContent = number;
-                button.addEventListener('click', () => block.scrollIntoView({behavior:'smooth', block:'start'}));
+                button.type = 'button';
+                button.className = 'question-number';
+                button.textContent = number;
+                button.addEventListener('click', () => {
+                    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
                 grid.appendChild(button);
+
                 const mapButton = document.createElement('button');
-                mapButton.type = 'button'; mapButton.className = 'answer-map-cell'; mapButton.textContent = number;
-                mapButton.addEventListener('click', () => block.scrollIntoView({behavior:'smooth', block:'start'}));
+                mapButton.type = 'button';
+                mapButton.className = 'answer-map-cell';
+                mapButton.textContent = number;
+                mapButton.addEventListener('click', () => {
+                    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
                 answerMap.appendChild(mapButton);
             });
-            const total = document.getElementById('totalQuestions');
-            if (total) total.textContent = blocks.length;
+
+            if (total) total.textContent = String(EXPECTED_QUESTIONS);
+
             function isAnswered(block) {
-                return Array.from(block.querySelectorAll('input[type="radio"]')).some(i=>i.checked) ||
-                    Array.from(block.querySelectorAll('input[type="text"]')).some(i=>i.value.trim() !== '') ||
-                    Array.from(block.querySelectorAll('select')).some(s=>s.value !== '');
+                return Array.from(block.querySelectorAll('input[type="radio"]')).some(i => i.checked) ||
+                    Array.from(block.querySelectorAll('input[type="text"]')).some(i => i.value.trim() !== '') ||
+                    Array.from(block.querySelectorAll('select')).some(s => s.value !== '');
             }
+
             function updateStates() {
-                blocks.forEach((block,index)=>{
-                    const b=grid.children[index], m=answerMap.children[index]; if(!b||!m)return;
-                    const answered=isAnswered(block); b.classList.toggle('answered',answered); m.classList.toggle('answered',answered);
-                    m.classList.toggle('correct',block.classList.contains('question-correct'));
-                    m.classList.toggle('incorrect',block.classList.contains('question-incorrect'));
+                blocks.slice(0, EXPECTED_QUESTIONS).forEach((block, index) => {
+                    const button = grid.children[index];
+                    const mapButton = answerMap.children[index];
+                    if (!button || !mapButton) return;
+
+                    const answered = isAnswered(block);
+                    button.classList.toggle('answered', answered);
+                    mapButton.classList.toggle('answered', answered);
+                    mapButton.classList.toggle('correct', block.classList.contains('question-correct'));
+                    mapButton.classList.toggle('incorrect', block.classList.contains('question-incorrect'));
                 });
             }
-            container.addEventListener('change', updateStates); container.addEventListener('input', updateStates);
-            const current=document.getElementById('currentQuestion');
-            const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
-                if(!entry.isIntersecting)return; const i=blocks.indexOf(entry.target); if(i<0)return;
-                Array.from(grid.children).forEach((b,n)=>b.classList.toggle('current',n===i));
-                Array.from(answerMap.children).forEach((b,n)=>b.classList.toggle('current',n===i));
-                if(current)current.textContent=i+1;
-            }),{root:null,rootMargin:'-18% 0px -62% 0px',threshold:0});
-            blocks.forEach(b=>observer.observe(b));
-            const mutationObserver=new MutationObserver(updateStates);
-            blocks.forEach(b=>mutationObserver.observe(b,{attributes:true,attributeFilter:['class']}));
+
+            container.addEventListener('change', updateStates);
+            container.addEventListener('input', updateStates);
+
+            const current = document.getElementById('currentQuestion');
+            const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const index = blocks.indexOf(entry.target);
+                if (index < 0 || index >= EXPECTED_QUESTIONS) return;
+
+                Array.from(grid.children).forEach((button, n) => {
+                    button.classList.toggle('current', n === index);
+                });
+                Array.from(answerMap.children).forEach((button, n) => {
+                    button.classList.toggle('current', n === index);
+                });
+                if (current) current.textContent = String(index + 1);
+            }), {
+                root: null,
+                rootMargin: '-18% 0px -62% 0px',
+                threshold: 0
+            });
+
+            blocks.slice(0, EXPECTED_QUESTIONS).forEach(block => observer.observe(block));
+
+            const mutationObserver = new MutationObserver(updateStates);
+            blocks.slice(0, EXPECTED_QUESTIONS).forEach(block => {
+                mutationObserver.observe(block, {
+                    attributes: true,
+                    attributeFilter: ['class']
+                });
+            });
+
             updateStates();
         }
+
         function syncSidebarTimer() {
-            const mainTimer=document.getElementById('timer'), sidebar=document.getElementById('sidebarTimer');
-            if(!mainTimer||!sidebar){setTimeout(syncSidebarTimer,200);return;}
-            const sync=()=>{sidebar.textContent=mainTimer.textContent; sidebar.classList.toggle('timer--warning',mainTimer.classList.contains('timer--warning'));};
-            new MutationObserver(sync).observe(mainTimer,{childList:true,characterData:true,subtree:true,attributes:true}); sync();
+            const mainTimer = document.getElementById('timer');
+            const sidebar = document.getElementById('sidebarTimer');
+            if (!mainTimer || !sidebar) {
+                setTimeout(syncSidebarTimer, 200);
+                return;
+            }
+
+            const sync = () => {
+                sidebar.textContent = mainTimer.textContent;
+                sidebar.classList.toggle('timer--warning', mainTimer.classList.contains('timer--warning'));
+            };
+
+            new MutationObserver(sync).observe(mainTimer, {
+                childList: true,
+                characterData: true,
+                subtree: true,
+                attributes: true
+            });
+            sync();
         }
-        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{setupExamNavigation();syncSidebarTimer();});
-        else{setupExamNavigation();syncSidebarTimer();}
+
+        function showAnswerMapAfterSubmit() {
+            const panel = document.getElementById('answerMapPanel');
+            if (!panel) return;
+
+            const check = () => {
+                if (window.quizSubmitted === true) {
+                    panel.style.display = '';
+                    return;
+                }
+                setTimeout(check, 250);
+            };
+            check();
+        }
+
+        function initExamUI() {
+            setupExamNavigation();
+            syncSidebarTimer();
+            showAnswerMapAfterSubmit();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initExamUI);
+        } else {
+            initExamUI();
+        }
     })();
     </script>
 </body>
