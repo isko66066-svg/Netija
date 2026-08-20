@@ -6,7 +6,7 @@ if (testCards) {
         card.className = 'test-card';
         card.href = `natcert-test.html?id=${test.id}`;
         card.setAttribute('data-test-id', `natcert-${test.id}`);
-        card.setAttribute('data-year', test.year); // Добавлено для правильной работы фильтра по годам
+        card.setAttribute('data-year', test.year);
 
         const statusBox = document.createElement('div');
         statusBox.className = 'card-status';
@@ -46,8 +46,7 @@ function loadResultsFromStorage() {
         const statusBox = card.querySelector('.card-status');
         const btn = card.querySelector('.btn-card-action');
 
-        // Используем баллы (из 100) или проценты
-        const isGood = result.score >= 44; // 44 балла — порог для C
+        const isGood = result.score >= 44;
         const badgeClass = isGood ? 'card-badge--success' : 'card-badge--warning';
 
         if (statusBox) {
@@ -65,13 +64,12 @@ function loadResultsFromStorage() {
     });
 }
 
-// Фильтр
-
+// Фильтр по годам. Скрытие делаем отдельным классом,
+// чтобы display:flex !important у карточек не ломал фильтр.
 var filterButtons = document.querySelectorAll('.filter-btn');
 
 filterButtons.forEach(button => {
     button.addEventListener('click', () => {
-        // Убираем активный класс у всех кнопок и ставим на нажатую
         filterButtons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
 
@@ -79,13 +77,9 @@ filterButtons.forEach(button => {
         const cards = document.querySelectorAll('.test-card');
 
         cards.forEach(card => {
-            const cardYear = card.getAttribute('data-year');
-            
-            if (selectedYear === 'all' || cardYear === selectedYear) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
-            }
+            const cardYear = String(card.getAttribute('data-year') || '');
+            const hidden = selectedYear !== 'all' && cardYear !== String(selectedYear);
+            card.classList.toggle('filter-hidden', hidden);
         });
     });
 });
