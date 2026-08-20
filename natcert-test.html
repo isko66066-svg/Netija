@@ -25,10 +25,7 @@ window.MathJax = {
     }
 };
 </script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
-        async>
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="test.css">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
@@ -56,12 +53,55 @@ window.MathJax = {
         </div>
     </header>
 
-    <main class="main" id="main">
-        <h1 class="test-title" id="testTitle">Загрузка теста...</h1>
-        <div class="timer" id="timer">02:30:00</div>
-        <div id="quizContainer"></div>
-        <button id="submitBtn" class="test-submit">Проверить результат</button>
-        <div id="resultBox" class="test-result" style="display:none;"></div>
+    <main class="exam-page" id="main">
+        <div class="exam-topbar">
+            <div>
+                <div class="exam-title" id="testTitle">Загрузка теста...</div>
+                <div class="exam-progress">
+                    Вопрос <span id="currentQuestion">1</span> из <span id="totalQuestions">45</span>
+                </div>
+            </div>
+
+            <div class="exam-timer">
+                <span class="timer-icon">◷</span>
+                <div>
+                    <strong id="timer">02:30:00</strong>
+                    <small>Оставшееся время</small>
+                </div>
+            </div>
+
+            <button id="submitBtn" class="finish-test">Завершить тест</button>
+        </div>
+
+        <div class="exam-layout">
+            <section class="questions-area">
+                <div id="quizContainer"></div>
+                <div id="resultBox" class="test-result" style="display:none;"></div>
+            </section>
+
+            <aside class="questions-sidebar">
+                <h2>Вопросы</h2>
+
+                <div class="question-status">
+                    <span class="status-dot answered"></span>
+                    Ответ дан
+                </div>
+                <div class="question-status">
+                    <span class="status-dot current"></span>
+                    Текущий вопрос
+                </div>
+                <div class="question-status">
+                    <span class="status-dot empty"></span>
+                    Ответ не дан
+                </div>
+
+                <div class="question-grid" id="questionGrid"></div>
+
+                <button class="check-answers" type="button" onclick="document.getElementById('submitBtn').click()">
+                    Проверить ответы
+                </button>
+            </aside>
+        </div>
     </main>
     
     <script src="js/auth.js"></script>
@@ -70,5 +110,89 @@ window.MathJax = {
     <script src="js/premium.js"></script>
     <script src="js/quiz.js"></script>
     <script src="js/router.js"></script>
+
+    <script>
+    (function () {
+        function setupExamNavigation() {
+            const grid = document.getElementById('questionGrid');
+            const container = document.getElementById('quizContainer');
+            if (!grid || !container) return;
+
+            const blocks = Array.from(container.querySelectorAll('.question-block'));
+            if (!blocks.length) {
+                setTimeout(setupExamNavigation, 150);
+                return;
+            }
+
+            grid.innerHTML = '';
+
+            blocks.forEach((block, index) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'question-number';
+                button.textContent = index + 1;
+                button.dataset.questionIndex = index;
+
+                button.addEventListener('click', function () {
+                    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+
+                grid.appendChild(button);
+            });
+
+            const total = document.getElementById('totalQuestions');
+            if (total) total.textContent = blocks.length;
+
+            function updateAnsweredState() {
+                blocks.forEach((block, index) => {
+                    const button = grid.children[index];
+                    if (!button) return;
+
+                    const radios = block.querySelectorAll('input[type="radio"]');
+                    const textInputs = block.querySelectorAll('input[type="text"]');
+                    const selects = block.querySelectorAll('select');
+
+                    const answered =
+                        Array.from(radios).some(input => input.checked) ||
+                        Array.from(textInputs).some(input => input.value.trim() !== '') ||
+                        Array.from(selects).some(select => select.value !== '');
+
+                    button.classList.toggle('answered', answered);
+                });
+            }
+
+            container.addEventListener('change', updateAnsweredState);
+            container.addEventListener('input', updateAnsweredState);
+
+            const current = document.getElementById('currentQuestion');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    const index = blocks.indexOf(entry.target);
+                    if (index < 0) return;
+
+                    Array.from(grid.children).forEach((button, i) => {
+                        button.classList.toggle('current', i === index);
+                    });
+
+                    if (current) current.textContent = index + 1;
+                });
+            }, {
+                root: null,
+                rootMargin: '-15% 0px -65% 0px',
+                threshold: 0
+            });
+
+            blocks.forEach(block => observer.observe(block));
+            updateAnsweredState();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupExamNavigation);
+        } else {
+            setupExamNavigation();
+        }
+    })();
+    </script>
 </body>
 </html>
