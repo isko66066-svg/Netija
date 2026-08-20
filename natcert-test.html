@@ -18,6 +18,7 @@ window.MathJax = {
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="test.css">
     <link rel="stylesheet" href="exam-overrides.css">
+    <link rel="stylesheet" href="header.css">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -97,8 +98,6 @@ window.MathJax = {
             if (!grid || !answerMap || !container) return;
 
             const blocks = Array.from(container.querySelectorAll('.question-block'));
-
-            // Ждём, пока все 45 заданий реально отрендерятся.
             if (blocks.length < EXPECTED_QUESTIONS) {
                 setTimeout(setupExamNavigation, 150);
                 return;
@@ -116,18 +115,14 @@ window.MathJax = {
                 button.type = 'button';
                 button.className = 'question-number';
                 button.textContent = number;
-                button.addEventListener('click', () => {
-                    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
+                button.addEventListener('click', () => block.scrollIntoView({ behavior: 'smooth', block: 'start' }));
                 grid.appendChild(button);
 
                 const mapButton = document.createElement('button');
                 mapButton.type = 'button';
                 mapButton.className = 'answer-map-cell';
                 mapButton.textContent = number;
-                mapButton.addEventListener('click', () => {
-                    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
+                mapButton.addEventListener('click', () => block.scrollIntoView({ behavior: 'smooth', block: 'start' }));
                 answerMap.appendChild(mapButton);
             });
 
@@ -144,7 +139,6 @@ window.MathJax = {
                     const button = grid.children[index];
                     const mapButton = answerMap.children[index];
                     if (!button || !mapButton) return;
-
                     const answered = isAnswered(block);
                     button.classList.toggle('answered', answered);
                     mapButton.classList.toggle('answered', answered);
@@ -161,30 +155,14 @@ window.MathJax = {
                 if (!entry.isIntersecting) return;
                 const index = blocks.indexOf(entry.target);
                 if (index < 0 || index >= EXPECTED_QUESTIONS) return;
-
-                Array.from(grid.children).forEach((button, n) => {
-                    button.classList.toggle('current', n === index);
-                });
-                Array.from(answerMap.children).forEach((button, n) => {
-                    button.classList.toggle('current', n === index);
-                });
+                Array.from(grid.children).forEach((button, n) => button.classList.toggle('current', n === index));
+                Array.from(answerMap.children).forEach((button, n) => button.classList.toggle('current', n === index));
                 if (current) current.textContent = String(index + 1);
-            }), {
-                root: null,
-                rootMargin: '-18% 0px -62% 0px',
-                threshold: 0
-            });
+            }), { root: null, rootMargin: '-18% 0px -62% 0px', threshold: 0 });
 
             blocks.slice(0, EXPECTED_QUESTIONS).forEach(block => observer.observe(block));
-
             const mutationObserver = new MutationObserver(updateStates);
-            blocks.slice(0, EXPECTED_QUESTIONS).forEach(block => {
-                mutationObserver.observe(block, {
-                    attributes: true,
-                    attributeFilter: ['class']
-                });
-            });
-
+            blocks.slice(0, EXPECTED_QUESTIONS).forEach(block => mutationObserver.observe(block, { attributes: true, attributeFilter: ['class'] }));
             updateStates();
         }
 
@@ -195,25 +173,17 @@ window.MathJax = {
                 setTimeout(syncSidebarTimer, 200);
                 return;
             }
-
             const sync = () => {
                 sidebar.textContent = mainTimer.textContent;
                 sidebar.classList.toggle('timer--warning', mainTimer.classList.contains('timer--warning'));
             };
-
-            new MutationObserver(sync).observe(mainTimer, {
-                childList: true,
-                characterData: true,
-                subtree: true,
-                attributes: true
-            });
+            new MutationObserver(sync).observe(mainTimer, { childList: true, characterData: true, subtree: true, attributes: true });
             sync();
         }
 
         function showAnswerMapAfterSubmit() {
             const panel = document.getElementById('answerMapPanel');
             if (!panel) return;
-
             const check = () => {
                 if (window.quizSubmitted === true) {
                     panel.style.display = '';
@@ -230,11 +200,8 @@ window.MathJax = {
             showAnswerMapAfterSubmit();
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initExamUI);
-        } else {
-            initExamUI();
-        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initExamUI);
+        else initExamUI();
     })();
     </script>
 </body>
