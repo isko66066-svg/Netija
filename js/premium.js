@@ -86,3 +86,107 @@ export function setupRewardedResultGate({onReward}){
     return true;
   }};
 }
+
+/* Exam-page fixes: remove account text from navigation and reliably build the question map. */
+(function initExamFixes(){
+  if(!document.getElementById('questionGrid')) return;
+
+  if(!document.getElementById('netija-exam-fixes-css')){
+    const link=document.createElement('link');
+    link.id='netija-exam-fixes-css';
+    link.rel='stylesheet';
+    link.href='exam-fixes.css';
+    document.head.appendChild(link);
+  }
+
+  const EXPECTED=45;
+  let lastSignature='';
+
+  function buildQuestionMap(){
+    const grid=document.getElementById('questionGrid');
+    const map=document.getElementById('answerMapGrid');
+    const container=document.getElementById('quizContainer');
+    const total=document.getElementById('totalQuestions');
+    if(!grid||!map||!container) return;
+
+    const blocks=Array.from(container.querySelectorAll('.question-block'));
+    if(blocks.length<EXPECTED) return;
+
+    const signature=blocks.slice(0,EXPECTED).map(b=>b.id).join('|');
+    if(signature===lastSignature && grid.children.length===EXPECTED) return;
+    lastSignature=signature;
+
+    grid.innerHTML='';
+    map.innerHTML='';
+    if(total) total.textContent=String(EXPECTED);
+
+    const buttons=[];
+    const mapButtons=[];
+
+    blocks.slice(0,EXPECTED).forEach((block,index)=>{
+      const text=block.querySelector('.question-text');
+      const match=text?.textContent.match(/^(\d+)/);
+      const number=match?match[1]:String(index+1);
+
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='question-number';
+      button.textContent=number;
+      button.addEventListener('click',()=>block.scrollIntoView({behavior:'smooth',block:'start'}));
+      grid.appendChild(button);
+      buttons.push(button);
+
+      const mapButton=document.createElement('button');
+      mapButton.type='button';
+      mapButton.className='answer-map-cell';
+      mapButton.textContent=number;
+      mapButton.addEventListener('click',()=>block.scrollIntoView({behavior:'smooth',block:'start'}));
+      map.appendChild(mapButton);
+      mapButtons.push(mapButton);
+    });
+
+    function answered(block){
+      return [...block.querySelectorAll('input[type="radio"]')].some(i=>i.checked)
+        || [...block.querySelectorAll('input[type="text"]')].some(i=>i.value.trim()!=='')
+        || [...block.querySelectorAll('select')].some(s=>s.value!=='');
+    }
+
+    function updateStates(){
+      blocks.slice(0,EXPECTED).forEach((block,index)=>{
+        const isAnswered=answered(block);
+        buttons[index]?.classList.toggle('answered',isAnswered);
+        mapButtons[index]?.classList.toggle('answered',isAnswered);
+        mapButtons[index]?.classList.toggle('correct',block.classList.contains('question-correct'));
+        mapButtons[index]?.classList.toggle('incorrect',block.classList.contains('question-incorrect'));
+      });
+    }
+
+    container.addEventListener('change',updateStates);
+    container.addEventListener('input',updateStates);
+
+    const current=document.getElementById('currentQuestion');
+    if(window.IntersectionObserver){
+      const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+        const index=blocks.indexOf(entry.target);
+        if(index<0||index>=EXPECTED) return;
+        buttons.forEach((b,n)=>b.classList.toggle('current',n===index));
+        mapButtons.forEach((b,n)=>b.classList.toggle('current',n===index));
+        if(current) current.textContent=String(index+1);
+      }),{root:null,rootMargin:'-18% 0px -62% 0px',threshold:0});
+      blocks.slice(0,EXPECTED).forEach(block=>observer.observe(block));
+    }
+
+    updateStates();
+  }
+
+  const observer=new MutationObserver(buildQuestionMap);
+  const start=()=>{
+    const container=document.getElementById('quizContainer');
+    if(container) observer.observe(container,{childList:true,subtree:true});
+    buildQuestionMap();
+  };
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
+})();
