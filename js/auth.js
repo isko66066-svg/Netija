@@ -36,14 +36,20 @@ window.onload = function () {
 function handleGoogleLogin(response) {
     const data = JSON.parse(atob(response.credential.split('.')[1]));
 
-    // Сохраняем только то, что нужно для отображения профиля —
-    // сам токен (credential) не храним из соображений безопасности
+    // Сохраняем данные, необходимые для профиля и проверки доступа к тестам.
+    // ВАЖНО: email нужен backend для проверки дневного лимита.
     saveUser({
         name: data.name,
-        picture: data.picture
+        picture: data.picture,
+        email: data.email
     });
 
     showUserProfile(data);
+
+    // Сообщаем другим модулям страницы, что вход завершён.
+    // quiz-loader.js использует это событие, чтобы повторно проверить доступ
+    // и сразу заменить сообщение «Сначала войдите...» на сам тест.
+    window.dispatchEvent(new CustomEvent('netija:login'));
 }
 
 function showUserProfile(data) {
