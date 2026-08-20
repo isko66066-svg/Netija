@@ -1,0 +1,136 @@
+/* =====================================================
+   ЭКЗАМЕН: боковая панель, таймер и шапка
+   ===================================================== */
+
+/* Шапка теста на всю ширину */
+.header {
+    width: 100%;
+    max-width: none;
+    padding: 20px 24px;
+}
+
+.header__container {
+    width: 100%;
+    max-width: none;
+}
+
+.header__nav {
+    width: 100%;
+    max-width: none;
+}
+
+/* Верхняя панель больше не содержит таймер */
+.exam-topbar {
+    width: 100%;
+}
+
+/* Таймер теперь находится внутри sticky-боковой панели */
+.questions-sidebar .exam-timer {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    padding: 13px 14px;
+    margin: 0 0 18px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.questions-sidebar .timer-icon {
+    font-size: 25px;
+    line-height: 1;
+}
+
+.questions-sidebar .exam-timer strong {
+    display: block;
+    font-size: 19px;
+    line-height: 1.2;
+    color: #172033;
+}
+
+.questions-sidebar .exam-timer small {
+    display: block;
+    margin-top: 3px;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.questions-sidebar .exam-timer #timer.timer--warning {
+    color: #ef4444;
+}
+
+/* Боковая панель остаётся на экране при прокрутке */
+.questions-sidebar {
+    position: sticky;
+    top: 18px;
+    max-height: calc(100vh - 36px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+/* Карта результатов после завершения теста — в боковой панели */
+.questions-sidebar #resultBox {
+    max-width: none;
+    width: 100%;
+    margin: 16px 0 0;
+    padding: 14px;
+    box-sizing: border-box;
+    border-radius: 14px;
+    font-size: 14px;
+}
+
+.questions-sidebar #resultBox .result-summary {
+    font-size: 17px;
+    margin-bottom: 12px;
+}
+
+.questions-sidebar #resultBox .result-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.questions-sidebar #resultBox .result-cell {
+    min-width: 0;
+    font-size: 11px;
+    border-radius: 7px;
+}
+
+/* После результата кнопка проверки не должна дублироваться визуально */
+.questions-sidebar .check-answers {
+    margin-top: 14px;
+}
+
+/* На телефоне sidebar превращается в обычный блок */
+@media (max-width: 900px) {
+    .header {
+        padding: 10px 12px;
+    }
+
+    .header__nav {
+        width: 100%;
+    }
+
+    .questions-sidebar {
+        position: sticky;
+        top: 10px;
+        max-height: none;
+        overflow: visible;
+    }
+
+    .questions-sidebar .exam-timer {
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .questions-sidebar #resultBox .result-grid {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 5px;
+    }
+
+    .questions-sidebar #resultBox .result-cell {
+        font-size: 10px;
+    }
+}
