@@ -6,7 +6,6 @@
     <title>Netija</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="test.css">
-    <link rel="stylesheet" href="premium.css">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,11 +48,12 @@
             <h2>⭐ Netija Premium</h2>
             <p>Без рекламы и Premium-доступ</p>
             <div class="premium-plans">
-                <button class="premium-plan active" data-plan="monthly">
+                <button class="premium-plan active" data-plan="monthly" type="button">
                     <strong>15 000 сум</strong><span>30 дней</span>
                 </button>
-                <button class="premium-plan" data-plan="yearly">
-                    <strong>135 000 сум</strong><span>1 год · скидка 25%</span>
+                <button class="premium-plan premium-plan--yearly" data-plan="yearly" type="button">
+                    <span class="premium-save">25% выгода</span>
+                    <strong>135 000 сум</strong><span>1 год</span>
                 </button>
             </div>
             <button class="premium-button" id="buyPremiumButton" disabled>Войдите через Google</button>
