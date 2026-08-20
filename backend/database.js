@@ -21,6 +21,20 @@ db.exec(`
     );
 `);
 
+// Дневной лимит бесплатных тестов.
+// Одна запись = пользователь уже использовал бесплатный тест в конкретную дату.
+db.exec(`
+    CREATE TABLE IF NOT EXISTS daily_test_usage (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        usage_date TEXT NOT NULL,
+        test_id TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        UNIQUE(user_id, usage_date),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+`);
+
 // Заказы Premium. order_id используется как account[order_id] в Payme.
 db.exec(`
     CREATE TABLE IF NOT EXISTS premium_orders (
@@ -62,6 +76,9 @@ function CREATE_INDEXES() {
 
         CREATE INDEX IF NOT EXISTS idx_payme_transactions_order
         ON payme_transactions(order_id);
+
+        CREATE INDEX IF NOT EXISTS idx_daily_test_usage_user_date
+        ON daily_test_usage(user_id, usage_date);
     `);
 }
 
