@@ -6,102 +6,74 @@
     <title>Netija — подготовка к экзаменам</title>
 
     <!-- Global styles -->
-    <link rel="stylesheet" href="style.css?v=20260821-2">
+    <link rel="stylesheet" href="style.css?v=20260821-3">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Header fix: menu.js changes .header to .site-header -->
+    <style>
+        .site-header {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #08172d !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: 0 2px 14px rgba(15, 23, 42, .14) !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2000 !important;
+            color: #fff !important;
+        }
+
+        .site-header .header__container,
+        .site-header .header__nav {
+            background: transparent !important;
+        }
+
+        .site-header .header__nav {
+            min-height: 58px !important;
+        }
+    </style>
 
     <!-- External services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2898376939409244"
-        crossorigin="anonymous"
-    ></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2898376939409244" crossorigin="anonymous"></script>
 </head>
 
 <body>
     <header class="header">
         <div class="header__container">
             <nav class="header__nav">
-                <a
-                    class="site-header__logo"
-                    href="index.html"
-                    aria-label="Netija"
-                >
-                    <img
-                        class="logo"
-                        src="./images/logo.svg"
-                        alt="Netija"
-                    >
+                <a class="site-header__logo" href="index.html" aria-label="Netija">
+                    <img class="logo" src="./images/logo.svg" alt="Netija">
                 </a>
 
                 <ul class="header__list">
                     <li class="header__list-item">
-                        <a
-                            class="header__list-link active"
-                            href="index.html"
-                        >
-                            Главная страница
-                        </a>
+                        <a class="header__list-link active" href="index.html">Главная страница</a>
                     </li>
                     <li class="header__list-item">
-                        <a class="header__list-link" href="/">
-                            Дтм
-                        </a>
+                        <a class="header__list-link" href="/">Дтм</a>
                     </li>
                     <li class="header__list-item">
-                        <a
-                            class="header__list-link"
-                            href="natcert.html"
-                        >
-                            Национальный сертификат
-                        </a>
+                        <a class="header__list-link" href="natcert.html">Национальный сертификат</a>
                     </li>
                 </ul>
 
                 <div class="site-header__account">
-                    <a
-                        class="premium-nav-link"
-                        href="premium.html"
-                    >
-                        👑 Premium
-                    </a>
-
-                    <div
-                        class="sign__button"
-                        id="googleSignInButton"
-                    ></div>
-
-                    <div
-                        id="userProfile"
-                        class="user-profile"
-                        style="display: none;"
-                    >
-                        <img
-                            id="userAvatar"
-                            class="user-profile__avatar"
-                            src=""
-                            alt=""
-                        >
-                        <span
-                            id="userName"
-                            class="user-profile__name"
-                        ></span>
+                    <a class="premium-nav-link" href="premium.html">👑 Premium</a>
+                    <div class="sign__button" id="googleSignInButton"></div>
+                    <div id="userProfile" class="user-profile" style="display: none;">
+                        <img id="userAvatar" class="user-profile__avatar" src="" alt="">
+                        <span id="userName" class="user-profile__name"></span>
                     </div>
-
-                    <button
-                        class="burger"
-                        id="burgerBtn"
-                        type="button"
-                        aria-label="Меню"
-                    >
+                    <button class="burger" id="burgerBtn" type="button" aria-label="Меню">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -113,32 +85,12 @@
 
     <main class="main" id="main">
         <section class="hero">
-            <span class="home-badge">
-                NETIJA • ПОДГОТОВКА К ЭКЗАМЕНАМ
-            </span>
-
-            <h1 class="hero__title">
-                Готовься к ДТМ и Национальному сертификату с платформой,
-                которая понимает, через что ты проходишь
-            </h1>
-
-            <p class="hero__subtitle">
-                Тесты с автопроверкой и трекер результатов — всё в одном месте.
-            </p>
-
+            <span class="home-badge">NETIJA • ПОДГОТОВКА К ЭКЗАМЕНАМ</span>
+            <h1 class="hero__title">Готовься к ДТМ и Национальному сертификату с платформой, которая понимает, через что ты проходишь</h1>
+            <p class="hero__subtitle">Тесты с автопроверкой и трекер результатов — всё в одном месте.</p>
             <div class="hero-actions">
-                <a
-                    class="hero-primary"
-                    href="natcert.html"
-                >
-                    Начать подготовку
-                </a>
-                <a
-                    class="hero-secondary"
-                    href="premium.html"
-                >
-                    Купить Premium
-                </a>
+                <a class="hero-primary" href="natcert.html">Начать подготовку</a>
+                <a class="hero-secondary" href="premium.html">Купить Premium</a>
             </div>
         </section>
 
@@ -147,30 +99,19 @@
                 <span class="stats__number">500+</span>
                 <span class="stats__label">Вопросов в тестах</span>
             </div>
-
             <div class="stats__item">
                 <span class="stats__number">2</span>
-                <span class="stats__label">
-                    Направления: ДТМ и Нацсертификат
-                </span>
+                <span class="stats__label">Направления: ДТМ и Нацсертификат</span>
             </div>
-
             <div class="stats__item">
                 <span class="stats__number">100%</span>
-                <span class="stats__label">
-                    Автопроверка результатов
-                </span>
+                <span class="stats__label">Автопроверка результатов</span>
             </div>
         </section>
 
         <section class="about">
             <h2 class="about__title">Почему я это создал</h2>
-            <p class="about__text">
-                Я сам сдавал ДТМ и знаю, как тяжело найти нормальные материалы
-                для подготовки. Поэтому создал Netija — тесты с автопроверкой
-                и трекер результатов, чтобы твоя подготовка была понятнее
-                и эффективнее.
-            </p>
+            <p class="about__text">Я сам сдавал ДТМ и знаю, как тяжело найти нормальные материалы для подготовки. Поэтому создал Netija — тесты с автопроверкой и трекер результатов, чтобы твоя подготовка была понятнее и эффективнее.</p>
         </section>
     </main>
 
