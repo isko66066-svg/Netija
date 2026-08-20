@@ -32,6 +32,34 @@ function publicUser(user) {
     };
 }
 
+function getTashkentDate() {
+    return new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Tashkent",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).format(new Date());
+}
+
+function refreshPremiumStatus(user) {
+    if (
+        user.premium &&
+        user.premium_until &&
+        new Date(user.premium_until).getTime() <= Date.now()
+    ) {
+        db.prepare(`
+            UPDATE users
+            SET premium = 0, subscription_status = 'expired'
+            WHERE id = ?
+        `).run(user.id);
+
+        user.premium = 0;
+        user.subscription_status = "expired";
+    }
+
+    return user;
+}
+
 // Google frontend sync: stores the verified-looking account data needed by the current site.
 // The frontend keeps the Google credential out of localStorage.
 app.post("/api/auth/sync", (req, res) => {
@@ -52,6 +80,7 @@ app.get("/api/me", (req, res) => {
     if (!email) return res.status(401).json({ error: "Пользователь не указан" });
     const user = db.prepare(`SELECT id, email, premium, premium_until, subscription_status FROM users WHERE email = ?`).get(email);
     if (!user) return res.status(404).json({ error: "Пользователь не найден" });
+    refreshPremiumStatus(user);
     res.json(publicUser(user));
 });
 
@@ -60,12 +89,75 @@ app.get("/api/premium/status", (req, res) => {
     if (!email) return res.status(400).json({ error: "Email не указан" });
     const user = db.prepare(`SELECT id, email, premium, premium_until, subscription_status FROM users WHERE email = ?`).get(email);
     if (!user) return res.status(404).json({ error: "Пользователь не найден" });
-    if (user.premium && user.premium_until && new Date(user.premium_until).getTime() <= Date.now()) {
-        db.prepare(`UPDATE users SET premium = 0, subscription_status = 'expired' WHERE id = ?`).run(user.id);
-        user.premium = 0;
-        user.subscription_status = "expired";
-    }
+    refreshPremiumStatus(user);
     res.json({ premium: Boolean(user.premium), premiumUntil: user.premium_until, subscriptionStatus: user.subscription_status });
+});
+
+// Проверка и атомарное использование бесплатного теста.
+// Premium-пользователи не расходуют дневной лимит.
+app.post("/api/tests/daily-access", (req, res) => {
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    const testId = String(req.body?.testId || "").trim();
+
+    if (!email || !email.includes("@")) {
+        return res.status(400).json({ error: "Нужен корректный email" });
+    }
+
+    if (!testId) {
+        return res.status(400).json({ error: "testId не указан" });
+    }
+
+    const user = db.prepare(`
+        SELECT id, email, premium, premium_until, subscription_status
+        FROM users
+        WHERE email = ?
+    `).get(email);
+
+    if (!user) {
+        return res.status(404).json({ error: "Пользователь не найден" });
+    }
+
+    refreshPremiumStatus(user);
+
+    if (user.premium) {
+        return res.json({
+            allowed: true,
+            premium: true,
+            usageDate: getTashkentDate()
+        });
+    }
+
+    const usageDate = getTashkentDate();
+
+    const result = db.prepare(`
+        INSERT OR IGNORE INTO daily_test_usage
+            (user_id, usage_date, test_id, created_at)
+        VALUES (?, ?, ?, ?)
+    `).run(user.id, usageDate, testId, Date.now());
+
+    if (result.changes === 0) {
+        const usage = db.prepare(`
+            SELECT test_id
+            FROM daily_test_usage
+            WHERE user_id = ? AND usage_date = ?
+        `).get(user.id, usageDate);
+
+        return res.status(409).json({
+            allowed: false,
+            premium: false,
+            error: "DAILY_LIMIT_REACHED",
+            message: "Вы уже прошли тест сегодня.",
+            usageDate,
+            usedTestId: usage?.test_id || null
+        });
+    }
+
+    return res.json({
+        allowed: true,
+        premium: false,
+        usageDate,
+        usedTestId: testId
+    });
 });
 
 app.get("/api/admin/users-count", (req, res) => {
@@ -89,6 +181,7 @@ app.post("/api/auth/login", (req, res) => {
     if (!email || !password) return res.status(400).json({ error: "Введите email и пароль" });
     const user = db.prepare(`SELECT id, email, password_hash, premium, premium_until, subscription_status FROM users WHERE email = ?`).get(email);
     if (!user || user.password_hash !== hashPassword(password)) return res.status(401).json({ error: "Неверный email или пароль" });
+    refreshPremiumStatus(user);
     res.json({ success: true, user: publicUser(user) });
 });
 
