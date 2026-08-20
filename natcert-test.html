@@ -25,9 +25,10 @@ window.MathJax = {
     }
 };
 </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async defer></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="exam-overrides.css">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -62,24 +63,23 @@ window.MathJax = {
                 </div>
             </div>
 
-            <div class="exam-timer">
-                <span class="timer-icon">◷</span>
-                <div>
-                    <strong id="timer">02:30:00</strong>
-                    <small>Оставшееся время</small>
-                </div>
-            </div>
-
             <button id="submitBtn" class="finish-test">Завершить тест</button>
         </div>
 
         <div class="exam-layout">
             <section class="questions-area">
                 <div id="quizContainer"></div>
-                <div id="resultBox" class="test-result" style="display:none;"></div>
             </section>
 
             <aside class="questions-sidebar">
+                <div class="exam-timer">
+                    <span class="timer-icon">◷</span>
+                    <div>
+                        <strong id="timer">02:30:00</strong>
+                        <small>Оставшееся время</small>
+                    </div>
+                </div>
+
                 <h2>Вопросы</h2>
 
                 <div class="question-status">
@@ -100,6 +100,8 @@ window.MathJax = {
                 <button class="check-answers" type="button" onclick="document.getElementById('submitBtn').click()">
                     Проверить ответы
                 </button>
+
+                <div id="resultBox" class="test-result" style="display:none;"></div>
             </aside>
         </div>
     </main>
