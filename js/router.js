@@ -53,9 +53,6 @@ async function loadPage(url, pushState = true) {
     }
 }
 
-// =========================================================
-// MATHJAX
-// =========================================================
 function ensureMathJax(callback) {
     if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
         callback();
@@ -90,16 +87,15 @@ function ensureMathJax(callback) {
     document.head.appendChild(script);
 }
 
-// =========================================================
-// ЗАГРУЗКА СКРИПТОВ СТРАНИЦЫ
-// =========================================================
 function runPageScripts(url) {
     if (url.includes('natcert-test.html')) {
         currentQuizUrl = url;
         window.quizInProgress = true;
         window.quizSubmitted = false;
         ensureMathJax(() => {
-            loadScript('js/quiz-loader.js', () => loadScript('js/quiz.js'));
+            loadScript('js/quiz-loader.js', () => {
+                loadScript('js/quiz.js', () => loadScript('js/exam-question-map-fix.js'));
+            });
         });
         return;
     }
@@ -123,14 +119,11 @@ function loadScript(src, callback) {
     const script = document.createElement('script');
     script.src = src;
     script.dataset.dynamic = src;
-    script.type = src.includes('premium-page.js') ? 'module' : 'text/javascript';
+    script.type = 'text/javascript';
     script.onload = callback || null;
     document.body.appendChild(script);
 }
 
-// =========================================================
-// КЛИКИ ПО ССЫЛКАМ
-// =========================================================
 document.addEventListener('click', (e) => {
     const link = e.target.closest('a');
     if (link && link.href && link.href.startsWith(window.location.origin) && !link.hasAttribute('target')) {
@@ -147,9 +140,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// =========================================================
-// КНОПКА "НАЗАД" / "ВПЕРЁД"
-// =========================================================
 window.addEventListener('popstate', () => {
     if (isLeavingActiveQuiz()) {
         if (!confirmLeaveQuiz()) {
@@ -161,3 +151,9 @@ window.addEventListener('popstate', () => {
     }
     loadPage(window.location.href, false);
 });
+
+// На прямом открытии natcert-test.html подключаем фикс после
+// загрузки основного router.js. Он отдельно исправляет 34/35.
+if (window.location.pathname.includes('natcert-test.html')) {
+    loadScript('js/exam-question-map-fix.js');
+}
