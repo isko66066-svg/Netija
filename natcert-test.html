@@ -1,1 +1,270 @@
 <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест | Netija</title>
+    <script>
+window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], macros: { tg: "\\operatorname{tg}", ctg: "\\operatorname{ctg}" } }, svg: { fontCache: 'global' } };
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async defer></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="exam-overrides.css">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="site-shell.css">
+    <link rel="stylesheet" href="premium.css">
+    <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="exam-body" data-question-count="45">
+    <header class="exam-header">
+        <div class="exam-header__inner">
+            <a class="exam-brand" href="index.html" aria-label="Netija"><span class="exam-brand__mark">✓</span><span class="exam-brand__text">NETIJA</span></a>
+            <nav class="exam-nav" aria-label="Основная навигация">
+                <a href="index.html">Главная</a><a href="natcert.html" class="is-active">Тесты</a><a href="/">Марафон</a><a href="/">Подборки</a><a href="/">Статистика</a><a href="premium.html">Цены</a>
+            </nav>
+            <div class="exam-header__actions">
+                <a href="premium.html" class="exam-premium">♛ <span>Premium</span></a>
+                <button class="exam-notification" type="button" aria-label="Уведомления">♧<span class="exam-notification__badge">1</span></button>
+                <div class="sign__button" id="googleSignInButton"></div>
+                <div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div>
+                <button class="burger exam-burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="exam-page" id="main">
+        <div class="exam-layout">
+            <section class="questions-area">
+                <div class="exam-testbar exam-testbar--title">
+                    <div class="exam-testbar__info">
+                        <div class="exam-testbar__title" id="testTitle">Загрузка теста...</div>
+                        <div class="exam-testbar__progress">Вопрос <strong id="currentQuestion">1</strong> из <strong id="totalQuestions">45</strong></div>
+                    </div>
+                </div>
+                <div id="quizContainer"></div>
+                <div id="resultBox" class="test-result" style="display:none;"></div>
+            </section>
+
+            <aside class="questions-sidebar">
+                <div class="exam-sidebar-controls">
+                    <div class="sidebar-timer">
+                        <span class="exam-clock">◷</span>
+                        <div><strong id="timer">02:30:00</strong><small>Оставшееся время</small></div>
+                    </div>
+                    <button id="submitBtn" class="finish-test finish-test--full" type="button">Завершить тест</button>
+                </div>
+
+                <h2>Вопросы</h2>
+                <div id="questionLegend" class="question-legend question-legend--progress">
+                    <div class="question-status"><span class="status-dot answered"></span>Ответ дан</div>
+                    <div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div>
+                    <div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>
+                </div>
+                <div class="question-grid" id="questionGrid"></div>
+            </aside>
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script><script src="js/menu.js"></script><script src="js/quiz-loader.js"></script><script src="js/premium.js"></script><script src="js/quiz.js"></script><script src="js/router.js"></script>
+    <script>
+    (function () {
+        let initialized = false;
+        let blocksById = new Map();
+        let navButtons = [];
+        let intersectionObserver = null;
+
+        function getExpectedCount() {
+            return Number(document.body.dataset.questionCount) || 45;
+        }
+
+        function getBlocks() {
+            return Array.from(document.querySelectorAll('#quizContainer .question-block'));
+        }
+
+        function getQuestionId(block, fallback) {
+            const idMatch = block && block.id && block.id.match(/question-block-(\d+)/);
+            if (idMatch) return Number(idMatch[1]);
+            const text = block && block.querySelector('.question-text');
+            const match = text && text.textContent.match(/^\s*(\d+)\./);
+            return match ? Number(match[1]) : fallback;
+        }
+
+        function scrollToQuestion(id) {
+            const block = blocksById.get(Number(id));
+            if (!block) return;
+
+            const header = document.querySelector('.exam-header');
+            const headerHeight = header ? header.getBoundingClientRect().height : 0;
+            const gap = 14;
+            const rect = block.getBoundingClientRect();
+            const targetY = Math.max(0, window.scrollY + rect.top - headerHeight - gap);
+
+            setCurrent(Number(id));
+            window.scrollTo({ top: targetY, behavior: 'smooth' });
+        }
+
+        function isAnswered(block) {
+            if (!block) return false;
+            return !!block.querySelector('input[type="radio"]:checked')
+                || Array.from(block.querySelectorAll('input[type="text"]')).some(i => i.value.trim() !== '')
+                || Array.from(block.querySelectorAll('select')).some(s => s.value !== '');
+        }
+
+        function refreshStates() {
+            const submitted = !!window.quizSubmitted;
+
+            for (let id = 1; id <= getExpectedCount(); id++) {
+                const block = blocksById.get(id);
+                const answered = isAnswered(block);
+                const correct = !!block && block.classList.contains('question-correct');
+                const incorrect = !!block && block.classList.contains('question-incorrect');
+                const button = navButtons[id - 1];
+
+                if (!button) continue;
+                button.classList.toggle('answered', answered && !submitted);
+                button.classList.toggle('correct', submitted && correct);
+                button.classList.toggle('incorrect', submitted && incorrect);
+                button.classList.toggle('missing', !block);
+            }
+        }
+
+        function setCurrent(id) {
+            id = Number(id);
+            navButtons.forEach((button, index) => {
+                button.classList.toggle('current', index === id - 1);
+            });
+            const current = document.getElementById('currentQuestion');
+            if (current) current.textContent = String(id);
+        }
+
+        function updateLegend() {
+            const legend = document.getElementById('questionLegend');
+            if (!legend) return;
+
+            if (window.quizSubmitted) {
+                legend.className = 'question-legend question-legend--result';
+                legend.innerHTML = `
+                    <div class="question-status question-status--correct"><span class="status-dot status-dot--correct"></span>Правильно</div>
+                    <div class="question-status question-status--incorrect"><span class="status-dot status-dot--incorrect"></span>Неправильно</div>
+                `;
+            } else {
+                legend.className = 'question-legend question-legend--progress';
+                legend.innerHTML = `
+                    <div class="question-status"><span class="status-dot answered"></span>Ответ дан</div>
+                    <div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div>
+                    <div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>
+                `;
+            }
+        }
+
+        function setupIntersectionObserver() {
+            const blocks = getBlocks();
+            if (!('IntersectionObserver' in window) || !blocks.length) return;
+            if (intersectionObserver) intersectionObserver.disconnect();
+
+            intersectionObserver = new IntersectionObserver(entries => {
+                let best = null;
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && (!best || entry.intersectionRatio > best.intersectionRatio)) {
+                        best = entry;
+                    }
+                });
+                if (!best) return;
+                setCurrent(getQuestionId(best.target, 1));
+            }, {
+                root: null,
+                rootMargin: '-90px 0px -55% 0px',
+                threshold: [0, .15, .4, .7]
+            });
+
+            blocks.forEach(block => intersectionObserver.observe(block));
+        }
+
+        function setupNavigation() {
+            const container = document.getElementById('quizContainer');
+            const grid = document.getElementById('questionGrid');
+            const total = document.getElementById('totalQuestions');
+            if (!container || !grid) return false;
+
+            const blocks = getBlocks();
+            if (!blocks.length) return false;
+
+            blocksById = new Map();
+            blocks.forEach((block, index) => {
+                blocksById.set(getQuestionId(block, index + 1), block);
+            });
+
+            const count = getExpectedCount();
+            grid.innerHTML = '';
+            navButtons = [];
+            if (total) total.textContent = String(count);
+
+            for (let id = 1; id <= count; id++) {
+                const block = blocksById.get(id);
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'question-number' + (!block ? ' missing' : '');
+                button.textContent = String(id);
+                button.title = block ? `Перейти к вопросу ${id}` : `Вопрос ${id} отсутствует в данных теста`;
+
+                if (block) {
+                    button.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        scrollToQuestion(id);
+                    });
+                } else {
+                    button.disabled = true;
+                }
+
+                grid.appendChild(button);
+                navButtons.push(button);
+            }
+
+            if (!container.dataset.navListenersAttached) {
+                container.addEventListener('change', refreshStates);
+                container.addEventListener('input', refreshStates);
+                container.dataset.navListenersAttached = '1';
+            }
+
+            blocks.forEach(block => {
+                if (block.dataset.stateObserverAttached) return;
+                const observer = new MutationObserver(refreshStates);
+                observer.observe(block, { attributes: true, attributeFilter: ['class'] });
+                block.dataset.stateObserverAttached = '1';
+            });
+
+            setupIntersectionObserver();
+            updateLegend();
+            refreshStates();
+            setCurrent(1);
+            initialized = true;
+            return true;
+        }
+
+        function handleSubmitted() {
+            updateLegend();
+            refreshStates();
+            requestAnimationFrame(refreshStates);
+            setTimeout(refreshStates, 50);
+            setTimeout(refreshStates, 250);
+        }
+
+        function initAfterQuiz() {
+            setupNavigation();
+        }
+
+        document.addEventListener('netija:quizRendered', initAfterQuiz);
+        document.addEventListener('netija:testSubmitted', handleSubmitted);
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => setTimeout(initAfterQuiz, 0));
+        } else {
+            setTimeout(initAfterQuiz, 0);
+        }
+    })();
+    </script>
+</body>
+</html>
