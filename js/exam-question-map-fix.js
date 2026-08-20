@@ -92,4 +92,13 @@
     } else {
         start();
     }
+
+    // Загружаем фикс правильных ответов и возврата наверх после завершения.
+    const existing = document.querySelector('script[data-exam-result-fixes]');
+    if (!existing) {
+        const script = document.createElement('script');
+        script.src = 'js/exam-result-fixes.js';
+        script.dataset.examResultFixes = 'true';
+        document.body.appendChild(script);
+    }
 })();
