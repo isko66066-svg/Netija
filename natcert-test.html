@@ -50,7 +50,7 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
                 <div class="exam-sidebar-controls">
                     <div class="sidebar-timer">
                         <span class="exam-clock">◷</span>
-                        <div><strong id="sidebarTimer">02:30:00</strong><small>Оставшееся время</small></div>
+                        <div><strong id="timer">02:30:00</strong><small>Оставшееся время</small></div>
                     </div>
                     <button id="submitBtn" class="finish-test finish-test--full" type="button">Завершить тест</button>
                 </div>
@@ -72,8 +72,6 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
     <script src="js/auth.js"></script><script src="js/menu.js"></script><script src="js/quiz-loader.js"></script><script src="js/premium.js"></script><script src="js/quiz.js"></script><script src="js/router.js"></script>
     <script>
     (function () {
-        let examNavigationReady = false;
-
         function scrollToQuestion(block) {
             if (!block) return;
             const headerOffset = 74;
@@ -97,7 +95,6 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
 
             grid.innerHTML = '';
             if (answerMap) answerMap.innerHTML = '';
-
             if (total) total.textContent = String(blocks.length);
 
             blocks.forEach((block, index) => {
@@ -161,16 +158,8 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
                         const index = blocks.indexOf(entry.target);
                         if (index < 0) return;
 
-                        Array.from(grid.children).forEach((button, n) => {
-                            button.classList.toggle('current', n === index);
-                        });
-
-                        if (answerMap) {
-                            Array.from(answerMap.children).forEach((button, n) => {
-                                button.classList.toggle('current', n === index);
-                            });
-                        }
-
+                        Array.from(grid.children).forEach((button, n) => button.classList.toggle('current', n === index));
+                        if (answerMap) Array.from(answerMap.children).forEach((button, n) => button.classList.toggle('current', n === index));
                         if (current) current.textContent = String(index + 1);
                     });
                 }, { root: null, rootMargin: '-18% 0px -62% 0px', threshold: 0 });
@@ -179,51 +168,13 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
             }
 
             const mutationObserver = new MutationObserver(updateStates);
-            blocks.forEach(block => mutationObserver.observe(block, {
-                attributes: true,
-                attributeFilter: ['class']
-            }));
-
+            blocks.forEach(block => mutationObserver.observe(block, { attributes: true, attributeFilter: ['class'] }));
             updateStates();
-            examNavigationReady = true;
-        }
-
-        function syncSidebarTimer() {
-            const mainTimer = document.getElementById('timer');
-            const sidebar = document.getElementById('sidebarTimer');
-            if (!sidebar) return;
-
-            if (!mainTimer) {
-                sidebar.textContent = '02:30:00';
-                return;
-            }
-
-            const sync = () => {
-                sidebar.textContent = mainTimer.textContent;
-                sidebar.classList.toggle('timer--warning', mainTimer.classList.contains('timer--warning'));
-            };
-
-            new MutationObserver(sync).observe(mainTimer, {
-                childList: true,
-                characterData: true,
-                subtree: true,
-                attributes: true
-            });
-            sync();
-        }
-
-        function hideOldTimer() {
-            const mainTimer = document.getElementById('timer');
-            if (mainTimer) {
-                const timerBox = mainTimer.closest('.exam-testbar__timer');
-                if (timerBox) timerBox.remove();
-            }
         }
 
         function showAnswerMapAfterSubmit() {
             const panel = document.getElementById('answerMapPanel');
             if (!panel) return;
-
             const check = () => {
                 if (window.quizSubmitted === true) {
                     panel.style.display = '';
@@ -236,16 +187,11 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
 
         function initExamUI() {
             setupExamNavigation();
-            syncSidebarTimer();
-            hideOldTimer();
             showAnswerMapAfterSubmit();
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initExamUI);
-        } else {
-            initExamUI();
-        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initExamUI);
+        else initExamUI();
     })();
     </script>
 </body>
