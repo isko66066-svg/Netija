@@ -7,22 +7,11 @@
     <script>
 window.MathJax = {
     tex: {
-        inlineMath: [
-            ['$', '$'],
-            ['\\(', '\\)']
-        ],
-        displayMath: [
-            ['$$', '$$'],
-            ['\\[', '\\]']
-        ],
-        macros: {
-            tg: "\\operatorname{tg}",
-            ctg: "\\operatorname{ctg}"
-        }
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        macros: { tg: "\\operatorname{tg}", ctg: "\\operatorname{ctg}" }
     },
-    svg: {
-        fontCache: 'global'
-    }
+    svg: { fontCache: 'global' }
 };
 </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async defer></script>
@@ -32,168 +21,130 @@ window.MathJax = {
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
-<body>
-    <header class="header">
-        <div class="header__container">
-            <nav class="header__nav">
-                <img class="logo" src="./images/logo.svg" alt="">
-                <ul class="header__list">
-                    <li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li>
-                    <li class="header__list-item"><a class="header__list-link" href="/">Дтм</a></li>
-                    <li class="header__list-item"><a class="header__list-link active" href="natcert.html">Национальный сертификат</a></li>
-                </ul>
+<body class="exam-body">
+    <header class="exam-header">
+        <div class="exam-header__inner">
+            <a class="exam-brand" href="index.html" aria-label="Netija">
+                <span class="exam-brand__mark">✓</span><span class="exam-brand__text">NETIJA</span>
+            </a>
+            <nav class="exam-nav" aria-label="Основная навигация">
+                <a href="index.html">Главная</a>
+                <a href="natcert.html" class="is-active">Тесты</a>
+                <a href="/">Марафон</a>
+                <a href="/">Подборки</a>
+                <a href="/">Статистика</a>
+                <a href="/">Цены</a>
+            </nav>
+            <div class="exam-header__actions">
+                <a href="/" class="exam-premium">♛ <span>Premium</span></a>
+                <button class="exam-notification" type="button" aria-label="Уведомления">♧<span class="exam-notification__badge">1</span></button>
                 <div class="sign__button" id="googleSignInButton"></div>
-                <div id="userProfile" class="user-profile" style="display: none;">
+                <div id="userProfile" class="user-profile" style="display:none;">
                     <img id="userAvatar" class="user-profile__avatar" src="" alt="">
                     <span id="userName" class="user-profile__name"></span>
                 </div>
-                <button class="burger" id="burgerBtn" aria-label="Меню">
-                    <span></span><span></span><span></span>
-                </button>
-            </nav>
+                <button class="burger exam-burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+            </div>
         </div>
     </header>
 
     <main class="exam-page" id="main">
-        <div class="exam-topbar">
-            <div>
-                <div class="exam-title" id="testTitle">Загрузка теста...</div>
-                <div class="exam-progress">
-                    Вопрос <span id="currentQuestion">1</span> из <span id="totalQuestions">45</span>
-                </div>
-            </div>
-
-            <button id="submitBtn" class="finish-test">Завершить тест</button>
-        </div>
-
         <div class="exam-layout">
             <section class="questions-area">
+                <div class="exam-testbar">
+                    <div class="exam-testbar__info">
+                        <div class="exam-testbar__title" id="testTitle">Загрузка теста...</div>
+                        <div class="exam-testbar__progress">Вопрос <strong id="currentQuestion">1</strong> из <strong id="totalQuestions">45</strong></div>
+                    </div>
+                    <div class="exam-testbar__timer"><span class="exam-clock">◷</span><div><strong id="timer">02:30:00</strong><small>Оставшееся время</small></div></div>
+                    <button id="submitBtn" class="finish-test" type="button">Завершить тест</button>
+                </div>
                 <div id="quizContainer"></div>
             </section>
 
             <aside class="questions-sidebar">
-                <div class="exam-timer">
-                    <span class="timer-icon">◷</span>
-                    <div>
-                        <strong id="timer">02:30:00</strong>
-                        <small>Оставшееся время</small>
-                    </div>
-                </div>
-
+                <div class="sidebar-timer"><span class="exam-clock">◷</span><div><strong id="sidebarTimer">02:30:00</strong><small>Оставшееся время</small></div></div>
                 <h2>Вопросы</h2>
-
-                <div class="question-status">
-                    <span class="status-dot answered"></span>
-                    Ответ дан
-                </div>
-                <div class="question-status">
-                    <span class="status-dot current"></span>
-                    Текущий вопрос
-                </div>
-                <div class="question-status">
-                    <span class="status-dot empty"></span>
-                    Ответ не дан
-                </div>
-
+                <div class="question-status"><span class="status-dot answered"></span>Ответ дан</div>
+                <div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div>
+                <div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>
                 <div class="question-grid" id="questionGrid"></div>
-
-                <button class="check-answers" type="button" onclick="document.getElementById('submitBtn').click()">
-                    Проверить ответы
-                </button>
-
+                <button class="check-answers" type="button" onclick="document.getElementById('submitBtn').click()">Проверить ответы</button>
+                <div class="answer-map-panel">
+                    <h3>Карта ответов по заданиям:</h3>
+                    <div class="answer-map-grid" id="answerMapGrid"></div>
+                </div>
                 <div id="resultBox" class="test-result" style="display:none;"></div>
             </aside>
         </div>
     </main>
-    
+
     <script src="js/auth.js"></script>
     <script src="js/menu.js"></script>
     <script src="js/quiz-loader.js"></script>
     <script src="js/premium.js"></script>
     <script src="js/quiz.js"></script>
     <script src="js/router.js"></script>
-
     <script>
     (function () {
         function setupExamNavigation() {
             const grid = document.getElementById('questionGrid');
+            const answerMap = document.getElementById('answerMapGrid');
             const container = document.getElementById('quizContainer');
-            if (!grid || !container) return;
-
+            if (!grid || !answerMap || !container) return;
             const blocks = Array.from(container.querySelectorAll('.question-block'));
-            if (!blocks.length) {
-                setTimeout(setupExamNavigation, 150);
-                return;
-            }
-
+            if (!blocks.length) { setTimeout(setupExamNavigation, 150); return; }
             grid.innerHTML = '';
-
+            answerMap.innerHTML = '';
             blocks.forEach((block, index) => {
+                const text = block.querySelector('.question-text');
+                const match = text && text.textContent.match(/^(\d+)/);
+                const number = match ? match[1] : String(index + 1);
                 const button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'question-number';
-                button.textContent = index + 1;
-                button.dataset.questionIndex = index;
-
-                button.addEventListener('click', function () {
-                    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
-
+                button.type = 'button'; button.className = 'question-number'; button.textContent = number;
+                button.addEventListener('click', () => block.scrollIntoView({behavior:'smooth', block:'start'}));
                 grid.appendChild(button);
+                const mapButton = document.createElement('button');
+                mapButton.type = 'button'; mapButton.className = 'answer-map-cell'; mapButton.textContent = number;
+                mapButton.addEventListener('click', () => block.scrollIntoView({behavior:'smooth', block:'start'}));
+                answerMap.appendChild(mapButton);
             });
-
             const total = document.getElementById('totalQuestions');
             if (total) total.textContent = blocks.length;
-
-            function updateAnsweredState() {
-                blocks.forEach((block, index) => {
-                    const button = grid.children[index];
-                    if (!button) return;
-
-                    const radios = block.querySelectorAll('input[type="radio"]');
-                    const textInputs = block.querySelectorAll('input[type="text"]');
-                    const selects = block.querySelectorAll('select');
-
-                    const answered =
-                        Array.from(radios).some(input => input.checked) ||
-                        Array.from(textInputs).some(input => input.value.trim() !== '') ||
-                        Array.from(selects).some(select => select.value !== '');
-
-                    button.classList.toggle('answered', answered);
+            function isAnswered(block) {
+                return Array.from(block.querySelectorAll('input[type="radio"]')).some(i=>i.checked) ||
+                    Array.from(block.querySelectorAll('input[type="text"]')).some(i=>i.value.trim() !== '') ||
+                    Array.from(block.querySelectorAll('select')).some(s=>s.value !== '');
+            }
+            function updateStates() {
+                blocks.forEach((block,index)=>{
+                    const b=grid.children[index], m=answerMap.children[index]; if(!b||!m)return;
+                    const answered=isAnswered(block); b.classList.toggle('answered',answered); m.classList.toggle('answered',answered);
+                    m.classList.toggle('correct',block.classList.contains('question-correct'));
+                    m.classList.toggle('incorrect',block.classList.contains('question-incorrect'));
                 });
             }
-
-            container.addEventListener('change', updateAnsweredState);
-            container.addEventListener('input', updateAnsweredState);
-
-            const current = document.getElementById('currentQuestion');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (!entry.isIntersecting) return;
-                    const index = blocks.indexOf(entry.target);
-                    if (index < 0) return;
-
-                    Array.from(grid.children).forEach((button, i) => {
-                        button.classList.toggle('current', i === index);
-                    });
-
-                    if (current) current.textContent = index + 1;
-                });
-            }, {
-                root: null,
-                rootMargin: '-15% 0px -65% 0px',
-                threshold: 0
-            });
-
-            blocks.forEach(block => observer.observe(block));
-            updateAnsweredState();
+            container.addEventListener('change', updateStates); container.addEventListener('input', updateStates);
+            const current=document.getElementById('currentQuestion');
+            const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+                if(!entry.isIntersecting)return; const i=blocks.indexOf(entry.target); if(i<0)return;
+                Array.from(grid.children).forEach((b,n)=>b.classList.toggle('current',n===i));
+                Array.from(answerMap.children).forEach((b,n)=>b.classList.toggle('current',n===i));
+                if(current)current.textContent=i+1;
+            }),{root:null,rootMargin:'-18% 0px -62% 0px',threshold:0});
+            blocks.forEach(b=>observer.observe(b));
+            const mutationObserver=new MutationObserver(updateStates);
+            blocks.forEach(b=>mutationObserver.observe(b,{attributes:true,attributeFilter:['class']}));
+            updateStates();
         }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', setupExamNavigation);
-        } else {
-            setupExamNavigation();
+        function syncSidebarTimer() {
+            const mainTimer=document.getElementById('timer'), sidebar=document.getElementById('sidebarTimer');
+            if(!mainTimer||!sidebar){setTimeout(syncSidebarTimer,200);return;}
+            const sync=()=>{sidebar.textContent=mainTimer.textContent; sidebar.classList.toggle('timer--warning',mainTimer.classList.contains('timer--warning'));};
+            new MutationObserver(sync).observe(mainTimer,{childList:true,characterData:true,subtree:true,attributes:true}); sync();
         }
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{setupExamNavigation();syncSidebarTimer();});
+        else{setupExamNavigation();syncSidebarTimer();}
     })();
     </script>
 </body>
