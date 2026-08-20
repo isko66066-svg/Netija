@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netija</title>
+    <title>Netija — подготовка к экзаменам</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="test.css">
     <link rel="stylesheet" href="header.css">
@@ -18,47 +18,46 @@
     <header class="header">
         <div class="header__container">
             <nav class="header__nav">
-                <img class="logo" src="./images/logo.svg" alt="">
+                <a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a>
                 <ul class="header__list">
-                    <li class="header__list-item"><a class="header__list-link active" href="/">Главная страница</a></li>
+                    <li class="header__list-item"><a class="header__list-link active" href="index.html">Главная страница</a></li>
                     <li class="header__list-item"><a class="header__list-link" href="/">Дтм</a></li>
                     <li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li>
                 </ul>
-                <div class="sign__button" id="googleSignInButton"></div>
-                <div id="userProfile" class="user-profile" style="display: none;">
-                    <img id="userAvatar" class="user-profile__avatar" src="" alt="">
-                    <span id="userName" class="user-profile__name"></span>
+                <div class="site-header__account">
+                    <a class="premium-nav-link" href="premium.html">👑 Premium</a>
+                    <div class="sign__button" id="googleSignInButton"></div>
+                    <div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div>
+                    <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
                 </div>
-                <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
             </nav>
         </div>
     </header>
 
     <main class="main" id="main">
         <section class="hero">
+            <span class="home-badge">NETIJA • ПОДГОТОВКА К ЭКЗАМЕНАМ</span>
             <h1 class="hero__title">Готовься к ДТМ и Национальному сертификату с платформой, которая понимает, через что ты проходишь</h1>
-            <p class="hero__subtitle">Тесты с автопроверкой и трекер результатов — всё в одном месте</p>
+            <p class="hero__subtitle">Тесты с автопроверкой и трекер результатов — всё в одном месте.</p>
+            <div class="hero-actions">
+                <a class="hero-primary" href="natcert.html">Начать подготовку</a>
+                <a class="hero-secondary" href="premium.html">Купить Premium</a>
+            </div>
         </section>
+
         <section class="stats">
             <div class="stats__item"><span class="stats__number">500+</span><span class="stats__label">Вопросов в тестах</span></div>
             <div class="stats__item"><span class="stats__number">2</span><span class="stats__label">Направления: ДТМ и Нацсертификат</span></div>
             <div class="stats__item"><span class="stats__number">100%</span><span class="stats__label">Автопроверка результатов</span></div>
         </section>
 
-        <section class="premium-card" id="premiumCard">
-            <h2>⭐ Netija Premium</h2>
-            <p>Без рекламы и Premium-доступ</p>
-            <div class="premium-plans">
-                <button class="premium-plan active" data-plan="monthly" type="button">
-                    <strong>15 000 сум</strong><span>30 дней</span>
-                </button>
-                <button class="premium-plan premium-plan--yearly" data-plan="yearly" type="button">
-                    <span class="premium-save">25% выгода</span>
-                    <strong>135 000 сум</strong><span>1 год</span>
-                </button>
+        <section class="premium-cta">
+            <div>
+                <span class="premium-cta__eyebrow">👑 NETIJA PREMIUM</span>
+                <h2>Больше возможностей для подготовки</h2>
+                <p>Без рекламы, Premium-доступ и удобная подготовка в одном месте.</p>
             </div>
-            <button class="premium-button" id="buyPremiumButton" disabled>Войдите через Google</button>
-            <div class="premium-status" id="premiumStatus"></div>
+            <a class="premium-cta__button" href="premium.html">Купить Premium</a>
         </section>
 
         <section class="about">
@@ -67,41 +66,8 @@
         </section>
     </main>
 
-<script src="js/auth.js"></script>
-<script src="js/menu.js"></script>
-<script src="js/router.js"></script>
-<script type="module">
-  import { getPremiumStatus, openPaymePayment } from './js/premium.js';
-  const button = document.getElementById('buyPremiumButton');
-  const status = document.getElementById('premiumStatus');
-  let selectedPlan = 'monthly';
-  document.querySelectorAll('.premium-plan').forEach(planButton => {
-    planButton.addEventListener('click', () => {
-      document.querySelectorAll('.premium-plan').forEach(x => x.classList.remove('active'));
-      planButton.classList.add('active');
-      selectedPlan = planButton.dataset.plan;
-      refreshPremium();
-    });
-  });
-  function updateBuyText(){
-    button.textContent = selectedPlan === 'yearly' ? 'Купить Premium — 135 000 сум' : 'Купить Premium — 15 000 сум';
-  }
-  async function refreshPremium(){
-    const user = JSON.parse(localStorage.getItem('netija_user') || 'null');
-    if(!user?.email){ button.disabled=true; button.textContent='Войдите через Google'; return; }
-    button.disabled=false; updateBuyText();
-    try{
-      const data=await getPremiumStatus();
-      if(data.premium){ button.disabled=true; button.textContent='Premium уже активен'; status.className='premium-status premium-ok'; status.textContent=data.premiumUntil ? `Активен до ${new Date(data.premiumUntil).toLocaleDateString('ru-RU')}` : 'Premium активен'; }
-      else{ status.className='premium-status'; status.textContent='Premium не активен'; }
-    }catch(e){ status.className='premium-status premium-error'; status.textContent='Не удалось проверить статус Premium'; }
-  }
-  button.addEventListener('click',async()=>{
-    button.disabled=true; button.textContent='Создаём заказ...'; status.textContent='';
-    try{ await openPaymePayment(selectedPlan); }
-    catch(e){ button.disabled=false; updateBuyText(); status.className='premium-status premium-error'; status.textContent=e.message==='LOGIN_REQUIRED'?'Сначала войдите через Google':(e.message||'Оплата пока не настроена'); }
-  });
-  window.addEventListener('netija:auth-changed',refreshPremium); refreshPremium();
-</script>
+    <script src="js/auth.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/router.js"></script>
 </body>
 </html>
