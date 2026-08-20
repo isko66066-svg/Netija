@@ -51,9 +51,16 @@
         const total = document.getElementById('totalQuestions');
         if (!grid || !map || !container) return;
 
+        if (!document.getElementById('netija-exam-fixes-css')) {
+            const styleLink = document.createElement('link');
+            styleLink.id = 'netija-exam-fixes-css';
+            styleLink.rel = 'stylesheet';
+            styleLink.href = 'exam-fixes.css';
+            document.head.appendChild(styleLink);
+        }
+
         const EXPECTED = 45;
         let builtSignature = '';
-        let observer;
 
         function build() {
             const blocks = Array.from(container.querySelectorAll('.question-block'));
@@ -127,7 +134,7 @@
             updateStates();
         }
 
-        observer = new MutationObserver(build);
+        const observer = new MutationObserver(build);
         observer.observe(container, { childList: true, subtree: true });
         build();
     }
