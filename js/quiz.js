@@ -217,6 +217,61 @@ function initQuiz() {
         return { level: 'A+', passed: true };
     }
 
+    function normalizeAnswer(value) {
+        return String(value ?? '')
+            .trim()
+            .replace(/\s+/g, '')
+            .replace(',', '.')
+            .toLowerCase();
+    }
+
+    function answersMatch(userValue, correctValue) {
+        const user = normalizeAnswer(userValue);
+        const correct = normalizeAnswer(correctValue);
+        if (!user || !correct) return false;
+        if (user === correct) return true;
+
+        // Allow equivalent decimal representations such as 1.5 and 1.50.
+        const userNumber = Number(user);
+        const correctNumber = Number(correct);
+        if (Number.isFinite(userNumber) && Number.isFinite(correctNumber)) {
+            return Math.abs(userNumber - correctNumber) < 1e-9;
+        }
+        return false;
+    }
+
+    function addOpenAnswerFeedback(subBlock, isCorrect, correctAnswer) {
+        if (!subBlock) return;
+        subBlock.querySelectorAll('.open-answer-feedback').forEach(el => el.remove());
+
+        const feedback = document.createElement('div');
+        feedback.className = `open-answer-feedback ${isCorrect ? 'open-answer-feedback--correct' : 'open-answer-feedback--wrong'}`;
+
+        const label = document.createElement('strong');
+        label.textContent = isCorrect ? '✓ Правильный ответ' : '✗ Правильный ответ';
+        feedback.appendChild(label);
+
+        const answer = document.createElement('span');
+        answer.className = 'open-answer-feedback__value';
+        answer.innerHTML = escapeHtmlOutsideMath(String(correctAnswer ?? ''));
+        feedback.appendChild(answer);
+
+        subBlock.appendChild(feedback);
+        renderMath(feedback);
+    }
+
+    function scrollToResultTop() {
+        // On mobile the result must be immediately visible after submission.
+        // A small delay lets the result DOM/layout finish before scrolling.
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+            });
+        });
+    }
+
     function submitTest() {
         if (testSubmitted) return;
         testSubmitted = true;
@@ -268,14 +323,12 @@ function initQuiz() {
                     details.push({ number: item.id, isCorrect: isItemCorrect, answered: selectedValue !== '' });
                     if (select) {
                         select.disabled = true;
-                        if (!isItemCorrect) {
-                            const hint = document.createElement('span');
-                            hint.className = 'correct-hint';
-                            const correctText = q.optionsPool && q.optionsPool[item.correctAnswer] ? q.optionsPool[item.correctAnswer] : '';
-                            hint.innerHTML = escapeHtmlOutsideMath(`Правильный ответ: ${item.correctAnswer}) ${correctText}`);
-                            select.insertAdjacentElement('afterend', hint);
-                            renderMath(hint);
-                        }
+                        const hint = document.createElement('span');
+                        hint.className = `correct-hint ${isItemCorrect ? 'correct-hint--success' : 'correct-hint--wrong'}`;
+                        const correctText = q.optionsPool && q.optionsPool[item.correctAnswer] ? q.optionsPool[item.correctAnswer] : '';
+                        hint.innerHTML = escapeHtmlOutsideMath(`Правильный ответ: ${item.correctAnswer}) ${correctText}`);
+                        select.insertAdjacentElement('afterend', hint);
+                        renderMath(hint);
                     }
                 });
                 if (allCorrect) {
@@ -290,13 +343,23 @@ function initQuiz() {
                 q.subQuestions.forEach((sub) => {
                     totalScoredParts++;
                     const input = block ? block.querySelector(`input[data-question-id="${q.id}"][data-sub-id="${sub.id}"]`) : null;
+                    const subBlock = input ? input.closest('.sub-question-item') : null;
                     const value = input ? input.value.trim() : '';
                     const correctAnswer = sub.correctAnswer;
-                    const isCorrect = correctAnswer !== null && correctAnswer !== undefined && value !== '' && value.toLowerCase() === String(correctAnswer).toLowerCase();
-                    if (sub.id === 'a') { aCorrect = isCorrect; if (isCorrect) totalRawScore += 1.5; }
-                    if (sub.id === 'b') { bCorrect = isCorrect; if (isCorrect) totalRawScore += 1.7; }
+                    const isCorrect = answersMatch(value, correctAnswer);
+
+                    if (sub.id === 'a') {
+                        aCorrect = isCorrect;
+                        if (isCorrect) totalRawScore += 1.5;
+                    }
+                    if (sub.id === 'b') {
+                        bCorrect = isCorrect;
+                        if (isCorrect) totalRawScore += 1.7;
+                    }
+
                     details.push({ number: `${q.id}${sub.id}`, isCorrect, answered: value !== '' });
                     if (input) input.disabled = true;
+                    addOpenAnswerFeedback(subBlock, isCorrect, correctAnswer);
                 });
                 if (aCorrect && bCorrect) correctFullTasksCount++;
                 else questionCorrect = false;
@@ -308,7 +371,6 @@ function initQuiz() {
             }
         });
 
-        // The certificate score is scaled from the raw task points.
         const maxRawScore = 64.2;
         const finalScore = Number(Math.min(100, (totalRawScore / maxRawScore) * 100).toFixed(2));
         const gradeInfo = getCertificateGrade(finalScore);
@@ -338,6 +400,8 @@ function initQuiz() {
         document.dispatchEvent(new CustomEvent('netija:testSubmitted', {
             detail: { details, score: finalScore, grade: gradeInfo, correctCount: correctFullTasksCount, total: EXPECTED_QUESTIONS }
         }));
+
+        scrollToResultTop();
     }
 
     function renderResultBox(score, correctCount, totalCount, gradeInfo) {
