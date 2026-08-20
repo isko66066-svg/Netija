@@ -1,102 +1,68 @@
-/* Netija — единый хедер для всего сайта */
-.site-header {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto 48px;
-    padding: 0;
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, .03);
-    position: relative;
-    z-index: 1000;
+/* =========================================================
+   NETIJA GLOBAL DESIGN — header + page shell
+   ========================================================= */
+:root{--netija-navy:#08172d;--netija-blue:#2563eb;--netija-bg:#f5f7fb;--netija-text:#172033;--netija-muted:#64748b;--netija-border:#e6ebf2;--netija-card:#fff;}
+
+html,body{margin:0;min-height:100%;}
+body{background:var(--netija-bg);color:var(--netija-text);}
+
+/* Full-width navigation like the reference */
+.site-header,.header{width:100%;max-width:none;margin:0;padding:0;background:var(--netija-navy);border:0;border-radius:0;box-shadow:0 2px 14px rgba(15,23,42,.14);position:sticky;top:0;z-index:2000;color:#fff;}
+.site-header .header__container,.header .header__container{width:100%;max-width:none;margin:0;padding:0;}
+.site-header .header__nav,.header .header__nav{width:100%;max-width:none;min-height:58px;margin:0;padding:0 24px;display:flex;align-items:center;gap:24px;background:transparent;border:0;border-radius:0;}
+
+.site-header__logo,.header .logo-wrap{flex:0 0 auto;display:flex;align-items:center;}
+.site-header .logo,.header .logo{display:block;width:110px;height:auto;margin:0;object-fit:contain;}
+
+.site-header .header__list,.header .header__list{flex:1 1 auto;min-width:0;display:flex;align-items:stretch;justify-content:center;gap:clamp(18px,3vw,44px);margin:0;padding:0;list-style:none;}
+.site-header .header__list-item,.header .header__list-item{margin:0;padding:0;display:flex;align-items:stretch;}
+.site-header .header__list-link,.header .header__list-link{position:relative;display:flex;align-items:center;justify-content:center;min-height:58px;padding:0 2px;background:transparent;border:0;border-radius:0;color:#dbe4f1;font-family:Poppins,sans-serif;font-size:14px;line-height:1;font-weight:600;white-space:nowrap;text-decoration:none;transition:color .2s ease,opacity .2s ease;}
+.site-header .header__list-link:hover,.header .header__list-link:hover{color:#fff;}
+.site-header .header__list-link.active,.header .header__list-link.active{color:#fff;}
+.site-header .header__list-link.active::after,.header .header__list-link.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px 3px 0 0;background:#3b82f6;}
+
+.site-header__account{flex:0 0 auto;display:flex;align-items:center;gap:12px;}
+.site-header .sign__button,.header .sign__button{display:flex;align-items:center;}
+.site-header .user-profile,.header .user-profile{display:flex;align-items:center;gap:8px;position:relative;cursor:pointer;color:#fff;}
+.site-header .user-profile__avatar,.header .user-profile__avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;display:block;border:2px solid rgba(255,255,255,.35);}
+.site-header .user-profile__name,.header .user-profile__name{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff;font-size:12px;font-weight:600;}
+.site-header .account-dropdown,.header .account-dropdown{top:calc(100% + 8px);right:0;}
+
+/* Premium action in the navigation */
+.site-header .premium-nav-link,.header .premium-nav-link{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;min-height:0;border-radius:22px;background:#3a3529;color:#f7c94c;font-size:13px;font-weight:700;}
+.site-header .premium-nav-link:hover,.header .premium-nav-link:hover{background:#48402f;color:#ffd866;}
+.site-header .premium-nav-link::after,.header .premium-nav-link::after{display:none;}
+
+/* Mobile */
+.site-header .burger,.header .burger{display:none;width:34px;height:34px;padding:6px;border:0;background:transparent;flex-direction:column;justify-content:center;gap:4px;cursor:pointer;}
+.site-header .burger span,.header .burger span{display:block;width:21px;height:2px;border-radius:2px;background:#fff;}
+
+/* Global page background/cards */
+.main,.main__natcert,.premium-page{position:relative;z-index:1;}
+.hero,.stats,.about,.premium-card,.test-cards,.test-card{box-shadow:0 4px 18px rgba(15,23,42,.045);}
+
+@media (max-width:900px){
+  .site-header .header__nav,.header .header__nav{min-height:56px;padding:0 14px;gap:12px;}
+  .site-header .logo,.header .logo{width:105px;}
+  .site-header .header__list,.header .header__list{gap:14px;}
+  .site-header .header__list-link,.header .header__list-link{font-size:12px;}
+  .site-header .premium-nav-link,.header .premium-nav-link{padding:8px 11px;font-size:11px;}
 }
 
-.site-header .header__container { width: 100%; margin: 0; padding: 0; }
-
-.site-header .header__nav {
-    min-height: 56px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 7px 14px;
-    background: transparent;
-    border: 0;
-    border-radius: 12px;
-    max-width: none;
-    margin: 0;
+@media (max-width:700px){
+  .site-header .header__nav,.header .header__nav{padding:0 10px;gap:8px;}
+  .site-header .logo,.header .logo{width:92px;}
+  .site-header .header__list,.header .header__list{gap:8px;justify-content:flex-end;}
+  .site-header .header__list-link,.header .header__list-link{font-size:9px;min-height:56px;}
+  .site-header .user-profile__avatar,.header .user-profile__avatar{width:32px;height:32px;}
+  .site-header .user-profile__name,.header .user-profile__name{display:none;}
+  .site-header .premium-nav-link,.header .premium-nav-link{padding:7px 9px;font-size:9px;}
 }
 
-.site-header__logo { flex: 0 0 auto; display: flex; align-items: center; }
-.site-header .logo { display: block; width: 100px; height: auto; margin: 0; }
-
-.site-header .header__list {
-    flex: 1 1 auto;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.site-header .header__list-item { margin: 0; padding: 0; }
-
-.site-header .header__list-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 28px;
-    padding: 5px 10px;
-    background: #f8f9fa;
-    border: 1px solid #e5e7eb;
-    border-radius: 999px;
-    color: #64748b;
-    font-family: Poppins, sans-serif;
-    font-size: 11px;
-    line-height: 1;
-    font-weight: 500;
-    letter-spacing: -.1px;
-    white-space: nowrap;
-    text-decoration: none;
-    transition: .2s ease;
-}
-
-.site-header .header__list-link:hover,
-.site-header .header__list-link.active {
-    color: #172033;
-    background: #fff;
-    border-color: #dfe4ea;
-}
-
-.site-header__account { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
-.site-header .sign__button { display: flex; align-items: center; }
-.site-header .user-profile { display: flex; align-items: center; gap: 7px; position: relative; cursor: pointer; }
-.site-header .user-profile__avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; display: block; }
-.site-header .user-profile__name { max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #172033; font-size: 11px; font-weight: 600; }
-.site-header .account-dropdown { top: calc(100% + 8px); right: 0; }
-.site-header .burger { display: none; width: 30px; height: 30px; padding: 5px; border: 0; background: transparent; flex-direction: column; justify-content: center; gap: 4px; cursor: pointer; }
-.site-header .burger span { display: block; width: 20px; height: 2px; border-radius: 2px; background: #172033; }
-
-@media (max-width: 700px) {
-    .site-header { margin-bottom: 48px; border-radius: 12px; }
-    .site-header .header__nav { min-height: 54px; padding: 7px 9px; gap: 5px; }
-    .site-header .logo { width: 98px; }
-    .site-header .header__list { gap: 4px; justify-content: flex-end; }
-    .site-header .header__list-link { min-height: 26px; padding: 5px 8px; font-size: 9px; }
-    .site-header .user-profile__avatar { width: 28px; height: 28px; }
-    .site-header .user-profile__name { display: block; max-width: 46px; font-size: 9px; }
-    .site-header .sign__button { max-width: 28px; overflow: hidden; }
-}
-
-@media (max-width: 430px) {
-    .site-header .header__nav { padding-left: 6px; padding-right: 6px; }
-    .site-header .logo { width: 90px; }
-    .site-header .header__list { gap: 3px; }
-    .site-header .header__list-link { padding-left: 5px; padding-right: 5px; font-size: 8.2px; }
-    .site-header .user-profile__avatar { width: 25px; height: 25px; }
-    .site-header .user-profile__name { max-width: 42px; font-size: 8.5px; }
+@media (max-width:480px){
+  .site-header .header__nav,.header .header__nav{padding:0 7px;gap:5px;}
+  .site-header .logo,.header .logo{width:82px;}
+  .site-header .header__list,.header .header__list{gap:5px;}
+  .site-header .header__list-link,.header .header__list-link{font-size:8px;}
+  .site-header .premium-nav-link,.header .premium-nav-link{padding:6px 7px;font-size:8px;}
 }
