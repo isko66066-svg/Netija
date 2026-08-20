@@ -24,14 +24,15 @@ export async function getPremiumStatus(){
   return r.json();
 }
 
-export async function createPaymeOrder(){
+export async function createPaymeOrder(plan = 'monthly'){
   const user = getCurrentUser();
   if (!user?.email) throw new Error('LOGIN_REQUIRED');
+  if (!['monthly', 'yearly'].includes(plan)) throw new Error('INVALID_PLAN');
 
   const r = await fetch(`${BACKEND_URL}/api/payments/payme/create-order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: user.email })
+    body: JSON.stringify({ email: user.email, plan })
   });
 
   const data = await r.json().catch(() => ({}));
@@ -39,30 +40,21 @@ export async function createPaymeOrder(){
   return data;
 }
 
-export async function openPaymePayment(){
-  const order = await createPaymeOrder();
-
-  // Payme Checkout expects the merchant, amount and account in the URL payload.
+export async function openPaymePayment(plan = 'monthly'){
+  const order = await createPaymeOrder(plan);
   const payload = [
     `m=${order.merchant}`,
     `ac.order_id=${order.orderId}`,
     `a=${order.amount}`
   ].join(';');
-
   const encoded = btoa(unescape(encodeURIComponent(payload)));
   const url = `https://checkout.paycom.uz/${encoded}`;
   window.location.href = url;
   return order;
 }
 
-// Backwards-compatible aliases used by existing UI code.
-export async function cancelPremium(){
-  throw new Error('CANCEL_NOT_AVAILABLE');
-}
-
-export async function resumePremium(){
-  throw new Error('RESUME_NOT_AVAILABLE');
-}
+export async function cancelPremium(){ throw new Error('CANCEL_NOT_AVAILABLE'); }
+export async function resumePremium(){ throw new Error('RESUME_NOT_AVAILABLE'); }
 
 export function setupRewardedResultGate({onReward}){
   let rewardedReady=false, rewardedSlot=null;
@@ -71,9 +63,7 @@ export function setupRewardedResultGate({onReward}){
     rewardedSlot=googletag.defineOutOfPageSlot('/YOUR_AD_MANAGER_NETWORK_ID/netija_rewarded',googletag.enums.OutOfPageFormat.REWARDED);
     if(!rewardedSlot) return;
     rewardedSlot.addService(googletag.pubads());
-    googletag.pubads().addEventListener('rewardedSlotReady',e=>{
-      if(e.slot===rewardedSlot){ rewardedReady=true; window.dispatchEvent(new CustomEvent('netija:rewarded-ready')); }
-    });
+    googletag.pubads().addEventListener('rewardedSlotReady',e=>{ if(e.slot===rewardedSlot){ rewardedReady=true; window.dispatchEvent(new CustomEvent('netija:rewarded-ready')); } });
     googletag.pubads().addEventListener('rewardedSlotGranted',async e=>{
       if(e.slot!==rewardedSlot) return;
       try{
