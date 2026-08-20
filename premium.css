@@ -42,6 +42,14 @@
 .premium-benefits li:hover{transform:translateY(-2px);border-color:#d8e3f0;background:#fbfdff;}
 .premium-plans{align-items:stretch;}
 
+/* Exam result legend: always show the status dots after submission. */
+.questions-sidebar .question-status{display:flex!important;align-items:center!important;gap:8px!important;min-height:18px;}
+.questions-sidebar .question-status .status-dot{display:inline-block!important;width:11px!important;height:11px!important;min-width:11px!important;flex:0 0 11px!important;border-radius:50%!important;visibility:visible!important;opacity:1!important;}
+.questions-sidebar .question-status--correct .status-dot--correct{background:#22c55e!important;border:0!important;}
+.questions-sidebar .question-status--incorrect .status-dot--incorrect{background:#ef4444!important;border:0!important;}
+.questions-sidebar .question-status--correct{color:#15803d!important;}
+.questions-sidebar .question-status--incorrect{color:#b91c1c!important;}
+
 @media(max-width:800px){.premium-page{padding:36px 14px 60px}.premium-hero h1{font-size:34px}.premium-offer{grid-template-columns:1fr}.premium-benefits{padding:22px}.premium-purchase{padding:20px;}}
 @media(max-width:560px){.premium-plans{grid-template-columns:1fr}.premium-plan{min-height:110px}.premium-plan[data-plan="yearly"]{padding-top:38px}.premium-plan[data-plan="yearly"].active{padding-top:37px;}}
 @media(max-width:480px){.premium-hero h1{font-size:29px}.premium-hero p{font-size:14px}.premium-benefits h2{font-size:20px}}
