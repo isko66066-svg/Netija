@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 280">
+<rect width="100%" height="100%" fill="white" fill-opacity="0"/>
+<line x1="70" y1="230" x2="410" y2="230" stroke="#222" stroke-width="2"/>
+<line x1="90" y1="250" x2="90" y2="35" stroke="#222" stroke-width="2"/>
+<line x1="90" y1="80" x2="360" y2="80" stroke="#777" stroke-width="2"/>
+<line x1="260" y1="230" x2="260" y2="55" stroke="#777" stroke-width="2"/>
+<path d="M165 35 C185 45,205 60,220 80 C240 108,255 155,260 230" fill="none" stroke="#222" stroke-width="2"/>
+<path d="M90 80 L220 80 C240 108 255 155 260 230 L90 230 Z" fill="#d9d9d9" fill-opacity=".65"/>
+<text x="72" y="55" font-size="16">y</text><text x="410" y="248" font-size="16">x</text>
+<text x="295" y="72" font-size="16">y₂ = 2</text><text x="265" y="252" font-size="16">x₂ = 2</text>
+<text x="295" y="155" font-size="17">f(x)=2/x</text>
+</svg>
