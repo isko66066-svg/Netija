@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netija — Admin</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        .admin-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 28px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(20, 30, 55, 0.12);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            margin: 0 0 24px;
+            color: #6b7280;
+        }
+
+        label {
+            display: block;
+            margin: 16px 0 7px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d8deea;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #6c63ff;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 13px 16px;
+            border: 0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .grant {
+            background: #6c63ff;
+            color: white;
+        }
+
+        .revoke {
+            background: #eef0f5;
+            color: #303747;
+        }
+
+        #status {
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 12px;
+            display: none;
+            white-space: pre-wrap;
+        }
+
+        .success {
+            display: block !important;
+            background: #eaf8ef;
+            color: #16733a;
+        }
+
+        .error {
+            display: block !important;
+            background: #fff0f0;
+            color: #b42318;
+        }
+    </style>
+</head>
+<body>
+    <main class="admin-card">
+        <h1>Netija Admin 👑</h1>
+        <p class="subtitle">Управление Pro-подпиской</p>
+
+        <label for="adminKey">Admin Key</label>
+        <input
+            id="adminKey"
+            type="password"
+            autocomplete="off"
+            placeholder="Введите ADMIN_KEY"
+        >
+
+        <label for="email">Email пользователя</label>
+        <input
+            id="email"
+            type="email"
+            autocomplete="off"
+            placeholder="user@gmail.com"
+        >
+
+        <label for="days">Срок Pro, дней</label>
+        <input
+            id="days"
+            type="number"
+            min="1"
+            max="36500"
+            value="3650"
+        >
+
+        <button class="grant" id="grantBtn">
+            👑 Выдать Pro
+        </button>
+
+        <button class="revoke" id="revokeBtn">
+            Забрать Pro
+        </button>
+
+        <div id="status"></div>
+    </main>
+
+    <script>
+        const API_URL = "https://netija.onrender.com";
+
+        const keyInput = document.getElementById("adminKey");
+        const emailInput = document.getElementById("email");
+        const daysInput = document.getElementById("days");
+        const status = document.getElementById("status");
+
+        function showStatus(message, isError = false) {
+            status.textContent = message;
+            status.className = isError ? "error" : "success";
+        }
+
+        async function adminRequest(endpoint, body) {
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Admin-Key": keyInput.value.trim()
+                },
+                body: JSON.stringify(body)
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.error || `Ошибка ${response.status}`);
+            }
+
+            return data;
+        }
+
+        document.getElementById("grantBtn").addEventListener("click", async () => {
+            const email = emailInput.value.trim();
+            const days = Number(daysInput.value);
+
+            if (!keyInput.value.trim()) {
+                return showStatus("Введите Admin Key.", true);
+            }
+
+            if (!email) {
+                return showStatus("Введите email пользователя.", true);
+            }
+
+            try {
+                const data = await adminRequest("/api/admin/grant-pro", {
+                    email,
+                    days
+                });
+
+                showStatus(
+                    `✅ Pro выдан\nEmail: ${data.user}\nДо: ${data.premiumUntil}`
+                );
+            } catch (error) {
+                showStatus(`❌ ${error.message}`, true);
+            }
+        });
+
+        document.getElementById("revokeBtn").addEventListener("click", async () => {
+            const email = emailInput.value.trim();
+
+            if (!keyInput.value.trim()) {
+                return showStatus("Введите Admin Key.", true);
+            }
+
+            if (!email) {
+                return showStatus("Введите email пользователя.", true);
+            }
+
+            try {
+                const data = await adminRequest("/api/admin/revoke-pro", {
+                    email
+                });
+
+                showStatus(`✅ Pro отключён\nEmail: ${data.user}`);
+            } catch (error) {
+                showStatus(`❌ ${error.message}`, true);
+            }
+        });
+    </script>
+</body>
+</html>
