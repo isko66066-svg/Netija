@@ -1,0 +1,27 @@
+/* Final exam UI fixes */
+.questions-sidebar .question-status{
+    display:flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    min-height:18px;
+}
+.questions-sidebar .question-status .status-dot{
+    display:inline-block !important;
+    width:11px !important;
+    height:11px !important;
+    min-width:11px !important;
+    flex:0 0 11px !important;
+    border-radius:50% !important;
+    visibility:visible !important;
+    opacity:1 !important;
+}
+.questions-sidebar .question-status--correct .status-dot--correct{
+    background:#22c55e !important;
+    border:0 !important;
+}
+.questions-sidebar .question-status--incorrect .status-dot--incorrect{
+    background:#ef4444 !important;
+    border:0 !important;
+}
+.questions-sidebar .question-status--correct{color:#15803d !important;}
+.questions-sidebar .question-status--incorrect{color:#b91c1c !important;}
