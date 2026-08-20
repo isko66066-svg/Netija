@@ -11,6 +11,7 @@ const PAYME_KEY = process.env.PAYME_KEY || "";
 const PAYME_MERCHANT_ID = process.env.PAYME_MERCHANT_ID || "";
 const PREMIUM_AMOUNT_TIIYN = Number(process.env.PREMIUM_AMOUNT_TIIYN || 0);
 const PREMIUM_DAYS = Number(process.env.PREMIUM_DAYS || 30);
+const ADMIN_KEY = process.env.ADMIN_KEY || "";
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
@@ -60,8 +61,6 @@ function refreshPremiumStatus(user) {
     return user;
 }
 
-// Google frontend sync: stores the verified-looking account data needed by the current site.
-// The frontend keeps the Google credential out of localStorage.
 app.post("/api/auth/sync", (req, res) => {
     const email = String(req.body?.email || "").trim().toLowerCase();
     if (!email || !email.includes("@")) return res.status(400).json({ error: "Нужен корректный email" });
@@ -72,6 +71,7 @@ app.post("/api/auth/sync", (req, res) => {
         const result = db.prepare(`INSERT INTO users (email, password_hash) VALUES (?, ?)`).run(email, hashPassword(password));
         user = db.prepare(`SELECT id, email, premium, premium_until, subscription_status FROM users WHERE id = ?`).get(result.lastInsertRowid);
     }
+    refreshPremiumStatus(user);
     res.json({ success: true, user: publicUser(user) });
 });
 
@@ -93,19 +93,12 @@ app.get("/api/premium/status", (req, res) => {
     res.json({ premium: Boolean(user.premium), premiumUntil: user.premium_until, subscriptionStatus: user.subscription_status });
 });
 
-// Проверка и атомарное использование бесплатного теста.
-// Premium-пользователи не расходуют дневной лимит.
 app.post("/api/tests/daily-access", (req, res) => {
     const email = String(req.body?.email || "").trim().toLowerCase();
     const testId = String(req.body?.testId || "").trim();
 
-    if (!email || !email.includes("@")) {
-        return res.status(400).json({ error: "Нужен корректный email" });
-    }
-
-    if (!testId) {
-        return res.status(400).json({ error: "testId не указан" });
-    }
+    if (!email || !email.includes("@")) return res.status(400).json({ error: "Нужен корректный email" });
+    if (!testId) return res.status(400).json({ error: "testId не указан" });
 
     const user = db.prepare(`
         SELECT id, email, premium, premium_until, subscription_status
@@ -113,22 +106,15 @@ app.post("/api/tests/daily-access", (req, res) => {
         WHERE email = ?
     `).get(email);
 
-    if (!user) {
-        return res.status(404).json({ error: "Пользователь не найден" });
-    }
+    if (!user) return res.status(404).json({ error: "Пользователь не найден" });
 
     refreshPremiumStatus(user);
 
     if (user.premium) {
-        return res.json({
-            allowed: true,
-            premium: true,
-            usageDate: getTashkentDate()
-        });
+        return res.json({ allowed: true, premium: true, usageDate: getTashkentDate() });
     }
 
     const usageDate = getTashkentDate();
-
     const result = db.prepare(`
         INSERT OR IGNORE INTO daily_test_usage
             (user_id, usage_date, test_id, created_at)
@@ -136,12 +122,7 @@ app.post("/api/tests/daily-access", (req, res) => {
     `).run(user.id, usageDate, testId, Date.now());
 
     if (result.changes === 0) {
-        const usage = db.prepare(`
-            SELECT test_id
-            FROM daily_test_usage
-            WHERE user_id = ? AND usage_date = ?
-        `).get(user.id, usageDate);
-
+        const usage = db.prepare(`SELECT test_id FROM daily_test_usage WHERE user_id = ? AND usage_date = ?`).get(user.id, usageDate);
         return res.status(409).json({
             allowed: false,
             premium: false,
@@ -152,12 +133,72 @@ app.post("/api/tests/daily-access", (req, res) => {
         });
     }
 
+    return res.json({ allowed: true, premium: false, usageDate, usedTestId: testId });
+});
+
+// Админ: выдать Pro пользователю.
+// ADMIN_KEY хранится только в Render Environment Variables и никогда не попадает в GitHub.
+app.post("/api/admin/grant-pro", (req, res) => {
+    const providedKey = String(req.get("X-Admin-Key") || req.body?.adminKey || "");
+    const email = String(req.body?.email || "").trim().toLowerCase();
+
+    if (!ADMIN_KEY || !crypto.timingSafeEqual(
+        Buffer.from(providedKey),
+        Buffer.from(ADMIN_KEY)
+    )) {
+        return res.status(403).json({ error: "Доступ запрещён" });
+    }
+
+    if (!email || !email.includes("@")) {
+        return res.status(400).json({ error: "Нужен корректный email" });
+    }
+
+    const user = db.prepare("SELECT id FROM users WHERE email = ?").get(email);
+
+    if (!user) {
+        return res.status(404).json({ error: "Пользователь не найден. Сначала войдите в Netija через Google." });
+    }
+
+    const premiumUntil = new Date("2099-12-31T23:59:59.000Z").toISOString();
+
+    db.prepare(`
+        UPDATE users
+        SET premium = 1,
+            premium_until = ?,
+            subscription_status = 'active'
+        WHERE id = ?
+    `).run(premiumUntil, user.id);
+
     return res.json({
-        allowed: true,
-        premium: false,
-        usageDate,
-        usedTestId: testId
+        success: true,
+        email,
+        premium: true,
+        premiumUntil
     });
+});
+
+app.post("/api/admin/revoke-pro", (req, res) => {
+    const providedKey = String(req.get("X-Admin-Key") || req.body?.adminKey || "");
+    const email = String(req.body?.email || "").trim().toLowerCase();
+
+    if (!ADMIN_KEY || !crypto.timingSafeEqual(
+        Buffer.from(providedKey),
+        Buffer.from(ADMIN_KEY)
+    )) {
+        return res.status(403).json({ error: "Доступ запрещён" });
+    }
+
+    const result = db.prepare(`
+        UPDATE users
+        SET premium = 0,
+            premium_until = NULL,
+            subscription_status = 'inactive'
+        WHERE email = ?
+    `).run(email);
+
+    if (!result.changes) return res.status(404).json({ error: "Пользователь не найден" });
+
+    return res.json({ success: true, email, premium: false });
 });
 
 app.get("/api/admin/users-count", (req, res) => {
