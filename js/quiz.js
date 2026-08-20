@@ -1,421 +1,481 @@
 function initQuiz() {
-    const quizContainer = document.getElementById('quizContainer');
-    const submitBtn = document.getElementById('submitBtn');
-    const resultBox = document.getElementById('resultBox');
-    const timerEl = document.getElementById('timer');
-    const EXPECTED_QUESTIONS = 45;
+  const quizContainer = document.getElementById("quizContainer");
+  const submitBtn = document.getElementById("submitBtn");
+  const resultBox = document.getElementById("resultBox");
+  const timerEl = document.getElementById("timer");
+  const EXPECTED_QUESTIONS = 45;
 
-    if (!quizContainer || typeof questions === 'undefined') {
-        console.error('Quiz: quizContainer или questions не найдены');
-        return;
+  if (!quizContainer || typeof questions === "undefined") {
+    console.error("Quiz: quizContainer или questions не найдены");
+    return;
+  }
+
+  let testSubmitted = false;
+  window.quizInProgress = true;
+  window.quizSubmitted = false;
+
+  function renderMath(element) {
+    if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+      return window.MathJax.typesetPromise([element]).catch((error) =>
+        console.error("MathJax error:", error),
+      );
     }
+    return Promise.resolve();
+  }
 
-    let testSubmitted = false;
-    window.quizInProgress = true;
-    window.quizSubmitted = false;
-
-    function renderMath(element) {
-        if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-            return window.MathJax.typesetPromise([element]).catch(error => console.error('MathJax error:', error));
+  async function waitForMathJax() {
+    if (window.MathJax && typeof window.MathJax.typesetPromise === "function")
+      return;
+    await new Promise((resolve) => {
+      let attempts = 0;
+      const check = setInterval(() => {
+        attempts++;
+        if (
+          window.MathJax &&
+          typeof window.MathJax.typesetPromise === "function"
+        ) {
+          clearInterval(check);
+          resolve();
         }
-        return Promise.resolve();
-    }
+        if (attempts >= 100) {
+          clearInterval(check);
+          resolve();
+        }
+      }, 50);
+    });
+  }
 
-    async function waitForMathJax() {
-        if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') return;
-        await new Promise(resolve => {
-            let attempts = 0;
-            const check = setInterval(() => {
-                attempts++;
-                if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-                    clearInterval(check);
-                    resolve();
-                }
-                if (attempts >= 100) {
-                    clearInterval(check);
-                    resolve();
-                }
-            }, 50);
+  window.addEventListener("beforeunload", function (e) {
+    if (!testSubmitted) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+
+  let timeLeft = 2 * 60 * 60 + 30 * 60;
+  let timerInterval;
+
+  function updateTimerDisplay() {
+    const hours = Math.floor(timeLeft / 3600);
+    const minutes = Math.floor((timeLeft % 3600) / 60);
+    const seconds = timeLeft % 60;
+    if (!timerEl) return;
+    timerEl.textContent = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    timerEl.classList.toggle("timer--warning", timeLeft <= 300);
+  }
+
+  function startTimer() {
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimerDisplay();
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        submitTest();
+        if (timerEl) timerEl.textContent = "Время вышло";
+      }
+    }, 1000);
+  }
+
+  function escapeHtmlOutsideMath(text) {
+    if (!text) return "";
+    return String(text).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function createMathText(className, text) {
+    const element = document.createElement("p");
+    element.className = className;
+    element.innerHTML = escapeHtmlOutsideMath(text || "");
+    return element;
+  }
+
+  function latexToPlainText(text) {
+    if (!text) return "";
+    let result = String(text);
+    result = result.replace(/\$\$?/g, "");
+    result = result.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, "$1/$2");
+    result = result.replace(/\\sqrt\{([^{}]+)\}/g, "√$1");
+    result = result.replace(/\\sqrt(\d+)/g, "√$1");
+    result = result.replace(/\\operatorname\{([^{}]+)\}/g, "$1");
+    result = result.replace(/[{}]/g, "");
+    result = result.replace(/\\,|\\ /g, " ");
+    return result.trim();
+  }
+
+  async function renderQuestions() {
+    quizContainer.innerHTML = "";
+
+    questions.forEach((q) => {
+      const block = document.createElement("div");
+      block.className = "question-block";
+      block.id = `question-block-${q.id}`;
+
+      block.appendChild(
+        createMathText("question-text", `${q.id}. ${q.question || ""}`),
+      );
+
+      if (q.subtitle) {
+        const subtitle = document.createElement("div");
+        subtitle.className = "question-subtitle";
+        subtitle.innerHTML = escapeHtmlOutsideMath(q.subtitle);
+        block.appendChild(subtitle);
+      }
+
+      if (q.image) {
+        const img = document.createElement("img");
+        img.className = "question-image";
+        img.src = q.image;
+        img.alt = `Изображение к заданию ${q.id}`;
+        block.appendChild(img);
+      }
+
+      if (q.type === "single_choice") {
+        const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
+        const optionsList = document.createElement("div");
+        optionsList.className = "options-list";
+        q.options.forEach((option, optIndex) => {
+          const label = document.createElement("label");
+          label.className = "option-label";
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = `q-${q.id}`;
+          input.value = optIndex;
+          label.appendChild(input);
+          const optionText = document.createElement("span");
+          optionText.innerHTML = escapeHtmlOutsideMath(
+            `${letters[optIndex] || ""}) ${option}`,
+          );
+          label.appendChild(optionText);
+          optionsList.appendChild(label);
         });
-    }
+        block.appendChild(optionsList);
+      }
 
-    window.addEventListener('beforeunload', function (e) {
-        if (!testSubmitted) {
-            e.preventDefault();
-            e.returnValue = '';
+      if (q.type === "matching") {
+        if (q.context) {
+          const context = document.createElement("div");
+          context.className = "matching-context";
+          context.innerHTML = escapeHtmlOutsideMath(q.context);
+          block.appendChild(context);
         }
+        q.items.forEach((item) => {
+          const itemBlock = document.createElement("div");
+          itemBlock.className = "matching-item";
+          const itemText = document.createElement("p");
+          itemText.className = "sub-question-text";
+          itemText.innerHTML = escapeHtmlOutsideMath(
+            `${item.id}. ${item.text}`,
+          );
+          itemBlock.appendChild(itemText);
+          const select = document.createElement("select");
+          select.className = "matching-select";
+          select.dataset.itemId = item.id;
+          const emptyOption = document.createElement("option");
+          emptyOption.value = "";
+          emptyOption.textContent = "Выберите ответ";
+          select.appendChild(emptyOption);
+          Object.entries(q.optionsPool || {}).forEach(([letter, value]) => {
+            const opt = document.createElement("option");
+            opt.value = letter;
+            opt.textContent = `${letter}) ${latexToPlainText(value)}`;
+            select.appendChild(opt);
+          });
+          itemBlock.appendChild(select);
+          block.appendChild(itemBlock);
+        });
+      }
+
+      if (q.type === "open_ended") {
+        q.subQuestions.forEach((sub) => {
+          const subBlock = document.createElement("div");
+          subBlock.className = "sub-question-item";
+          const subText = document.createElement("p");
+          subText.className = "sub-question-text";
+          subText.innerHTML = escapeHtmlOutsideMath(sub.text || "");
+          subBlock.appendChild(subText);
+          const input = document.createElement("input");
+          input.type = "text";
+          input.className = "sub-question-input";
+          input.placeholder = "Введите ответ";
+          input.dataset.questionId = q.id;
+          input.dataset.subId = sub.id;
+          subBlock.appendChild(input);
+          block.appendChild(subBlock);
+        });
+      }
+
+      quizContainer.appendChild(block);
     });
 
-    let timeLeft = 2 * 60 * 60 + 30 * 60;
-    let timerInterval;
+    await waitForMathJax();
+    await renderMath(quizContainer);
+  }
 
-    function updateTimerDisplay() {
-        const hours = Math.floor(timeLeft / 3600);
-        const minutes = Math.floor((timeLeft % 3600) / 60);
-        const seconds = timeLeft % 60;
-        if (!timerEl) return;
-        timerEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        timerEl.classList.toggle('timer--warning', timeLeft <= 300);
+  if (submitBtn) {
+    submitBtn.addEventListener("click", () => {
+      if (testSubmitted) return;
+      if (
+        !window.confirm(
+          "Вы уверены, что хотите завершить тест и проверить результат?",
+        )
+      )
+        return;
+      submitTest();
+    });
+  }
+
+  function getCertificateGrade(score) {
+    if (score < 44.0) return { level: "Не выдается", passed: false };
+    if (score <= 49.99) return { level: "C", passed: true };
+    if (score <= 54.99) return { level: "C+", passed: true };
+    if (score <= 59.99) return { level: "B", passed: true };
+    if (score <= 64.99) return { level: "B+", passed: true };
+    if (score <= 69.99) return { level: "A", passed: true };
+    return { level: "A+", passed: true };
+  }
+
+  function normalizeAnswer(value) {
+    return String(value ?? "")
+      .trim()
+      .replace(/\s+/g, "")
+      .replace(",", ".")
+      .toLowerCase();
+  }
+
+  function answersMatch(userValue, correctValue) {
+    const user = normalizeAnswer(userValue);
+    const correct = normalizeAnswer(correctValue);
+    if (!user || !correct) return false;
+    if (user === correct) return true;
+
+    // Allow equivalent decimal representations such as 1.5 and 1.50.
+    const userNumber = Number(user);
+    const correctNumber = Number(correct);
+    if (Number.isFinite(userNumber) && Number.isFinite(correctNumber)) {
+      return Math.abs(userNumber - correctNumber) < 1e-9;
     }
+    return false;
+  }
 
-    function startTimer() {
-        updateTimerDisplay();
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            updateTimerDisplay();
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                submitTest();
-                if (timerEl) timerEl.textContent = 'Время вышло';
-            }
-        }, 1000);
-    }
+  function addOpenAnswerFeedback(subBlock, isCorrect, correctAnswer) {
+    if (!subBlock) return;
+    subBlock
+      .querySelectorAll(".open-answer-feedback")
+      .forEach((el) => el.remove());
 
-    function escapeHtmlOutsideMath(text) {
-        if (!text) return '';
-        return String(text).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
+    const feedback = document.createElement("div");
+    feedback.className = `open-answer-feedback ${isCorrect ? "open-answer-feedback--correct" : "open-answer-feedback--wrong"}`;
 
-    function createMathText(className, text) {
-        const element = document.createElement('p');
-        element.className = className;
-        element.innerHTML = escapeHtmlOutsideMath(text || '');
-        return element;
-    }
+    const label = document.createElement("strong");
+    label.textContent = isCorrect ? "✓ Правильный ответ" : "✗ Правильный ответ";
+    feedback.appendChild(label);
 
-    function latexToPlainText(text) {
-        if (!text) return '';
-        let result = String(text);
-        result = result.replace(/\$\$?/g, '');
-        result = result.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2');
-        result = result.replace(/\\sqrt\{([^{}]+)\}/g, '√$1');
-        result = result.replace(/\\sqrt(\d+)/g, '√$1');
-        result = result.replace(/\\operatorname\{([^{}]+)\}/g, '$1');
-        result = result.replace(/[{}]/g, '');
-        result = result.replace(/\\,|\\ /g, ' ');
-        return result.trim();
-    }
+    const answer = document.createElement("span");
+    answer.className = "open-answer-feedback__value";
+    answer.innerHTML = escapeHtmlOutsideMath(String(correctAnswer ?? ""));
+    feedback.appendChild(answer);
 
-    async function renderQuestions() {
-        quizContainer.innerHTML = '';
+    subBlock.appendChild(feedback);
+    renderMath(feedback);
+  }
 
-        questions.forEach((q) => {
-            const block = document.createElement('div');
-            block.className = 'question-block';
-            block.id = `question-block-${q.id}`;
+  function scrollToResultTop() {
+    // On mobile the result must be immediately visible after submission.
+    // A small delay lets the result DOM/layout finish before scrolling.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      });
+    });
+  }
 
-            block.appendChild(createMathText('question-text', `${q.id}. ${q.question || ''}`));
+  function submitTest() {
+    if (testSubmitted) return;
+    testSubmitted = true;
+    window.quizSubmitted = true;
+    window.quizInProgress = false;
+    clearInterval(timerInterval);
 
-            if (q.subtitle) {
-                const subtitle = document.createElement('div');
-                subtitle.className = 'question-subtitle';
-                subtitle.innerHTML = escapeHtmlOutsideMath(q.subtitle);
-                block.appendChild(subtitle);
-            }
+    let totalRawScore = 0;
+    let correctFullTasksCount = 0;
+    let totalScoredParts = 0;
+    const details = [];
 
-            if (q.image) {
-                const img = document.createElement('img');
-                img.className = 'question-image';
-                img.src = q.image;
-                img.alt = `Изображение к заданию ${q.id}`;
-                block.appendChild(img);
-            }
+    questions.forEach((q) => {
+      const block = document.getElementById(`question-block-${q.id}`);
+      let questionCorrect = true;
 
-            if (q.type === 'single_choice') {
-                const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-                const optionsList = document.createElement('div');
-                optionsList.className = 'options-list';
-                q.options.forEach((option, optIndex) => {
-                    const label = document.createElement('label');
-                    label.className = 'option-label';
-                    const input = document.createElement('input');
-                    input.type = 'radio';
-                    input.name = `q-${q.id}`;
-                    input.value = optIndex;
-                    label.appendChild(input);
-                    const optionText = document.createElement('span');
-                    optionText.innerHTML = escapeHtmlOutsideMath(`${letters[optIndex] || ''}) ${option}`);
-                    label.appendChild(optionText);
-                    optionsList.appendChild(label);
-                });
-                block.appendChild(optionsList);
-            }
-
-            if (q.type === 'matching') {
-                if (q.context) {
-                    const context = document.createElement('div');
-                    context.className = 'matching-context';
-                    context.innerHTML = escapeHtmlOutsideMath(q.context);
-                    block.appendChild(context);
-                }
-                q.items.forEach((item) => {
-                    const itemBlock = document.createElement('div');
-                    itemBlock.className = 'matching-item';
-                    const itemText = document.createElement('p');
-                    itemText.className = 'sub-question-text';
-                    itemText.innerHTML = escapeHtmlOutsideMath(`${item.id}. ${item.text}`);
-                    itemBlock.appendChild(itemText);
-                    const select = document.createElement('select');
-                    select.className = 'matching-select';
-                    select.dataset.itemId = item.id;
-                    const emptyOption = document.createElement('option');
-                    emptyOption.value = '';
-                    emptyOption.textContent = 'Выберите ответ';
-                    select.appendChild(emptyOption);
-                    Object.entries(q.optionsPool || {}).forEach(([letter, value]) => {
-                        const opt = document.createElement('option');
-                        opt.value = letter;
-                        opt.textContent = `${letter}) ${latexToPlainText(value)}`;
-                        select.appendChild(opt);
-                    });
-                    itemBlock.appendChild(select);
-                    block.appendChild(itemBlock);
-                });
-            }
-
-            if (q.type === 'open_ended') {
-                q.subQuestions.forEach((sub) => {
-                    const subBlock = document.createElement('div');
-                    subBlock.className = 'sub-question-item';
-                    const subText = document.createElement('p');
-                    subText.className = 'sub-question-text';
-                    subText.innerHTML = escapeHtmlOutsideMath(sub.text || '');
-                    subBlock.appendChild(subText);
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.className = 'sub-question-input';
-                    input.placeholder = 'Введите ответ';
-                    input.dataset.questionId = q.id;
-                    input.dataset.subId = sub.id;
-                    subBlock.appendChild(input);
-                    block.appendChild(subBlock);
-                });
-            }
-
-            quizContainer.appendChild(block);
+      if (q.type === "single_choice") {
+        totalScoredParts++;
+        const points = q.points !== undefined ? q.points : 1.3;
+        const selected = document.querySelector(
+          `input[name="q-${q.id}"]:checked`,
+        );
+        const selectedValue = selected ? parseInt(selected.value, 10) : null;
+        const isCorrect = selectedValue === q.correctAnswer;
+        if (isCorrect) {
+          totalRawScore += points;
+          correctFullTasksCount++;
+        } else questionCorrect = false;
+        details.push({
+          number: q.id,
+          isCorrect,
+          answered: selectedValue !== null,
         });
 
-        await waitForMathJax();
-        await renderMath(quizContainer);
-    }
-
-    if (submitBtn) {
-        submitBtn.addEventListener('click', () => {
-            if (testSubmitted) return;
-            if (!window.confirm('Вы уверены, что хотите завершить тест и проверить результат?')) return;
-            submitTest();
-        });
-    }
-
-    function getCertificateGrade(score) {
-        if (score < 44.0) return { level: 'Не выдается', passed: false };
-        if (score <= 49.99) return { level: 'C', passed: true };
-        if (score <= 54.99) return { level: 'C+', passed: true };
-        if (score <= 59.99) return { level: 'B', passed: true };
-        if (score <= 64.99) return { level: 'B+', passed: true };
-        if (score <= 69.99) return { level: 'A', passed: true };
-        return { level: 'A+', passed: true };
-    }
-
-    function normalizeAnswer(value) {
-        return String(value ?? '')
-            .trim()
-            .replace(/\s+/g, '')
-            .replace(',', '.')
-            .toLowerCase();
-    }
-
-    function answersMatch(userValue, correctValue) {
-        const user = normalizeAnswer(userValue);
-        const correct = normalizeAnswer(correctValue);
-        if (!user || !correct) return false;
-        if (user === correct) return true;
-
-        // Allow equivalent decimal representations such as 1.5 and 1.50.
-        const userNumber = Number(user);
-        const correctNumber = Number(correct);
-        if (Number.isFinite(userNumber) && Number.isFinite(correctNumber)) {
-            return Math.abs(userNumber - correctNumber) < 1e-9;
+        if (block) {
+          block.querySelectorAll(".option-label").forEach((label, idx) => {
+            label.classList.remove("correct-answer", "wrong-answer");
+            const input = label.querySelector("input");
+            if (input) input.disabled = true;
+            if (idx === q.correctAnswer) label.classList.add("correct-answer");
+            else if (idx === selectedValue && !isCorrect)
+              label.classList.add("wrong-answer");
+          });
         }
-        return false;
-    }
+      }
 
-    function addOpenAnswerFeedback(subBlock, isCorrect, correctAnswer) {
-        if (!subBlock) return;
-        subBlock.querySelectorAll('.open-answer-feedback').forEach(el => el.remove());
-
-        const feedback = document.createElement('div');
-        feedback.className = `open-answer-feedback ${isCorrect ? 'open-answer-feedback--correct' : 'open-answer-feedback--wrong'}`;
-
-        const label = document.createElement('strong');
-        label.textContent = isCorrect ? '✓ Правильный ответ' : '✗ Правильный ответ';
-        feedback.appendChild(label);
-
-        const answer = document.createElement('span');
-        answer.className = 'open-answer-feedback__value';
-        answer.innerHTML = escapeHtmlOutsideMath(String(correctAnswer ?? ''));
-        feedback.appendChild(answer);
-
-        subBlock.appendChild(feedback);
-        renderMath(feedback);
-    }
-
-    function scrollToResultTop() {
-        // On mobile the result must be immediately visible after submission.
-        // A small delay lets the result DOM/layout finish before scrolling.
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-                document.documentElement.scrollTop = 0;
-                document.body.scrollTop = 0;
-            });
+      if (q.type === "matching") {
+        const points = q.points !== undefined ? q.points : 2.2;
+        let allCorrect = true;
+        q.items.forEach((item) => {
+          totalScoredParts++;
+          const select = block
+            ? block.querySelector(`select[data-item-id="${item.id}"]`)
+            : null;
+          const selectedValue = select ? select.value : "";
+          const isItemCorrect = selectedValue === item.correctAnswer;
+          if (!isItemCorrect) allCorrect = false;
+          details.push({
+            number: item.id,
+            isCorrect: isItemCorrect,
+            answered: selectedValue !== "",
+          });
+          if (select) {
+            select.disabled = true;
+            const hint = document.createElement("span");
+            hint.className = `correct-hint ${isItemCorrect ? "correct-hint--success" : "correct-hint--wrong"}`;
+            const correctText =
+              q.optionsPool && q.optionsPool[item.correctAnswer]
+                ? q.optionsPool[item.correctAnswer]
+                : "";
+            hint.innerHTML = escapeHtmlOutsideMath(
+              `Правильный ответ: ${item.correctAnswer}) ${correctText}`,
+            );
+            select.insertAdjacentElement("afterend", hint);
+            renderMath(hint);
+          }
         });
-    }
+        if (allCorrect) {
+          totalRawScore += points;
+          correctFullTasksCount++;
+        } else questionCorrect = false;
+      }
 
-    function submitTest() {
-        if (testSubmitted) return;
-        testSubmitted = true;
-        window.quizSubmitted = true;
-        window.quizInProgress = false;
-        clearInterval(timerInterval);
+      if (q.type === "open_ended") {
+        let aCorrect = false;
+        let bCorrect = false;
+        q.subQuestions.forEach((sub) => {
+          totalScoredParts++;
+          const input = block
+            ? block.querySelector(
+                `input[data-question-id="${q.id}"][data-sub-id="${sub.id}"]`,
+              )
+            : null;
+          const subBlock = input ? input.closest(".sub-question-item") : null;
+          const value = input ? input.value.trim() : "";
+          const correctAnswer = sub.correctAnswer;
+          const isCorrect = answersMatch(value, correctAnswer);
 
-        let totalRawScore = 0;
-        let correctFullTasksCount = 0;
-        let totalScoredParts = 0;
-        const details = [];
+          if (sub.id === "a") {
+            aCorrect = isCorrect;
+            if (isCorrect) totalRawScore += 1.5;
+          }
+          if (sub.id === "b") {
+            bCorrect = isCorrect;
+            if (isCorrect) totalRawScore += 1.7;
+          }
 
-        questions.forEach((q) => {
-            const block = document.getElementById(`question-block-${q.id}`);
-            let questionCorrect = true;
-
-            if (q.type === 'single_choice') {
-                totalScoredParts++;
-                const points = q.points !== undefined ? q.points : 1.3;
-                const selected = document.querySelector(`input[name="q-${q.id}"]:checked`);
-                const selectedValue = selected ? parseInt(selected.value, 10) : null;
-                const isCorrect = selectedValue === q.correctAnswer;
-                if (isCorrect) {
-                    totalRawScore += points;
-                    correctFullTasksCount++;
-                } else questionCorrect = false;
-                details.push({ number: q.id, isCorrect, answered: selectedValue !== null });
-
-                if (block) {
-                    block.querySelectorAll('.option-label').forEach((label, idx) => {
-                        label.classList.remove('correct-answer', 'wrong-answer');
-                        const input = label.querySelector('input');
-                        if (input) input.disabled = true;
-                        if (idx === q.correctAnswer) label.classList.add('correct-answer');
-                        else if (idx === selectedValue && !isCorrect) label.classList.add('wrong-answer');
-                    });
-                }
-            }
-
-            if (q.type === 'matching') {
-                const points = q.points !== undefined ? q.points : 2.2;
-                let allCorrect = true;
-                q.items.forEach((item) => {
-                    totalScoredParts++;
-                    const select = block ? block.querySelector(`select[data-item-id="${item.id}"]`) : null;
-                    const selectedValue = select ? select.value : '';
-                    const isItemCorrect = selectedValue === item.correctAnswer;
-                    if (!isItemCorrect) allCorrect = false;
-                    details.push({ number: item.id, isCorrect: isItemCorrect, answered: selectedValue !== '' });
-                    if (select) {
-                        select.disabled = true;
-                        const hint = document.createElement('span');
-                        hint.className = `correct-hint ${isItemCorrect ? 'correct-hint--success' : 'correct-hint--wrong'}`;
-                        const correctText = q.optionsPool && q.optionsPool[item.correctAnswer] ? q.optionsPool[item.correctAnswer] : '';
-                        hint.innerHTML = escapeHtmlOutsideMath(`Правильный ответ: ${item.correctAnswer}) ${correctText}`);
-                        select.insertAdjacentElement('afterend', hint);
-                        renderMath(hint);
-                    }
-                });
-                if (allCorrect) {
-                    totalRawScore += points;
-                    correctFullTasksCount++;
-                } else questionCorrect = false;
-            }
-
-            if (q.type === 'open_ended') {
-                let aCorrect = false;
-                let bCorrect = false;
-                q.subQuestions.forEach((sub) => {
-                    totalScoredParts++;
-                    const input = block ? block.querySelector(`input[data-question-id="${q.id}"][data-sub-id="${sub.id}"]`) : null;
-                    const subBlock = input ? input.closest('.sub-question-item') : null;
-                    const value = input ? input.value.trim() : '';
-                    const correctAnswer = sub.correctAnswer;
-                    const isCorrect = answersMatch(value, correctAnswer);
-
-                    if (sub.id === 'a') {
-                        aCorrect = isCorrect;
-                        if (isCorrect) totalRawScore += 1.5;
-                    }
-                    if (sub.id === 'b') {
-                        bCorrect = isCorrect;
-                        if (isCorrect) totalRawScore += 1.7;
-                    }
-
-                    details.push({ number: `${q.id}${sub.id}`, isCorrect, answered: value !== '' });
-                    if (input) input.disabled = true;
-                    addOpenAnswerFeedback(subBlock, isCorrect, correctAnswer);
-                });
-                if (aCorrect && bCorrect) correctFullTasksCount++;
-                else questionCorrect = false;
-            }
-
-            if (block) {
-                block.classList.toggle('question-correct', questionCorrect);
-                block.classList.toggle('question-incorrect', !questionCorrect);
-            }
+          details.push({
+            number: `${q.id}${sub.id}`,
+            isCorrect,
+            answered: value !== "",
+          });
+          if (input) input.disabled = true;
+          addOpenAnswerFeedback(subBlock, isCorrect, correctAnswer);
         });
+        if (aCorrect && bCorrect) correctFullTasksCount++;
+        else questionCorrect = false;
+      }
 
-        const maxRawScore = 64.2;
-        const finalScore = Number(Math.min(100, (totalRawScore / maxRawScore) * 100).toFixed(2));
-        const gradeInfo = getCertificateGrade(finalScore);
+      if (block) {
+        block.classList.toggle("question-correct", questionCorrect);
+        block.classList.toggle("question-incorrect", !questionCorrect);
+      }
+    });
 
-        const params = new URLSearchParams(window.location.search);
-        const testId = params.get('id');
-        const storageKey = `result_natcert-${testId}`;
-        const currentResult = {
-            score: finalScore,
-            correctCount: correctFullTasksCount,
-            total: EXPECTED_QUESTIONS,
-            level: gradeInfo.level
-        };
-        try {
-            const old = JSON.parse(localStorage.getItem(storageKey) || 'null');
-            if (old && Number(old.score) > finalScore) {
-                currentResult.score = old.score;
-                currentResult.correctCount = old.correctCount;
-                currentResult.level = old.level;
-            }
-            localStorage.setItem(storageKey, JSON.stringify(currentResult));
-        } catch (error) {
-            console.error('Ошибка сохранения результата:', error);
-        }
+    const maxRawScore = 64.2;
+    const finalScore = Number(
+      Math.min(100, (totalRawScore / maxRawScore) * 100).toFixed(2),
+    );
+    const gradeInfo = getCertificateGrade(finalScore);
 
-        renderResultBox(finalScore, correctFullTasksCount, EXPECTED_QUESTIONS, gradeInfo);
-        document.dispatchEvent(new CustomEvent('netija:testSubmitted', {
-            detail: { details, score: finalScore, grade: gradeInfo, correctCount: correctFullTasksCount, total: EXPECTED_QUESTIONS }
-        }));
-
-        scrollToResultTop();
+    const params = new URLSearchParams(window.location.search);
+    const testId = params.get("id");
+    const storageKey = `result_natcert-${testId}`;
+    const currentResult = {
+      score: finalScore,
+      correctCount: correctFullTasksCount,
+      total: EXPECTED_QUESTIONS,
+      level: gradeInfo.level,
+    };
+    try {
+      const old = JSON.parse(localStorage.getItem(storageKey) || "null");
+      if (old && Number(old.score) > finalScore) {
+        currentResult.score = old.score;
+        currentResult.correctCount = old.correctCount;
+        currentResult.level = old.level;
+      }
+      localStorage.setItem(storageKey, JSON.stringify(currentResult));
+    } catch (error) {
+      console.error("Ошибка сохранения результата:", error);
     }
 
-    function renderResultBox(score, correctCount, totalCount, gradeInfo) {
-        if (!resultBox) return;
-        const passed = gradeInfo.passed;
-        resultBox.style.display = 'block';
-        resultBox.innerHTML = `
+    renderResultBox(
+      finalScore,
+      correctFullTasksCount,
+      EXPECTED_QUESTIONS,
+      gradeInfo,
+    );
+    document.dispatchEvent(
+      new CustomEvent("netija:testSubmitted", {
+        detail: {
+          details,
+          score: finalScore,
+          grade: gradeInfo,
+          correctCount: correctFullTasksCount,
+          total: EXPECTED_QUESTIONS,
+        },
+      }),
+    );
+
+    scrollToResultTop();
+  }
+
+  function renderResultBox(score, correctCount, totalCount, gradeInfo) {
+    if (!resultBox) return;
+    const passed = gradeInfo.passed;
+    resultBox.style.display = "block";
+    resultBox.innerHTML = `
             <div class="result-summary-card">
                 <div class="result-header">
                     <div>
                         <div class="result-eyebrow">Результат тестирования</div>
                         <h3>Ваш результат</h3>
                     </div>
-                    <span class="result-status-badge ${passed ? 'result-status--success' : 'result-status--fail'}">${passed ? 'Сертификат получен' : 'Не выдается'}</span>
+                    <span class="result-status-badge ${passed ? "result-status--success" : "result-status--fail"}">${passed ? "Сертификат получен" : "Не выдается"}</span>
                 </div>
                 <div class="result-metrics">
                     <div class="metric-item metric-item--score"><span class="metric-label">Итоговый балл</span><span class="metric-value">${score}</span></div>
@@ -424,11 +484,11 @@ function initQuiz() {
                 </div>
             </div>
         `;
-        renderMath(resultBox);
-    }
+    renderMath(resultBox);
+  }
 
-    renderQuestions().then(() => {
-        startTimer();
-        document.dispatchEvent(new CustomEvent('netija:quizRendered'));
-    });
+  renderQuestions().then(() => {
+    startTimer();
+    document.dispatchEvent(new CustomEvent("netija:quizRendered"));
+  });
 }
