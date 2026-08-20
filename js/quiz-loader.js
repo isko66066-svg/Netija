@@ -23,18 +23,9 @@
         }
     }
 
-    function getTashkentDate() {
-        return new Intl.DateTimeFormat('en-CA', {
-            timeZone: 'Asia/Tashkent',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        }).format(new Date());
-    }
-
-    function showLimitMessage(message) {
+    function showAccessMessage(title, text) {
         if (titleEl) {
-            titleEl.textContent = 'Доступ к тесту ограничен';
+            titleEl.textContent = title;
         }
 
         if (timerEl) {
@@ -44,10 +35,7 @@
         if (quizContainer) {
             quizContainer.innerHTML = `
                 <div class="test-access-message">
-                    <h2>${message}</h2>
-                    <p>
-                        Бесплатно можно пройти только один тест в сутки.
-                    </p>
+                    <h2>${text}</h2>
                 </div>
             `;
         }
@@ -57,11 +45,12 @@
         }
     }
 
-    async function checkDailyLimit() {
+    async function checkDailyAccess() {
         const user = getCurrentUser();
 
         if (!user?.email) {
-            showLimitMessage(
+            showAccessMessage(
+                'Доступ к тесту ограничен',
                 'Сначала войдите в аккаунт, чтобы пройти тест.'
             );
             return false;
@@ -69,41 +58,62 @@
 
         try {
             const response = await fetch(
-                `${BACKEND_URL}/api/premium/status?email=${encodeURIComponent(user.email)}`
-            );
-
-            if (response.ok) {
-                const account = await response.json();
-
-                if (account.premium) {
-                    return true;
+                `${BACKEND_URL}/api/tests/daily-access`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: user.email,
+                        testId
+                    })
                 }
-            }
-        } catch (error) {
-            console.error(
-                'Не удалось проверить Premium:',
-                error
             );
-        }
 
-        const today = getTashkentDate();
-        const storageKey = `netija_daily_test_${user.email}_${today}`;
-        const alreadyUsed = localStorage.getItem(storageKey);
+            const data = await response.json().catch(() => ({}));
 
-        if (alreadyUsed) {
-            showLimitMessage(
-                'Вы уже прошли тест сегодня.'
+            if (response.ok && data.allowed) {
+                return true;
+            }
+
+            if (
+                response.status === 409 &&
+                data.error === 'DAILY_LIMIT_REACHED'
+            ) {
+                showAccessMessage(
+                    'Доступ к тесту ограничен',
+                    'Вы уже прошли тест сегодня.'
+                );
+                return false;
+            }
+
+            if (response.status === 404) {
+                showAccessMessage(
+                    'Доступ к тесту ограничен',
+                    'Пользователь не найден. Войдите в аккаунт заново.'
+                );
+                return false;
+            }
+
+            showAccessMessage(
+                'Ошибка доступа',
+                'Не удалось проверить доступ к тесту. Попробуйте ещё раз.'
+            );
+            return false;
+        } catch (error) {
+            console.error('Daily test access error:', error);
+
+            showAccessMessage(
+                'Ошибка соединения',
+                'Не удалось связаться с сервером. Попробуйте ещё раз.'
             );
             return false;
         }
-
-        localStorage.setItem(storageKey, '1');
-
-        return true;
     }
 
     async function loadQuiz() {
-        const allowed = await checkDailyLimit();
+        const allowed = await checkDailyAccess();
 
         if (!allowed) {
             return;
@@ -131,7 +141,8 @@
         };
 
         script.onerror = function () {
-            showLimitMessage(
+            showAccessMessage(
+                'Ошибка загрузки',
                 'Не удалось загрузить вопросы теста.'
             );
         };
