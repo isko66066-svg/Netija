@@ -572,6 +572,69 @@ a {
 }
 
 /* ===============================
+   ВЫПАДАЮЩЕЕ МЕНЮ ПРОФИЛЯ (desktop)
+   =============================== */
+
+.account-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 210px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    padding: 8px;
+    z-index: 1100;
+}
+
+.account-dropdown.open {
+    display: block;
+}
+
+.account-dropdown button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border: none;
+    background: none;
+    font: inherit;
+    font-weight: 600;
+    color: #19191B;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.account-dropdown button:hover {
+    background-color: #f1f5f9;
+}
+
+.account-dropdown button.danger {
+    color: #dc2626;
+}
+
+/* Пункты аккаунта внутри бургер-списка — на десктопе скрыты,
+   там уже есть выпадающее меню под аватаром */
+.account-item {
+    display: none;
+}
+
+.account-item-link {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.account-item-link--danger {
+    color: #dc2626;
+}
+
+/* ===============================
    БУРГЕР-МЕНЮ (кнопка)
    =============================== */
 
@@ -677,6 +740,16 @@ a {
 
     .user-profile {
         margin-right: 4px;
+    }
+
+    /* На мобильном выпадающее меню профиля не нужно —
+       те же пункты показываются внутри бургер-списка */
+    .account-dropdown {
+        display: none !important;
+    }
+
+    .account-item {
+        display: block;
     }
 
     .hero {
