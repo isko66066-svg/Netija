@@ -6,7 +6,7 @@ if (testCards) {
         card.className = 'test-card';
         card.href = `natcert-test.html?id=${test.id}`;
         card.setAttribute('data-test-id', `natcert-${test.id}`);
-        card.setAttribute('data-year', test.year);
+        card.setAttribute('data-year', String(test.year));
 
         const statusBox = document.createElement('div');
         statusBox.className = 'card-status';
@@ -27,7 +27,6 @@ if (testCards) {
         card.appendChild(title);
         card.appendChild(count);
         card.appendChild(actionBtn);
-
         testCards.appendChild(card);
     });
 
@@ -45,7 +44,6 @@ function loadResultsFromStorage() {
         const result = JSON.parse(saved);
         const statusBox = card.querySelector('.card-status');
         const btn = card.querySelector('.btn-card-action');
-
         const isGood = result.score >= 44;
         const badgeClass = isGood ? 'card-badge--success' : 'card-badge--warning';
 
@@ -64,8 +62,6 @@ function loadResultsFromStorage() {
     });
 }
 
-// Фильтр по годам. Скрытие делаем отдельным классом,
-// чтобы display:flex !important у карточек не ломал фильтр.
 var filterButtons = document.querySelectorAll('.filter-btn');
 
 filterButtons.forEach(button => {
@@ -73,13 +69,14 @@ filterButtons.forEach(button => {
         filterButtons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
 
-        const selectedYear = button.getAttribute('data-filter');
+        const selectedYear = String(button.getAttribute('data-filter') || 'all');
         const cards = document.querySelectorAll('.test-card');
 
         cards.forEach(card => {
             const cardYear = String(card.getAttribute('data-year') || '');
-            const hidden = selectedYear !== 'all' && cardYear !== String(selectedYear);
+            const hidden = selectedYear !== 'all' && cardYear !== selectedYear;
             card.classList.toggle('filter-hidden', hidden);
+            card.style.setProperty('display', hidden ? 'none' : 'flex', 'important');
         });
     });
 });
