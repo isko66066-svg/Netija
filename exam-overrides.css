@@ -1,136 +1,73 @@
 /* =====================================================
-   ЭКЗАМЕН: боковая панель, таймер и шапка
+   NETIJA EXAM UI — reference-style redesign
    ===================================================== */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body.exam-body{background:#f7f9fc;color:#172033;overflow-x:hidden}
 
-/* Шапка теста на всю ширину */
-.header {
-    width: 100%;
-    max-width: none;
-    padding: 20px 24px;
+/* FULL WIDTH HEADER */
+.exam-header{width:100%;min-height:58px;background:#0b1930;color:#fff;border:0;box-shadow:0 2px 12px rgba(15,23,42,.12);position:sticky;top:0;z-index:1000}
+.exam-header__inner{width:100%;max-width:none;min-height:58px;margin:0;padding:0 22px;display:flex;align-items:center;gap:28px}
+.exam-brand{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;color:#fff;text-decoration:none;font-weight:800;letter-spacing:.2px}
+.exam-brand__mark{width:23px;height:23px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;background:#2563eb;color:#fff;font-size:17px;font-weight:900;box-shadow:0 2px 5px rgba(37,99,235,.35)}
+.exam-brand__text{font-size:20px}
+.exam-nav{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;gap:clamp(18px,3vw,46px)}
+.exam-nav a{position:relative;padding:21px 0 18px;color:#e8edf5;text-decoration:none;font-size:14px;font-weight:600;white-space:nowrap;opacity:.92}
+.exam-nav a:hover,.exam-nav a.is-active{color:#fff;opacity:1}
+.exam-nav a.is-active:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px 3px 0 0;background:#3b82f6}
+.exam-header__actions{flex:0 0 auto;display:flex;align-items:center;gap:14px}
+.exam-premium{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:22px;background:#3a3529;color:#f7c94c;text-decoration:none;font-size:13px;font-weight:700}
+.exam-notification{position:relative;border:0;background:transparent;color:#fff;font-size:22px;cursor:pointer;padding:4px}
+.exam-notification__badge{position:absolute;top:-4px;right:-5px;min-width:16px;height:16px;padding:0 4px;border-radius:10px;background:#ef4444;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center}
+.exam-header .user-profile__avatar{width:42px;height:42px;border-radius:50%}
+.exam-header .user-profile__name{color:#fff}
+.exam-burger{display:none}
+
+/* PAGE */
+.exam-page{width:100%;max-width:1500px;margin:0 auto;padding:18px 22px 40px}
+.exam-layout{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:18px;align-items:start}
+.questions-area,.questions-area #quizContainer{min-width:0;width:100%}
+
+/* TOP TEST BAR */
+.exam-testbar{width:100%;min-height:80px;margin-bottom:14px;padding:14px 20px;background:#fff;border:1px solid #e8edf3;border-radius:12px;display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:24px;box-shadow:0 2px 8px rgba(15,23,42,.035)}
+.exam-testbar__title{font-size:15px;font-weight:700;color:#273449;margin-bottom:7px}
+.exam-testbar__progress{color:#64748b;font-size:14px}.exam-testbar__progress strong{color:#273449}
+.exam-testbar__timer{display:flex;align-items:center;gap:9px;padding-right:22px;border-right:1px solid #e5e7eb}
+.exam-clock{font-size:23px;line-height:1}.exam-testbar__timer strong{display:block;font-size:18px}.exam-testbar__timer small{display:block;margin-top:2px;color:#94a3b8;font-size:12px}
+.finish-test{padding:12px 20px;background:#fff;color:#ef4444;border:1px solid #e5e7eb;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer}.finish-test:hover{background:#fff7f7;border-color:#fecaca}
+
+/* QUESTION CARDS — content left, answers right, nothing can escape */
+.questions-area .question-block{width:100%;max-width:none;min-width:0;margin:0 0 16px;padding:24px;background:#fff;border:1px solid #e6ebf1;border-radius:13px;box-shadow:0 2px 7px rgba(15,23,42,.035);overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,1fr);column-gap:28px;align-items:center}
+.questions-area .question-text{grid-column:1;min-width:0;margin:0 0 14px;font-size:17px;line-height:1.48;font-weight:650;color:#172033;overflow-wrap:anywhere}
+.questions-area .question-subtitle,.questions-area .matching-context{grid-column:1;min-width:0;overflow-wrap:anywhere}
+.questions-area .question-image{grid-column:1;width:100%;max-width:100%;height:auto;max-height:280px;object-fit:contain;display:block;margin:6px auto 4px;border:0;border-radius:7px}
+.questions-area .option-label{grid-column:2;min-width:0;width:100%;margin:4px 0;padding:12px 15px;display:flex;align-items:center;gap:10px;border:1px solid #e5eaf0;border-radius:9px;background:#fff;color:#273449;cursor:pointer;overflow:hidden}
+.questions-area .option-label span{min-width:0;overflow-wrap:anywhere}.questions-area .option-label:hover{border-color:#9bbcfb;background:#f8fbff}.questions-area .option-label input{width:18px;height:18px;flex:0 0 auto}
+.questions-area .matching-item,.questions-area .sub-question-item{grid-column:1/-1;min-width:0}.questions-area .matching-item{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px}.questions-area .sub-question-item{display:block}.questions-area .matching-select{max-width:260px;min-width:180px}
+.question-block mjx-container,.question-block .MathJax,.question-block svg{max-width:100%}.question-block mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden}
+
+/* STICKY SIDEBAR */
+.questions-sidebar{position:sticky;top:76px;min-width:0;max-height:calc(100vh - 92px);overflow-y:auto;padding:16px;background:#fff;border:1px solid #e4e9ef;border-radius:13px;box-shadow:0 3px 12px rgba(15,23,42,.05);scrollbar-width:thin}
+.sidebar-timer{width:100%;min-height:66px;margin-bottom:17px;padding:11px 14px;display:flex;align-items:center;gap:10px;background:#f8fafc;border:1px solid #e4e9ef;border-radius:10px}.sidebar-timer strong{display:block;font-size:18px;line-height:1.2}.sidebar-timer small{display:block;margin-top:3px;color:#94a3b8;font-size:11px}.sidebar-timer.timer--warning strong{color:#ef4444}
+.questions-sidebar h2{margin:0 0 14px;font-size:18px;color:#172033}.question-status{display:flex;align-items:center;gap:8px;margin:7px 0;color:#64748b;font-size:12px}.status-dot{width:11px;height:11px;border-radius:50%;display:inline-block;flex:0 0 auto}.status-dot.answered{background:#43d17b}.status-dot.current{background:#fff;border:2px solid #3b82f6}.status-dot.empty{background:#e5e7eb}
+.question-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:17px 0 15px}.question-number{width:100%;aspect-ratio:1;border:1px solid transparent;border-radius:8px;background:#f1f5f9;color:#334155;font-size:12px;font-weight:600;cursor:pointer}.question-number.current{background:#fff;color:#2563eb;border:2px solid #3b82f6}.question-number.answered{background:#dcfce7;color:#166534}.question-number.current.answered{background:#fff;color:#2563eb;border:2px solid #3b82f6}.question-number:hover{border-color:#93c5fd}
+.check-answers{width:100%;padding:13px 14px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-size:14px;font-weight:700;cursor:pointer}.check-answers:hover{background:#1d4ed8}
+
+/* ANSWER MAP */
+.answer-map-panel{margin-top:18px;padding-top:15px;border-top:1px solid #edf0f4}.answer-map-panel h3{margin:0 0 10px;text-align:center;font-size:13px;font-weight:700;color:#475569}.answer-map-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}.answer-map-cell{min-width:0;aspect-ratio:1;border:0;border-radius:6px;background:#f6a0a5;color:#fff;font-size:10px;font-weight:700;cursor:pointer}.answer-map-cell.answered{background:#f58f95}.answer-map-cell.current{outline:2px solid #2563eb;outline-offset:1px}.answer-map-cell.correct{background:#4ade80}.answer-map-cell.incorrect{background:#ef4444}
+.questions-sidebar #resultBox{width:100%;max-width:none;margin:15px 0 0;padding:13px;box-sizing:border-box}
+
+@media (min-width:1100px){.questions-area .question-block{min-height:250px}.questions-area .question-block:has(.question-image){min-height:330px}}
+@media (max-width:1050px){.exam-nav{gap:18px}.exam-nav a{font-size:13px}.exam-layout{grid-template-columns:minmax(0,1fr) 330px}.questions-area .question-block{grid-template-columns:minmax(0,1fr) minmax(240px,1fr);column-gap:18px;padding:18px}}
+
+@media (max-width:900px){
+    .exam-header__inner{padding:0 14px;gap:14px}.exam-nav{display:none}.exam-header__actions{margin-left:auto}.exam-premium span{display:none}.exam-burger{display:flex;flex-direction:column;gap:4px;border:0;background:transparent;padding:5px}.exam-burger span{display:block;width:21px;height:2px;background:#fff;border-radius:2px}
+    .exam-page{padding:10px 10px 28px}.exam-layout{grid-template-columns:1fr;gap:10px}
+    .questions-sidebar{position:sticky;top:68px;z-index:20;max-height:none;overflow:visible;order:-1}
+    .exam-testbar{grid-template-columns:1fr auto;gap:10px;padding:12px 14px}.exam-testbar__timer{display:none}.finish-test{grid-column:2;grid-row:1}
+    .questions-area .question-block{grid-template-columns:1fr;min-height:0;padding:16px}.questions-area .question-text,.questions-area .question-subtitle,.questions-area .matching-context,.questions-area .question-image,.questions-area .option-label{grid-column:1}.questions-area .question-image{max-height:250px}
+    .answer-map-grid{grid-template-columns:repeat(9,minmax(0,1fr))}
 }
-
-.header__container {
-    width: 100%;
-    max-width: none;
-}
-
-.header__nav {
-    width: 100%;
-    max-width: none;
-}
-
-/* Верхняя панель больше не содержит таймер */
-.exam-topbar {
-    width: 100%;
-}
-
-/* Таймер теперь находится внутри sticky-боковой панели */
-.questions-sidebar .exam-timer {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    width: 100%;
-    padding: 13px 14px;
-    margin: 0 0 18px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    box-sizing: border-box;
-}
-
-.questions-sidebar .timer-icon {
-    font-size: 25px;
-    line-height: 1;
-}
-
-.questions-sidebar .exam-timer strong {
-    display: block;
-    font-size: 19px;
-    line-height: 1.2;
-    color: #172033;
-}
-
-.questions-sidebar .exam-timer small {
-    display: block;
-    margin-top: 3px;
-    font-size: 12px;
-    color: #94a3b8;
-}
-
-.questions-sidebar .exam-timer #timer.timer--warning {
-    color: #ef4444;
-}
-
-/* Боковая панель остаётся на экране при прокрутке */
-.questions-sidebar {
-    position: sticky;
-    top: 18px;
-    max-height: calc(100vh - 36px);
-    overflow-y: auto;
-    scrollbar-width: thin;
-}
-
-/* Карта результатов после завершения теста — в боковой панели */
-.questions-sidebar #resultBox {
-    max-width: none;
-    width: 100%;
-    margin: 16px 0 0;
-    padding: 14px;
-    box-sizing: border-box;
-    border-radius: 14px;
-    font-size: 14px;
-}
-
-.questions-sidebar #resultBox .result-summary {
-    font-size: 17px;
-    margin-bottom: 12px;
-}
-
-.questions-sidebar #resultBox .result-grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 6px;
-}
-
-.questions-sidebar #resultBox .result-cell {
-    min-width: 0;
-    font-size: 11px;
-    border-radius: 7px;
-}
-
-/* После результата кнопка проверки не должна дублироваться визуально */
-.questions-sidebar .check-answers {
-    margin-top: 14px;
-}
-
-/* На телефоне sidebar превращается в обычный блок */
-@media (max-width: 900px) {
-    .header {
-        padding: 10px 12px;
-    }
-
-    .header__nav {
-        width: 100%;
-    }
-
-    .questions-sidebar {
-        position: sticky;
-        top: 10px;
-        max-height: none;
-        overflow: visible;
-    }
-
-    .questions-sidebar .exam-timer {
-        margin-bottom: 12px;
-    }
-}
-
-@media (max-width: 600px) {
-    .questions-sidebar #resultBox .result-grid {
-        grid-template-columns: repeat(7, minmax(0, 1fr));
-        gap: 5px;
-    }
-
-    .questions-sidebar #resultBox .result-cell {
-        font-size: 10px;
-    }
+@media (max-width:560px){
+    .exam-brand__text{font-size:18px}.exam-brand__mark{width:21px;height:21px;font-size:15px}.exam-header__actions{gap:7px}.exam-notification{display:none}.exam-page{padding:8px}.questions-sidebar{padding:12px}.question-grid{gap:6px}.question-number{font-size:11px}.answer-map-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}.answer-map-cell{font-size:9px}.questions-area .question-text{font-size:15px}.questions-area .option-label{padding:11px 12px;font-size:14px}
 }
