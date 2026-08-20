@@ -44,6 +44,99 @@
         if (burgerBtn && headerList) burgerBtn.addEventListener('click', () => { headerList.classList.toggle('open'); burgerBtn.classList.toggle('active'); });
     };
 
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.initNetijaHeader, { once: true });
-    else window.initNetijaHeader();
+    function initExamQuestionMap() {
+        const grid = document.getElementById('questionGrid');
+        const map = document.getElementById('answerMapGrid');
+        const container = document.getElementById('quizContainer');
+        const total = document.getElementById('totalQuestions');
+        if (!grid || !map || !container) return;
+
+        const EXPECTED = 45;
+        let builtSignature = '';
+        let observer;
+
+        function build() {
+            const blocks = Array.from(container.querySelectorAll('.question-block'));
+            if (blocks.length < EXPECTED) return;
+
+            const signature = blocks.slice(0, EXPECTED).map(block => block.id).join('|');
+            if (signature === builtSignature && grid.children.length === EXPECTED) return;
+            builtSignature = signature;
+
+            grid.innerHTML = '';
+            map.innerHTML = '';
+            if (total) total.textContent = String(EXPECTED);
+
+            const questionButtons = [];
+            const mapButtons = [];
+
+            blocks.slice(0, EXPECTED).forEach((block, index) => {
+                const text = block.querySelector('.question-text');
+                const match = text && text.textContent.match(/^(\d+)/);
+                const number = match ? match[1] : String(index + 1);
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'question-number';
+                button.textContent = number;
+                button.addEventListener('click', () => block.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+                grid.appendChild(button);
+                questionButtons.push(button);
+
+                const mapButton = document.createElement('button');
+                mapButton.type = 'button';
+                mapButton.className = 'answer-map-cell';
+                mapButton.textContent = number;
+                mapButton.addEventListener('click', () => block.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+                map.appendChild(mapButton);
+                mapButtons.push(mapButton);
+            });
+
+            function isAnswered(block) {
+                return Array.from(block.querySelectorAll('input[type="radio"]')).some(input => input.checked)
+                    || Array.from(block.querySelectorAll('input[type="text"]')).some(input => input.value.trim() !== '')
+                    || Array.from(block.querySelectorAll('select')).some(select => select.value !== '');
+            }
+
+            function updateStates() {
+                blocks.slice(0, EXPECTED).forEach((block, index) => {
+                    const answered = isAnswered(block);
+                    questionButtons[index]?.classList.toggle('answered', answered);
+                    mapButtons[index]?.classList.toggle('answered', answered);
+                    mapButtons[index]?.classList.toggle('correct', block.classList.contains('question-correct'));
+                    mapButtons[index]?.classList.toggle('incorrect', block.classList.contains('question-incorrect'));
+                });
+            }
+
+            container.addEventListener('change', updateStates);
+            container.addEventListener('input', updateStates);
+
+            const current = document.getElementById('currentQuestion');
+            if (window.IntersectionObserver) {
+                const intersection = new IntersectionObserver(entries => entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    const index = blocks.indexOf(entry.target);
+                    if (index < 0 || index >= EXPECTED) return;
+                    questionButtons.forEach((button, n) => button.classList.toggle('current', n === index));
+                    mapButtons.forEach((button, n) => button.classList.toggle('current', n === index));
+                    if (current) current.textContent = String(index + 1);
+                }), { root: null, rootMargin: '-18% 0px -62% 0px', threshold: 0 });
+                blocks.slice(0, EXPECTED).forEach(block => intersection.observe(block));
+            }
+
+            updateStates();
+        }
+
+        observer = new MutationObserver(build);
+        observer.observe(container, { childList: true, subtree: true });
+        build();
+    }
+
+    function start() {
+        window.initNetijaHeader();
+        initExamQuestionMap();
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+    else start();
 })();
