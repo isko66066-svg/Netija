@@ -1,6 +1,6 @@
 (function () {
     const HEADER_HTML = `
-        <header class="site-header header">
+        <header class="site-header">
             <div class="header__container">
                 <nav class="header__nav" aria-label="Основная навигация">
                     <a class="site-header__logo" href="index.html" aria-label="Netija">
