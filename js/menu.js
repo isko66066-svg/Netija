@@ -32,6 +32,15 @@
         if (active) active.classList.add('active');
     }
 
+    function loadGlobalFixes() {
+        if (document.getElementById('netija-exam-fixes-css')) return;
+        const styleLink = document.createElement('link');
+        styleLink.id = 'netija-exam-fixes-css';
+        styleLink.rel = 'stylesheet';
+        styleLink.href = 'exam-fixes.css';
+        document.head.appendChild(styleLink);
+    }
+
     window.initNetijaHeader = function () {
         const oldHeader = document.querySelector('.site-header, .header, .exam-header');
         if (oldHeader) oldHeader.outerHTML = HEADER_HTML;
@@ -39,6 +48,7 @@
         const header = document.querySelector('.site-header');
         if (!header) return;
         setActiveLink(header);
+        loadGlobalFixes();
         const burgerBtn = document.getElementById('burgerBtn');
         const headerList = header.querySelector('.header__list');
         if (burgerBtn && headerList) burgerBtn.addEventListener('click', () => { headerList.classList.toggle('open'); burgerBtn.classList.toggle('active'); });
@@ -50,14 +60,6 @@
         const container = document.getElementById('quizContainer');
         const total = document.getElementById('totalQuestions');
         if (!grid || !map || !container) return;
-
-        if (!document.getElementById('netija-exam-fixes-css')) {
-            const styleLink = document.createElement('link');
-            styleLink.id = 'netija-exam-fixes-css';
-            styleLink.rel = 'stylesheet';
-            styleLink.href = 'exam-fixes.css';
-            document.head.appendChild(styleLink);
-        }
 
         const EXPECTED = 45;
         let builtSignature = '';
