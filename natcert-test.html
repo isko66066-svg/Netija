@@ -57,15 +57,12 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
                 </div>
 
                 <h2>Вопросы</h2>
-                <div class="question-status"><span class="status-dot answered"></span>Ответ дан</div>
-                <div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div>
-                <div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>
-                <div class="question-grid" id="questionGrid"></div>
-
-                <div class="answer-map-panel" id="answerMapPanel" style="display:none;">
-                    <h3>Карта ответов по заданиям:</h3>
-                    <div class="answer-map-grid" id="answerMapGrid"></div>
+                <div id="questionLegend" class="question-legend question-legend--progress">
+                    <div class="question-status"><span class="status-dot answered"></span>Ответ дан</div>
+                    <div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div>
+                    <div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>
                 </div>
+                <div class="question-grid" id="questionGrid"></div>
             </aside>
         </div>
     </main>
@@ -76,11 +73,15 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
         let initialized = false;
         let blocksById = new Map();
         let navButtons = [];
-        let mapButtons = [];
         let intersectionObserver = null;
 
-        function getExpectedCount() { return Number(document.body.dataset.questionCount) || 45; }
-        function getBlocks() { return Array.from(document.querySelectorAll('#quizContainer .question-block')); }
+        function getExpectedCount() {
+            return Number(document.body.dataset.questionCount) || 45;
+        }
+
+        function getBlocks() {
+            return Array.from(document.querySelectorAll('#quizContainer .question-block'));
+        }
 
         function getQuestionId(block, fallback) {
             const idMatch = block && block.id && block.id.match(/question-block-(\d+)/);
@@ -96,7 +97,9 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
 
             const header = document.querySelector('.exam-header');
             const headerHeight = header ? header.getBoundingClientRect().height : 0;
-            const targetY = Math.max(0, window.scrollY + block.getBoundingClientRect().top - headerHeight - 12);
+            const gap = 14;
+            const rect = block.getBoundingClientRect();
+            const targetY = Math.max(0, window.scrollY + rect.top - headerHeight - gap);
 
             setCurrent(Number(id));
             window.scrollTo({ top: targetY, behavior: 'smooth' });
@@ -111,28 +114,49 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
 
         function refreshStates() {
             const submitted = !!window.quizSubmitted;
+
             for (let id = 1; id <= getExpectedCount(); id++) {
                 const block = blocksById.get(id);
                 const answered = isAnswered(block);
                 const correct = !!block && block.classList.contains('question-correct');
                 const incorrect = !!block && block.classList.contains('question-incorrect');
+                const button = navButtons[id - 1];
 
-                [navButtons[id - 1], mapButtons[id - 1]].forEach(button => {
-                    if (!button) return;
-                    button.classList.toggle('answered', answered);
-                    button.classList.toggle('correct', submitted && correct);
-                    button.classList.toggle('incorrect', submitted && incorrect);
-                    button.classList.toggle('missing', !block);
-                });
+                if (!button) continue;
+                button.classList.toggle('answered', answered && !submitted);
+                button.classList.toggle('correct', submitted && correct);
+                button.classList.toggle('incorrect', submitted && incorrect);
+                button.classList.toggle('missing', !block);
             }
         }
 
         function setCurrent(id) {
             id = Number(id);
-            navButtons.forEach((button, index) => button.classList.toggle('current', index === id - 1));
-            mapButtons.forEach((button, index) => button.classList.toggle('current', index === id - 1));
+            navButtons.forEach((button, index) => {
+                button.classList.toggle('current', index === id - 1);
+            });
             const current = document.getElementById('currentQuestion');
             if (current) current.textContent = String(id);
+        }
+
+        function updateLegend() {
+            const legend = document.getElementById('questionLegend');
+            if (!legend) return;
+
+            if (window.quizSubmitted) {
+                legend.className = 'question-legend question-legend--result';
+                legend.innerHTML = `
+                    <div class="question-status question-status--correct"><span class="status-dot status-dot--correct"></span>Правильно</div>
+                    <div class="question-status question-status--incorrect"><span class="status-dot status-dot--incorrect"></span>Неправильно</div>
+                `;
+            } else {
+                legend.className = 'question-legend question-legend--progress';
+                legend.innerHTML = `
+                    <div class="question-status"><span class="status-dot answered"></span>Ответ дан</div>
+                    <div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div>
+                    <div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>
+                `;
+            }
         }
 
         function setupIntersectionObserver() {
@@ -143,38 +167,24 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
             intersectionObserver = new IntersectionObserver(entries => {
                 let best = null;
                 entries.forEach(entry => {
-                    if (entry.isIntersecting && (!best || entry.intersectionRatio > best.intersectionRatio)) best = entry;
+                    if (entry.isIntersecting && (!best || entry.intersectionRatio > best.intersectionRatio)) {
+                        best = entry;
+                    }
                 });
                 if (!best) return;
                 setCurrent(getQuestionId(best.target, 1));
-            }, { root: null, rootMargin: '-90px 0px -55% 0px', threshold: [0, .15, .4, .7] });
+            }, {
+                root: null,
+                rootMargin: '-90px 0px -55% 0px',
+                threshold: [0, .15, .4, .7]
+            });
 
             blocks.forEach(block => intersectionObserver.observe(block));
-        }
-
-        function makeNavigationButton(id, block, className) {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = className + (!block ? ' missing' : '');
-            button.textContent = String(id);
-            button.title = block ? `Перейти к вопросу ${id}` : `Вопрос ${id} отсутствует в данных теста`;
-
-            if (block) {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    scrollToQuestion(id);
-                });
-            } else {
-                button.disabled = true;
-            }
-            return button;
         }
 
         function setupNavigation() {
             const container = document.getElementById('quizContainer');
             const grid = document.getElementById('questionGrid');
-            const answerMap = document.getElementById('answerMapGrid');
             const total = document.getElementById('totalQuestions');
             if (!container || !grid) return false;
 
@@ -182,26 +192,35 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
             if (!blocks.length) return false;
 
             blocksById = new Map();
-            blocks.forEach((block, index) => blocksById.set(getQuestionId(block, index + 1), block));
+            blocks.forEach((block, index) => {
+                blocksById.set(getQuestionId(block, index + 1), block);
+            });
 
             const count = getExpectedCount();
             grid.innerHTML = '';
-            if (answerMap) answerMap.innerHTML = '';
             navButtons = [];
-            mapButtons = [];
             if (total) total.textContent = String(count);
 
             for (let id = 1; id <= count; id++) {
                 const block = blocksById.get(id);
-                const button = makeNavigationButton(id, block, 'question-number');
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'question-number' + (!block ? ' missing' : '');
+                button.textContent = String(id);
+                button.title = block ? `Перейти к вопросу ${id}` : `Вопрос ${id} отсутствует в данных теста`;
+
+                if (block) {
+                    button.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        scrollToQuestion(id);
+                    });
+                } else {
+                    button.disabled = true;
+                }
+
                 grid.appendChild(button);
                 navButtons.push(button);
-
-                if (answerMap) {
-                    const mapButton = makeNavigationButton(id, block, 'answer-map-cell');
-                    answerMap.appendChild(mapButton);
-                    mapButtons.push(mapButton);
-                }
             }
 
             if (!container.dataset.navListenersAttached) {
@@ -218,23 +237,27 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
             });
 
             setupIntersectionObserver();
+            updateLegend();
             refreshStates();
             setCurrent(1);
             initialized = true;
             return true;
         }
 
-        function showAnswerMap() {
-            const panel = document.getElementById('answerMapPanel');
-            if (panel) panel.style.display = '';
+        function handleSubmitted() {
+            updateLegend();
+            refreshStates();
             requestAnimationFrame(refreshStates);
             setTimeout(refreshStates, 50);
+            setTimeout(refreshStates, 250);
         }
 
-        function initAfterQuiz() { setupNavigation(); }
+        function initAfterQuiz() {
+            setupNavigation();
+        }
 
         document.addEventListener('netija:quizRendered', initAfterQuiz);
-        document.addEventListener('netija:testSubmitted', showAnswerMap);
+        document.addEventListener('netija:testSubmitted', handleSubmitted);
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => setTimeout(initAfterQuiz, 0));
