@@ -8,12 +8,8 @@
 window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], macros: { tg: "\\operatorname{tg}", ctg: "\\operatorname{ctg}" } }, svg: { fontCache: 'global' } };
 </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async defer></script>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="test.css">
-    <link rel="stylesheet" href="exam-overrides.css">
-    <link rel="stylesheet" href="header.css">
-    <link rel="stylesheet" href="site-shell.css">
-    <link rel="stylesheet" href="premium.css">
+    <link rel="stylesheet" href="style.css?v=20260821">
+    <link rel="stylesheet" href="test.css?v=20260821">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -75,14 +71,8 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
         let navButtons = [];
         let intersectionObserver = null;
 
-        function getExpectedCount() {
-            return Number(document.body.dataset.questionCount) || 45;
-        }
-
-        function getBlocks() {
-            return Array.from(document.querySelectorAll('#quizContainer .question-block'));
-        }
-
+        function getExpectedCount() { return Number(document.body.dataset.questionCount) || 45; }
+        function getBlocks() { return Array.from(document.querySelectorAll('#quizContainer .question-block')); }
         function getQuestionId(block, fallback) {
             const idMatch = block && block.id && block.id.match(/question-block-(\d+)/);
             if (idMatch) return Number(idMatch[1]);
@@ -90,180 +80,75 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
             const match = text && text.textContent.match(/^\s*(\d+)\./);
             return match ? Number(match[1]) : fallback;
         }
-
         function scrollToQuestion(id) {
-            const block = blocksById.get(Number(id));
-            if (!block) return;
-
+            const block = blocksById.get(Number(id)); if (!block) return;
             const header = document.querySelector('.exam-header');
             const headerHeight = header ? header.getBoundingClientRect().height : 0;
-            const gap = 14;
             const rect = block.getBoundingClientRect();
-            const targetY = Math.max(0, window.scrollY + rect.top - headerHeight - gap);
-
+            const targetY = Math.max(0, window.scrollY + rect.top - headerHeight - 14);
             setCurrent(Number(id));
             window.scrollTo({ top: targetY, behavior: 'smooth' });
         }
-
         function isAnswered(block) {
             if (!block) return false;
-            return !!block.querySelector('input[type="radio"]:checked')
-                || Array.from(block.querySelectorAll('input[type="text"]')).some(i => i.value.trim() !== '')
-                || Array.from(block.querySelectorAll('select')).some(s => s.value !== '');
+            return !!block.querySelector('input[type="radio"]:checked') || Array.from(block.querySelectorAll('input[type="text"]')).some(i => i.value.trim() !== '') || Array.from(block.querySelectorAll('select')).some(s => s.value !== '');
         }
-
         function refreshStates() {
             const submitted = !!window.quizSubmitted;
-
             for (let id = 1; id <= getExpectedCount(); id++) {
-                const block = blocksById.get(id);
-                const answered = isAnswered(block);
+                const block = blocksById.get(id); const answered = isAnswered(block);
                 const correct = !!block && block.classList.contains('question-correct');
                 const incorrect = !!block && block.classList.contains('question-incorrect');
-                const button = navButtons[id - 1];
-
-                if (!button) continue;
+                const button = navButtons[id - 1]; if (!button) continue;
                 button.classList.toggle('answered', answered && !submitted);
                 button.classList.toggle('correct', submitted && correct);
                 button.classList.toggle('incorrect', submitted && incorrect);
                 button.classList.toggle('missing', !block);
             }
         }
-
         function setCurrent(id) {
-            id = Number(id);
-            navButtons.forEach((button, index) => {
-                button.classList.toggle('current', index === id - 1);
-            });
-            const current = document.getElementById('currentQuestion');
-            if (current) current.textContent = String(id);
+            id = Number(id); navButtons.forEach((button, index) => button.classList.toggle('current', index === id - 1));
+            const current = document.getElementById('currentQuestion'); if (current) current.textContent = String(id);
         }
-
         function updateLegend() {
-            const legend = document.getElementById('questionLegend');
-            if (!legend) return;
-
+            const legend = document.getElementById('questionLegend'); if (!legend) return;
             if (window.quizSubmitted) {
                 legend.className = 'question-legend question-legend--result';
-                legend.innerHTML = `
-                    <div class="question-status question-status--correct"><span class="status-dot status-dot--correct"></span>Правильно</div>
-                    <div class="question-status question-status--incorrect"><span class="status-dot status-dot--incorrect"></span>Неправильно</div>
-                `;
+                legend.innerHTML = '<div class="question-status question-status--correct"><span class="status-dot status-dot--correct"></span>Правильно</div><div class="question-status question-status--incorrect"><span class="status-dot status-dot--incorrect"></span>Неправильно</div>';
             } else {
                 legend.className = 'question-legend question-legend--progress';
-                legend.innerHTML = `
-                    <div class="question-status"><span class="status-dot answered"></span>Ответ дан</div>
-                    <div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div>
-                    <div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>
-                `;
+                legend.innerHTML = '<div class="question-status"><span class="status-dot answered"></span>Ответ дан</div><div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div><div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>';
             }
         }
-
         function setupIntersectionObserver() {
-            const blocks = getBlocks();
-            if (!('IntersectionObserver' in window) || !blocks.length) return;
+            const blocks = getBlocks(); if (!('IntersectionObserver' in window) || !blocks.length) return;
             if (intersectionObserver) intersectionObserver.disconnect();
-
             intersectionObserver = new IntersectionObserver(entries => {
-                let best = null;
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && (!best || entry.intersectionRatio > best.intersectionRatio)) {
-                        best = entry;
-                    }
-                });
-                if (!best) return;
-                setCurrent(getQuestionId(best.target, 1));
-            }, {
-                root: null,
-                rootMargin: '-90px 0px -55% 0px',
-                threshold: [0, .15, .4, .7]
-            });
-
+                let best = null; entries.forEach(entry => { if (entry.isIntersecting && (!best || entry.intersectionRatio > best.intersectionRatio)) best = entry; });
+                if (best) setCurrent(getQuestionId(best.target, 1));
+            }, { root:null, rootMargin:'-90px 0px -55% 0px', threshold:[0,.15,.4,.7] });
             blocks.forEach(block => intersectionObserver.observe(block));
         }
-
         function setupNavigation() {
-            const container = document.getElementById('quizContainer');
-            const grid = document.getElementById('questionGrid');
-            const total = document.getElementById('totalQuestions');
-            if (!container || !grid) return false;
-
-            const blocks = getBlocks();
-            if (!blocks.length) return false;
-
-            blocksById = new Map();
-            blocks.forEach((block, index) => {
-                blocksById.set(getQuestionId(block, index + 1), block);
-            });
-
-            const count = getExpectedCount();
-            grid.innerHTML = '';
-            navButtons = [];
-            if (total) total.textContent = String(count);
-
-            for (let id = 1; id <= count; id++) {
-                const block = blocksById.get(id);
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'question-number' + (!block ? ' missing' : '');
-                button.textContent = String(id);
-                button.title = block ? `Перейти к вопросу ${id}` : `Вопрос ${id} отсутствует в данных теста`;
-
-                if (block) {
-                    button.addEventListener('click', function (event) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        scrollToQuestion(id);
-                    });
-                } else {
-                    button.disabled = true;
-                }
-
-                grid.appendChild(button);
-                navButtons.push(button);
+            const container = document.getElementById('quizContainer'); const grid = document.getElementById('questionGrid'); const total = document.getElementById('totalQuestions');
+            if (!container || !grid) return false; const blocks = getBlocks(); if (!blocks.length) return false;
+            blocksById = new Map(); blocks.forEach((block,index) => blocksById.set(getQuestionId(block,index+1),block));
+            const count = getExpectedCount(); grid.innerHTML=''; navButtons=[]; if (total) total.textContent=String(count);
+            for (let id=1; id<=count; id++) {
+                const block=blocksById.get(id); const button=document.createElement('button'); button.type='button'; button.className='question-number'+(!block?' missing':''); button.textContent=String(id); button.title=block?`Перейти к вопросу ${id}`:`Вопрос ${id} отсутствует в данных теста`;
+                if(block) button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();scrollToQuestion(id);}); else button.disabled=true;
+                grid.appendChild(button); navButtons.push(button);
             }
-
-            if (!container.dataset.navListenersAttached) {
-                container.addEventListener('change', refreshStates);
-                container.addEventListener('input', refreshStates);
-                container.dataset.navListenersAttached = '1';
-            }
-
-            blocks.forEach(block => {
-                if (block.dataset.stateObserverAttached) return;
-                const observer = new MutationObserver(refreshStates);
-                observer.observe(block, { attributes: true, attributeFilter: ['class'] });
-                block.dataset.stateObserverAttached = '1';
-            });
-
-            setupIntersectionObserver();
-            updateLegend();
-            refreshStates();
-            setCurrent(1);
-            initialized = true;
-            return true;
+            if(!container.dataset.navListenersAttached){container.addEventListener('change',refreshStates);container.addEventListener('input',refreshStates);container.dataset.navListenersAttached='1';}
+            blocks.forEach(block=>{if(block.dataset.stateObserverAttached)return;const observer=new MutationObserver(refreshStates);observer.observe(block,{attributes:true,attributeFilter:['class']});block.dataset.stateObserverAttached='1';});
+            setupIntersectionObserver(); updateLegend(); refreshStates(); setCurrent(1); initialized=true; return true;
         }
-
         function handleSubmitted() {
-            updateLegend();
-            refreshStates();
-            requestAnimationFrame(refreshStates);
-            setTimeout(refreshStates, 50);
-            setTimeout(refreshStates, 250);
+            updateLegend(); refreshStates(); requestAnimationFrame(refreshStates); setTimeout(refreshStates,50); setTimeout(refreshStates,250);
+            if (window.innerWidth <= 900) setTimeout(() => window.scrollTo({top:0,behavior:'smooth'}), 50);
         }
-
-        function initAfterQuiz() {
-            setupNavigation();
-        }
-
-        document.addEventListener('netija:quizRendered', initAfterQuiz);
-        document.addEventListener('netija:testSubmitted', handleSubmitted);
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => setTimeout(initAfterQuiz, 0));
-        } else {
-            setTimeout(initAfterQuiz, 0);
-        }
+        document.addEventListener('netija:quizRendered',setupNavigation); document.addEventListener('netija:testSubmitted',handleSubmitted);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(setupNavigation,0)); else setTimeout(setupNavigation,0);
     })();
     </script>
 </body>
