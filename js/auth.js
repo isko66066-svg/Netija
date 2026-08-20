@@ -1,3 +1,5 @@
+const NETIJA_BACKEND_URL = 'https://netija.onrender.com';
+
 window.onload = function () {
 
     buildAccountMenu();
@@ -28,28 +30,79 @@ window.onload = function () {
 
     if (savedUser) {
         showUserProfile(savedUser);
+
+        // Важно: пользователь мог быть сохранён в localStorage,
+        // но ещё отсутствовать в backend-базе. Синхронизируем его
+        // перед повторной проверкой доступа к тесту.
+        syncUserWithBackend(savedUser.email).then(() => {
+            window.dispatchEvent(new CustomEvent('netija:login'));
+        });
     } else {
         refreshAccountMenu();
     }
 };
 
-function handleGoogleLogin(response) {
-    const data = JSON.parse(atob(response.credential.split('.')[1]));
+async function syncUserWithBackend(email) {
+    if (!email) return false;
 
-    // Сохраняем данные, необходимые для профиля и проверки доступа к тестам.
-    // ВАЖНО: email нужен backend для проверки дневного лимита.
-    saveUser({
-        name: data.name,
-        picture: data.picture,
-        email: data.email
-    });
+    try {
+        const response = await fetch(`${NETIJA_BACKEND_URL}/api/auth/sync`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        });
 
-    showUserProfile(data);
+        const data = await response.json().catch(() => ({}));
 
-    // Сообщаем другим модулям страницы, что вход завершён.
-    // quiz-loader.js использует это событие, чтобы повторно проверить доступ
-    // и сразу заменить сообщение «Сначала войдите...» на сам тест.
-    window.dispatchEvent(new CustomEvent('netija:login'));
+        if (!response.ok || !data.success || !data.user) {
+            console.error('Netija backend sync error:', data);
+            return false;
+        }
+
+        // Обновляем только серверные поля, сохраняя локальные
+        // name/picture, включая пользовательский аватар.
+        const localUser = getSavedUser() || {};
+        saveUser({
+            ...localUser,
+            ...data.user,
+            name: localUser.name || data.user.name || '',
+            picture: localUser.picture || data.user.picture || ''
+        });
+
+        return true;
+    } catch (error) {
+        console.error('Netija backend sync request failed:', error);
+        return false;
+    }
+}
+
+async function handleGoogleLogin(response) {
+    try {
+        const data = JSON.parse(atob(response.credential.split('.')[1]));
+
+        // Сначала синхронизируем Google-пользователя с backend.
+        // Если записи ещё нет, /api/auth/sync автоматически создаст её.
+        await syncUserWithBackend(data.email);
+
+        // Сохраняем данные, необходимые для профиля и проверки доступа к тестам.
+        saveUser({
+            name: data.name,
+            picture: data.picture,
+            email: data.email
+        });
+
+        showUserProfile(data);
+
+        // Сообщаем другим модулям страницы, что вход завершён.
+        // quiz-loader.js использует это событие, чтобы повторно проверить доступ
+        // и сразу открыть тест.
+        window.dispatchEvent(new CustomEvent('netija:login'));
+    } catch (error) {
+        console.error('Google login error:', error);
+        window.alert('Не удалось выполнить вход. Попробуйте ещё раз.');
+    }
 }
 
 function showUserProfile(data) {
