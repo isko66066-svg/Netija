@@ -1,161 +1,161 @@
 var questions = [
     {
         id: 1,
-        question: "8962ab ko‘rinishidagi son 12 ga qoldiqsiz bo‘linsa, a·b ning eng katta qiymatini toping.",
+        question: "Если число вида $8962ab$ делится на 12 без остатка, найдите наибольшее значение $a\\cdot b$.",
         type: "single_choice",
         options: ["72", "48", "64", "54"],
         correctAnswer: 1
     },
     {
         id: 2,
-        question: "Hisoblang: $\\frac{45\\frac{10}{63}-44\\frac{25}{84}}{\\left(2\\frac13-1\\frac19\\right):4-\\frac34}:\\frac{31}{32}$",
+        question: "Вычислите: $\\frac{45\\frac{10}{63}-44\\frac{25}{84}}{\\left(2\\frac13-1\\frac19\\right):4-\\frac34}:\\frac{31}{32}$",
         type: "single_choice",
         options: ["2", "-2", "$\\frac12$", "$-\\frac12$"],
         correctAnswer: 1
     },
     {
         id: 3,
-        question: "Birinchi sonning 10% iga ikkinchi sonning $\\frac16$ qismi qo‘shilgani, birinchi sonning yarmidan ikkinchi sonning yarmini ayirganimizga teng. Birinchi sonning ikkinchi songa nisbatini toping.",
+        question: "Сумма 10% первого числа и $\\frac16$ второго числа равна разности половины первого и половины второго числа. Найдите отношение первого числа ко второму.",
         type: "single_choice",
         options: ["$\\frac35$", "$\\frac53$", "$\\frac56$", "$\\frac65$"],
         correctAnswer: 1
     },
     {
         id: 4,
-        question: "O‘quvchi ikkita kitobni 205000 so‘mga sotib oldi. Agar birinchi kitob narxi 15% ga kamaytirilsa va ikkinchi kitob narxi 20% ga oshirilsa, u holda kitoblarning yangi narxlari o‘zaro teng bo‘ladi. Birinchi kitobning narxi ikkinchi kitob narxidan necha so‘mga qimmat ekanini aniqlang.",
+        question: "Ученик купил две книги за 205 000 сум. Если цену первой книги уменьшить на 15%, а цену второй увеличить на 20%, то новые цены книг станут равными. На сколько сум цена первой книги дороже цены второй книги?",
         type: "single_choice",
         options: ["30000", "35000", "45000", "40000"],
         correctAnswer: 1
     },
     {
         id: 5,
-        question: "Hisoblang: $(-1^2)^3+(-1^3)^4+\\ldots+(-1^{99})^{100}$",
+        question: "Вычислите: $(-1^2)^3+(-1^3)^4+\\ldots+(-1^{99})^{100}$",
         type: "single_choice",
         options: ["0", "98", "50", "-1"],
         correctAnswer: 0
     },
     {
         id: 6,
-        question: "Sonlarni kamayish tartibida joylashtiring: $a=\\sqrt8+\\sqrt3$, $b=\\sqrt6+2$, $c=2\\sqrt3+\\sqrt2$.",
+        question: "Расположите числа в порядке убывания: $a=\\sqrt8+\\sqrt3$, $b=\\sqrt6+2$, $c=2\\sqrt3+\\sqrt2$.",
         type: "single_choice",
         options: ["$a>b>c$", "$b>a>c$", "$b>c>a$", "$c>a>b$"],
         correctAnswer: 3
     },
     {
         id: 7,
-        question: "Hisoblang: $\\sqrt[3]{26+15\\sqrt3}+\\sqrt[3]{26-15\\sqrt3}$.",
+        question: "Вычислите: $\\sqrt[3]{26+15\\sqrt3}+\\sqrt[3]{26-15\\sqrt3}$.",
         type: "single_choice",
         options: ["2", "3", "4", "5"],
         correctAnswer: 2
     },
     {
         id: 8,
-        question: "$n$ ta hadli arifmetik progressiyaning $n$ ta hadi o‘rta arifmetigi $2n$ ga teng bo‘lsa, arifmetik progressiyaning o‘ninchi hadini toping.",
+        question: "Если среднее арифметическое $n$ членов арифметической прогрессии, состоящей из $n$ членов, равно $2n$, найдите десятый член арифметической прогрессии.",
         type: "single_choice",
         options: ["38", "20", "40", "36"],
         correctAnswer: 0
     },
     {
         id: 9,
-        question: "Geometrik progressiyada $b_1+b_2+b_3=70$ va $b_1\\cdot b_2\\cdot b_3=8000$ bo‘lsa, dastlabki beshta hadining yig‘indisini toping.",
+        question: "В геометрической прогрессии $b_1+b_2+b_3=70$ и $b_1\\cdot b_2\\cdot b_3=8000$. Найдите сумму первых пяти членов.",
         type: "single_choice",
-        options: ["310 yoki 77,5", "310 yoki 77,25", "330 yoki 77,25", "330 yoki 77,5"],
+        options: ["310 или 77,5", "310 или 77,25", "330 или 77,25", "330 или 77,5"],
         correctAnswer: 0
     },
     {
         id: 10,
-        question: "Ifodani soddalashtiring: $\\frac{x+2y-\\frac{4x^2-y^2}{x}}{y^3+2xy^2-3x^2y}$.",
+        question: "Упростите выражение: $\\frac{x+2y-\\frac{4x^2-y^2}{x}}{y^3+2xy^2-3x^2y}$.",
         type: "single_choice",
         options: ["$\\frac1y$", "$\\frac{x}{y}$", "$\\frac1x$", "$\\frac1{xy}$"],
         correctAnswer: 3
     },
     {
         id: 11,
-        question: "Agar $x>0$ bo‘lsa, ifodani soddalashtiring: $\\frac{\\sqrt{\\frac12\\left(\\frac{x^2-2}{2x}\\right)^2+1}}{\\frac1{2x}(x^2+2)}$.",
+        question: "Если $x>0$, упростите выражение: $\\frac{\\sqrt{\\frac12\\left(\\frac{x^2-2}{2x}\\right)^2+1}}{\\frac1{2x}(x^2+2)}$.",
         type: "single_choice",
         options: ["2", "$\\frac1{\\sqrt2}$", "1", "$\\sqrt2$"],
         correctAnswer: 0
     },
     {
         id: 12,
-        question: "Agar $\\sin\\alpha=-\\frac45\\;(\\frac{3\\pi}{2}<\\alpha<2\\pi)$ bo‘lsa, $\\cos\\alpha$ ni toping.",
+        question: "Если $\\sin\\alpha=-\\frac45$ и $\\frac{3\\pi}{2}<\\alpha<2\\pi$, найдите $\\cos\\alpha$.",
         type: "single_choice",
         options: ["$\\frac35$", "$-\\frac35$", "$\\frac5{13}$", "$-\\frac5{13}$"],
         correctAnswer: 0
     },
     {
         id: 13,
-        question: "Tenglama $\\left[-\\frac\\pi2;\\pi\\right]$ oraliqda nechta yechimga ega? $\\sqrt3\\sin^2x+\\sin^22x=\\frac{\\sqrt3}{2}-\\frac12-\\sqrt3\\cos2x$",
+        question: "Сколько решений имеет уравнение на промежутке $\\left[-\\frac\\pi2;\\pi\\right]$? $\\sqrt3\\sin^2x+\\sin^22x=\\frac{\\sqrt3}{2}-\\frac12-\\sqrt3\\cos2x$",
         type: "single_choice",
         options: ["1", "2", "3", "5"],
         correctAnswer: 2
     },
     {
         id: 14,
-        question: "Tengsizlikni nechta butun son qanoatlantiradi? $\\left(\\frac12\\right)^{x^2+3x}-\\frac{2^{-x}}8>0$",
+        question: "Сколько целых чисел удовлетворяют неравенству? $\\left(\\frac12\\right)^{x^2+3x}-\\frac{2^{-x}}8>0$",
         type: "single_choice",
-        options: ["2", "3", "4", "cheksiz ko‘p"],
+        options: ["2", "3", "4", "бесконечно много"],
         correctAnswer: 1
     },
     {
         id: 15,
-        question: "Tengsizlikni nechta butun son qanoatlantiradi? $\\log_{0,5}\\log_2\\log_{x-1}9>0$",
+        question: "Сколько целых чисел удовлетворяют неравенству? $\\log_{0,5}\\log_2\\log_{x-1}9>0$",
         type: "single_choice",
-        options: ["cheksiz ko‘p", "7 ta", "3 ta", "5 ta"],
+        options: ["бесконечно много", "7", "3", "5"],
         correctAnswer: 3
     },
     {
         id: 16,
-        question: "Tenglama nechta haqiqiy ildizga ega? $\\frac4{(x+6)(x-1)}-\\frac5{(x+2)(x+3)}=\\frac14$",
+        question: "Сколько действительных корней имеет уравнение? $\\frac4{(x+6)(x-1)}-\\frac5{(x+2)(x+3)}=\\frac14$",
         type: "single_choice",
         options: ["1", "2", "3", "4"],
         correctAnswer: 1
     },
     {
         id: 17,
-        question: "Tenglama nechta haqiqiy ildizga ega? $(x-6)^4+(x-8)^4=16$",
+        question: "Сколько действительных корней имеет уравнение? $(x-6)^4+(x-8)^4=16$",
         type: "single_choice",
         options: ["1", "2", "3", "4"],
         correctAnswer: 1
     },
     {
         id: 18,
-        question: "Tengsizlikni nechta butun son qanoatlantiradi? $\\frac{x^2-1}{x^2+1}+x^2-2x+1\\le0$",
+        question: "Сколько целых чисел удовлетворяют неравенству? $\\frac{x^2-1}{x^2+1}+x^2-2x+1\\le0$",
         type: "single_choice",
         options: ["0", "1", "2", "3"],
         correctAnswer: 2
     },
     {
         id: 19,
-        question: "Nechta natural son tengsizlikning yechimi bo‘la olmaydi? $x(x-3)^2>0$",
+        question: "Сколько натуральных чисел не могут быть решениями неравенства? $x(x-3)^2>0$",
         type: "single_choice",
-        options: ["1", "2", "3", "cheksiz ko‘p"],
+        options: ["1", "2", "3", "бесконечно много"],
         correctAnswer: 0
     },
     {
         id: 20,
-        question: "Agar $f(x)=\\ln x+\\ln3$ va $g(x)=2e^x$ bo‘lsa, $g(f(3))$ ni hisoblang.",
+        question: "Если $f(x)=\\ln x+\\ln3$ и $g(x)=2e^x$, вычислите $g(f(3))$.",
         type: "single_choice",
         options: ["8", "9", "18", "36"],
         correctAnswer: 2
     },
     {
         id: 21,
-        question: "Aniq integralni hisoblang: $\\int_{-1}^{1}\\frac{x^4}{x^2+1}\\,dx$.",
+        question: "Вычислите определённый интеграл: $\\int_{-1}^{1}\\frac{x^4}{x^2+1}\\,dx$.",
         type: "single_choice",
         options: ["$\\frac43-\\frac\\pi2$", "$\\frac43$", "0", "$\\frac\\pi2-\\frac43$"],
         correctAnswer: 3
     },
     {
         id: 22,
-        question: "$y=\\frac1{x^2+4}$ funksiyaga grafiga o‘tkazilgan urinma abssissa o‘qiga parallel bo‘ladi. Urinish nuqtasining koordinatalari yig‘indisini toping.",
+        question: "К графику функции $y=\\frac1{x^2+4}$ проведена касательная, параллельная оси абсцисс. Найдите сумму координат точки касания.",
         type: "single_choice",
         options: ["1", "$\\frac12$", "$\\frac34$", "$\\frac14$"],
         correctAnswer: 3
     },
     {
         id: 23,
-        question: "Aylanaga kvadrat ichki chizilgan. Aylana radiusi $\\sqrt6$ ga teng bo‘lsa, kvadrat yuzini toping.",
+        question: "В окружность вписан квадрат. Если радиус окружности равен $\\sqrt6$, найдите площадь квадрата.",
         image: "images/2-mart_1-img/23.svg",
         type: "single_choice",
         options: ["6", "12", "24", "18"],
@@ -163,14 +163,14 @@ var questions = [
     },
     {
         id: 24,
-        question: "$f(x,y,z)=\\frac{x^2+1}{x^2-1}+\\frac{2y^2-1}{2y^2+1}+\\frac{4z^2-1}{4z^2+1}$, $|a|>1$, $-1<b\\le1$ va $-1\\le c<1$ funksiya berilgan. Funksiyaning $x=\\frac{\\sqrt{a^2-1}}{a-1}$, $y=\\sqrt{\\frac{1-b}{2+2b}}$, $z=\\frac{\\sqrt{1-c^2}}{2(c-1)}$ bo‘lgandagi qiymatini toping.",
+        question: "Дана функция $f(x,y,z)=\\frac{x^2+1}{x^2-1}+\\frac{2y^2-1}{2y^2+1}+\\frac{4z^2-1}{4z^2+1}$, где $|a|>1$, $-1<b\\le1$ и $-1\\le c<1$. Найдите значение функции при $x=\\frac{\\sqrt{a^2-1}}{a-1}$, $y=\\sqrt{\\frac{1-b}{2+2b}}$, $z=\\frac{\\sqrt{1-c^2}}{2(c-1)}$.",
         type: "single_choice",
         options: ["$a+b+c$", "-1", "$\\frac{a+b+c}{2}$", "1"],
         correctAnswer: 0
     },
     {
         id: 25,
-        question: "Uchburchakning eng katta tomoni 8 ga, yon tomonlari esa $(3x-4)$ va $(2x+1)$ ga teng. Agar uchburchakning tomonlari butun sonlardan iborat bo‘lsa, uchburchak perimetrini toping.",
+        question: "Наибольшая сторона треугольника равна 8, а остальные стороны равны $(3x-4)$ и $(2x+1)$. Если стороны треугольника — целые числа, найдите его периметр.",
         image: "images/2-mart_1-img/25.svg",
         type: "single_choice",
         options: ["16", "17", "18", "20"],
@@ -178,7 +178,7 @@ var questions = [
     },
     {
         id: 26,
-        question: "Rasmdagi ma’lumotlar asosida $\\alpha$ burchakni toping.",
+        question: "По данным на рисунке найдите угол $\\alpha$.",
         image: "images/2-mart_1-img/26.svg",
         type: "single_choice",
         options: ["18°", "22,5°", "15°", "36°"],
@@ -186,7 +186,7 @@ var questions = [
     },
     {
         id: 27,
-        question: "$ABCD$ teng yonli trapetsiyada $KL$ o‘rta chiziq o‘tkazilgan. Trapetsiyaning $C$ uchidan $AD$ katta asosiga $CH$ balandlik tushirildi. $CH$ balandlik $KL$ o‘rta chiziqni $O$ nuqtada kesib o‘tadi. Agar $KL=48$ va $KO:OL=5:1$ bo‘lsa, $AD$ katta asosini toping.",
+        question: "В равнобедренной трапеции $ABCD$ проведена средняя линия $KL$. Из вершины $C$ опущена высота $CH$ на большее основание $AD$. Высота $CH$ пересекает среднюю линию $KL$ в точке $O$. Если $KL=48$ и $KO:OL=5:1$, найдите большее основание $AD$.",
         image: "images/2-mart_1-img/27.svg",
         type: "single_choice",
         options: ["54", "56", "64", "72"],
@@ -194,35 +194,35 @@ var questions = [
     },
     {
         id: 28,
-        question: "Qavariq $n$ burchakning diagonallari soni 25 dan kichik emas va 30 dan katta emas. $n$ ning qiymatini toping.",
+        question: "Число диагоналей выпуклого $n$-угольника не меньше 25 и не больше 30. Найдите $n$.",
         type: "single_choice",
         options: ["9", "6", "11", "7"],
         correctAnswer: 0
     },
     {
         id: 29,
-        question: "Uchlari $A(1;-1;-1)$, $B(2;2;1)$ va $C(3;3;3)$ nuqtalarda bo‘lgan $ABC$ uchburchak berilgan. $ABC$ uchburchakda $AC$ asosga $BD$ mediana tushirilgan. $\\cos\\angle BDC$ ni toping.",
+        question: "Дан треугольник $ABC$ с вершинами $A(1;-1;-1)$, $B(2;2;1)$ и $C(3;3;3)$. В треугольнике $ABC$ к основанию $AC$ проведена медиана $BD$. Найдите $\\cos\\angle BDC$.",
         type: "single_choice",
         options: ["0", "$\\frac23$", "$\\frac13$", "$\\frac32$"],
         correctAnswer: 1
     },
     {
         id: 30,
-        question: "$\\alpha$ tekislikdan tashqarida joylashgan $A$ nuqtadan ushbu tekislikka $AB$ va $AC$ og‘malar hamda $AH$ perpendikulyar tushirilgan. Bu yerda $H$ — perpendikulyarning asos nuqtasi bo‘lib, $B$, $C$ va $H$ nuqtalar $\\alpha$ tekislikda yotadi. Agar $AH=4$, $\\angle ABH=45°$, $\\angle ACH=60°$, $\\angle BHC=60°$ bo‘lsa, $AHBC$ piramidaning hajmini toping.",
+        question: "Из точки $A$, расположенной вне плоскости $\\alpha$, к этой плоскости проведены наклонные $AB$ и $AC$, а также перпендикуляр $AH$. Здесь $H$ — основание перпендикуляра, а точки $B$, $C$ и $H$ лежат в плоскости $\\alpha$. Если $AH=4$, $\\angle ABH=45°$, $\\angle ACH=60°$, $\\angle BHC=60°$, найдите объём пирамиды $AHBC$.",
         type: "single_choice",
         options: ["$6\\frac23$", "$5\\frac23$", "$5\\frac13$", "$6\\frac13$"],
         correctAnswer: 2
     },
     {
         id: 31,
-        question: "$A$ to‘plamga 1 element qo‘shilgandagi qism to‘plamlar soni $A$ to‘plamning 1 ta element olinadigan qism to‘plamlar sonidan 12 ga ko‘p bo‘lsa, $A$ to‘plamning qism to‘plamlari soni nechta?",
+        question: "Если количество подмножеств множества $A$, полученного добавлением 1 элемента, на 12 больше количества подмножеств множества $A$, состоящих из 1 элемента, сколько всего подмножеств имеет множество $A$?",
         type: "single_choice",
         options: ["4", "8", "16", "32"],
         correctAnswer: 1
     },
     {
         id: 32,
-        question: "1000 gacha bo‘lgan natural sonlar ichida 11 ga qoldiqsiz bo‘linadigan va 2 ga ham 3 ga ham qoldiqsiz bo‘linmaydigan sonlar nechta?",
+        question: "Сколько среди натуральных чисел до 1000 существует чисел, которые делятся на 11 без остатка, но не делятся без остатка ни на 2, ни на 3?",
         type: "single_choice",
         options: ["90", "75", "45", "30"],
         correctAnswer: 3
@@ -230,11 +230,11 @@ var questions = [
     {
         id: "33-35",
         type: "matching",
-        question: "Topshiriqlar (33-35) va javob variantlari (A-F) ni o‘zaro moslashtiring. Asosining radiusi 6 cm bo‘lgan silindrga konus ichki chizilgan, konusga esa shar ichki chizilgan. Konusning asosi va uchi silindr asoslari markazlarida yotadi. Agar konus yon sirti $60\\pi\\,cm^2$ ga teng bo‘lsa,",
+        question: "Сопоставьте задания 33–35 с вариантами ответов A–F. В цилиндр с радиусом основания 6 см вписан конус, а в конус вписан шар. Основание и вершина конуса лежат в центрах оснований цилиндра. Если боковая поверхность конуса равна $60\\pi\\,cm^2$,",
         items: [
-            { id: "33", text: "Silindr va konus to‘la sirtlarining ayirmasini toping.", correctAnswer: "D" },
-            { id: "34", text: "Silindr va konus hajmlari ayirmasini toping.", correctAnswer: "E" },
-            { id: "35", text: "Shar hajmini toping.", correctAnswer: "A" }
+            { id: "33", text: "Найдите разность полных площадей поверхностей цилиндра и конуса.", correctAnswer: "D" },
+            { id: "34", text: "Найдите разность объёмов цилиндра и конуса.", correctAnswer: "E" },
+            { id: "35", text: "Найдите объём шара.", correctAnswer: "A" }
         ],
         optionsPool: {
             A: "$36\\pi",
@@ -248,96 +248,96 @@ var questions = [
     {
         id: 36,
         type: "open_ended",
-        question: "Tenglamani yeching: $\\sqrt{x}+2x+2=(x+3)\\sqrt[4]{x}$",
+        question: "Решите уравнение: $\\sqrt{x}+2x+2=(x+3)\\sqrt[4]{x}$",
         subQuestions: [
-            { id: "a", text: "Tenglama nechta haqiqiy ildizga ega?", correctAnswer: "1" },
-            { id: "b", text: "Tenglamaning haqiqiy ildizlari yig‘indisini toping.", correctAnswer: "16" }
+            { id: "a", text: "Сколько действительных корней имеет уравнение?", correctAnswer: "1" },
+            { id: "b", text: "Найдите сумму действительных корней уравнения.", correctAnswer: "16" }
         ]
     },
     {
         id: 37,
         type: "open_ended",
-        question: "Tenglamani yeching: $\\sin^3x(1+\\operatorname{ctg}x)+\\cos^3x(1+\\operatorname{tg}x)=2\\sqrt{\\sin x\\cos x}$",
+        question: "Решите уравнение: $\\sin^3x(1+\\operatorname{ctg}x)+\\cos^3x(1+\\operatorname{tg}x)=2\\sqrt{\\sin x\\cos x}$",
         subQuestions: [
-            { id: "a", text: "Tenglamaning eng kichik musbat yechimini toping.", correctAnswer: "$\\frac\\pi4$" },
-            { id: "b", text: "Tenglama $\\left[-\\frac{5\\pi}{2};\\frac{5\\pi}{2}\\right]$ oraliqda nechta yechimga ega?", correctAnswer: "3" }
+            { id: "a", text: "Найдите наименьшее положительное решение уравнения.", correctAnswer: "$\\frac\\pi4$" },
+            { id: "b", text: "Сколько решений имеет уравнение на промежутке $\\left[-\\frac{5\\pi}{2};\\frac{5\\pi}{2}\\right]$?", correctAnswer: "3" }
         ]
     },
     {
         id: 38,
         type: "open_ended",
-        question: "$f(x)=\\frac{4x^2}{4x^4+1}$ funksiya berilgan.",
+        question: "Дана функция $f(x)=\\frac{4x^2}{4x^4+1}$.",
         subQuestions: [
-            { id: "a", text: "Funksiyaning eng katta qiymatini toping.", correctAnswer: "1" },
-            { id: "b", text: "Funksiyaning qiymatlar sohasiga nechta butun son tegishli?", correctAnswer: "2" }
+            { id: "a", text: "Найдите наибольшее значение функции.", correctAnswer: "1" },
+            { id: "b", text: "Сколько целых чисел принадлежит области значений функции?", correctAnswer: "2" }
         ]
     },
     {
         id: 39,
         type: "open_ended",
-        question: "$f(x)=\\operatorname{arctg}2^{x-1013}$ funksiya berilgan.",
+        question: "Дана функция $f(x)=\\operatorname{arctg}2^{x-1013}$.",
         subQuestions: [
-            { id: "a", text: "$f(0)+f(1)+\\ldots+f(2026)$ ni toping.", correctAnswer: "$\\frac{2027\\pi}{4}$" },
-            { id: "b", text: "$f'(1013)$ ni toping.", correctAnswer: "$\\frac{\\ln2}{2}$" }
+            { id: "a", text: "Найдите $f(0)+f(1)+\\ldots+f(2026)$.", correctAnswer: "$\\frac{2027\\pi}{4}$" },
+            { id: "b", text: "Найдите $f'(1013)$.", correctAnswer: "$\\frac{\\ln2}{2}$" }
         ]
     },
     {
         id: 40,
         type: "open_ended",
-        question: "Rasmda $f(x)=\\frac2x$, $y_1=0$, $y_2=2$, $x_1=0$ va $x_2=2$ funksiya grafiklari tasvirlangan.",
+        question: "На рисунке изображены графики функций $f(x)=\\frac2x$, $y_1=0$, $y_2=2$, $x_1=0$ и $x_2=2$.",
         image: "images/2-mart_1-img/40.svg",
         subQuestions: [
-            { id: "a", text: "Bo‘yalgan soha yuzini toping.", correctAnswer: "$2+\\ln4$" },
-            { id: "b", text: "Bo‘yalgan sohani $OX$ o‘qi atrofida $360°$ ga aylantirishdan hosil bo‘lgan jism hajmini toping. ($\\pi\\approx3$ deb oling.)", correctAnswer: "18" }
+            { id: "a", text: "Найдите площадь закрашенной области.", correctAnswer: "$2+\\ln4$" },
+            { id: "b", text: "Найдите объём тела, полученного вращением закрашенной области вокруг оси $OX$ на $360°$. (Примите $\\pi\\approx3$.)", correctAnswer: "18" }
         ]
     },
     {
         id: 41,
         type: "open_ended",
-        question: "$ABC$ uchburchakning $AC$ asosidan $D$ nuqta tanlab olinib $B$ uchi bilan tutashtirildi. $ABD$ va $BDC$ uchburchaklarga mos ravishda $O_1$ va $O_2$ markazli aylanalar ichki chizilgan. Agar $AB=10$, $BC=14$, $AD=10$ va $DC=6$ bo‘lsa,",
+        question: "На основании $AC$ треугольника $ABC$ выбрана точка $D$ и соединена с вершиной $B$. В треугольники $ABD$ и $BDC$ вписаны окружности с центрами соответственно $O_1$ и $O_2$. Если $AB=10$, $BC=14$, $AD=10$ и $DC=6$,",
         image: "images/2-mart_1-img/41.svg",
         subQuestions: [
-            { id: "a", text: "$BD$ kesma uzunligini toping.", correctAnswer: "10" },
-            { id: "b", text: "$O_1O_2D$ uchburchak yuzini toping.", correctAnswer: "$\\frac{10\\sqrt3}{3}$" }
+            { id: "a", text: "Найдите длину отрезка $BD$.", correctAnswer: "10" },
+            { id: "b", text: "Найдите площадь треугольника $O_1O_2D$.", correctAnswer: "$\\frac{10\\sqrt3}{3}$" }
         ]
     },
     {
         id: 42,
         type: "open_ended",
-        question: "$ABCD$ qavariq to‘rtburchakning $AB$, $BC$ va $CD$ tomonlaridan mos ravishda $E$, $F$, $G$ nuqtalar olindi. Bunda $AE:EB=CF:FB=CG:GD=3:4$, $EF=8$, $FG=6$ va $EF\\perp FG$ bo‘lsa,",
+        question: "На сторонах $AB$, $BC$ и $CD$ выпуклого четырёхугольника $ABCD$ выбраны соответственно точки $E$, $F$, $G$. При этом $AE:EB=CF:FB=CG:GD=3:4$, $EF=8$, $FG=6$ и $EF\\perp FG$.",
         image: "images/2-mart_1-img/42.svg",
         subQuestions: [
-            { id: "a", text: "$EFG$ uchburchak yuzini toping.", correctAnswer: "24" },
-            { id: "b", text: "$ABCD$ to‘rtburchak yuzini toping.", correctAnswer: "98" }
+            { id: "a", text: "Найдите площадь треугольника $EFG$.", correctAnswer: "24" },
+            { id: "b", text: "Найдите площадь четырёхугольника $ABCD$.", correctAnswer: "98" }
         ]
     },
     {
         id: 43,
         type: "open_ended",
-        question: "Asosi tomonlari 3 va 5 ga teng bo‘lgan $ABCD$ trapetsiyaga markazlari $O_1$ va $O_2$ bo‘lgan aylanalar ichki va tashqi chizilgan. $O_1$ markazli aylana $AB$ va $CD$ yon tomonlarga $E$ va $F$ nuqtalarda urinadi.",
+        question: "В трапецию $ABCD$ с основаниями 3 и 5 вписана и около неё описана окружность; их центры — $O_1$ и $O_2$. Окружность с центром $O_1$ касается боковых сторон $AB$ и $CD$ в точках $E$ и $F$.",
         image: "images/2-mart_1-img/43.svg",
         subQuestions: [
-            { id: "a", text: "$BCFO_1E$ beshburchak yuzini toping.", correctAnswer: "$\\frac{3\\sqrt{15}}{2}$" },
-            { id: "b", text: "$AEO_1FDO_2$ oltiburchak yuzini toping.", correctAnswer: "$\\frac{19\\sqrt{15}}{12}$" }
+            { id: "a", text: "Найдите площадь пятиугольника $BCFO_1E$.", correctAnswer: "$\\frac{3\\sqrt{15}}{2}$" },
+            { id: "b", text: "Найдите площадь шестиугольника $AEO_1FDO_2$.", correctAnswer: "$\\frac{19\\sqrt{15}}{12}$" }
         ]
     },
     {
         id: 44,
         type: "open_ended",
-        question: "Barcha yon qirralari teng bo‘lgan piramida shar ichiga chizilgan. Piramidaning asosi teng yonli trapetsiyadan iborat. Trapetsiyaning yon tomonlari 3 ga, asoslari esa 5 va 8 ga teng. Piramida yon qirrasi $\\frac{14\\sqrt3}{3}$ ga teng bo‘lsa,",
+        question: "Пирамида со всеми равными боковыми рёбрами вписана в шар. Основанием пирамиды является равнобедренная трапеция. Боковые стороны трапеции равны 3, а основания — 5 и 8. Если боковое ребро пирамиды равно $\\frac{14\\sqrt3}{3}$,",
         subQuestions: [
-            { id: "a", text: "Piramida balandligini toping.", correctAnswer: "7" },
-            { id: "b", text: "Shar radiusini toping.", correctAnswer: "$\\frac{14}{3}$" }
+            { id: "a", text: "Найдите высоту пирамиды.", correctAnswer: "7" },
+            { id: "b", text: "Найдите радиус шара.", correctAnswer: "$\\frac{14}{3}$" }
         ]
     },
     {
         id: 45,
         type: "open_ended",
-        question: "Rasmda $AB$ qiyalik orqali jism $C$ nuqtaga qarab tortilmoqda. $AB$ qiyalikda 9 km/soat, $BC$ tekislikda esa 15 km/soat tezlik bilan tortilmoqda. Bunda $AC=50\,m$, $DC=30\,m$ va $\\angle BAD=\\alpha$. $A$ nuqtadagi jism eng qisqa vaqt ichida $C$ nuqtaga tortib borildi.",
+        question: "На рисунке тело тянут к точке $C$ по наклонной $AB$. По наклонной $AB$ его тянут со скоростью 9 км/ч, а по горизонтальной плоскости $BC$ — со скоростью 15 км/ч. При этом $AC=50\\,m$, $DC=30\\,m$ и $\\angle BAD=\\alpha$. Тело из точки $A$ доставляется в точку $C$ за минимально возможное время.",
         image: "images/2-mart_1-img/45.svg",
         subQuestions: [
-            { id: "a", text: "$\\cos\\alpha$ ni toping.", correctAnswer: "$\\frac35$" },
-            { id: "b", text: "Eng kam vaqtni toping (soat).", correctAnswer: "$\\frac2{375}$" }
+            { id: "a", text: "Найдите $\\cos\\alpha$.", correctAnswer: "$\\frac35$" },
+            { id: "b", text: "Найдите минимальное время (в часах).", correctAnswer: "$\\frac2{375}$" }
         ]
     }
 ];
