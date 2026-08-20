@@ -12,6 +12,7 @@
                         <li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li>
                     </ul>
                     <div class="site-header__account">
+                        <a class="premium-nav-link" href="premium.html">👑 Premium</a>
                         <div class="sign__button" id="googleSignInButton"></div>
                         <div id="userProfile" class="user-profile" style="display:none;">
                             <img id="userAvatar" class="user-profile__avatar" src="" alt="">
@@ -27,10 +28,12 @@
 
     function setActiveLink(header) {
         const path = window.location.pathname.toLowerCase();
-        header.querySelectorAll('.header__list-link').forEach(link => link.classList.remove('active'));
+        header.querySelectorAll('.header__list-link, .premium-nav-link').forEach(link => link.classList.remove('active'));
         let selector = '.header__list-link[href="index.html"]';
-        if (path.includes('natcert')) selector = '.header__list-link[href="natcert.html"]';
-        if (path.endsWith('/') || path.endsWith('/index.html')) selector = '.header__list-link[href="index.html"]';
+        if (path.includes('natcert-test')) selector = '.header__list-link[href="natcert.html"]';
+        else if (path.includes('natcert')) selector = '.header__list-link[href="natcert.html"]';
+        else if (path.includes('premium')) selector = '.premium-nav-link';
+        else if (path.endsWith('/') || path.endsWith('/index.html')) selector = '.header__list-link[href="index.html"]';
         const active = header.querySelector(selector);
         if (active) active.classList.add('active');
     }
