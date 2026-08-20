@@ -128,6 +128,21 @@
         }
     }
 
+    function restoreTestUI() {
+        if (titleEl) {
+            titleEl.textContent = `Тест №${testId}`;
+            titleEl.classList.remove('test-title--access');
+        }
+
+        if (timerEl) {
+            timerEl.style.display = '';
+        }
+
+        if (submitBtn) {
+            submitBtn.style.display = '';
+        }
+    }
+
     async function checkDailyAccess() {
         const user = getCurrentUser();
 
@@ -202,6 +217,8 @@
             return;
         }
 
+        restoreTestUI();
+
         const oldScript = document.querySelector(
             'script[data-questions-loader]'
         );
@@ -230,6 +247,12 @@
 
         document.head.appendChild(script);
     }
+
+    // Если пользователь вошёл уже после загрузки страницы,
+    // повторно проверяем доступ и сразу открываем тест.
+    window.addEventListener('netija:login', function () {
+        loadQuiz();
+    });
 
     loadQuiz();
 })();
