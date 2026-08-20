@@ -6,6 +6,7 @@
     <title>Netija</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="premium.css">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,8 +47,15 @@
 
         <section class="premium-card" id="premiumCard">
             <h2>⭐ Netija Premium</h2>
-            <p>Без рекламы и Premium-доступ на 30 дней</p>
-            <div class="premium-price">10 000 сум / 30 дней</div>
+            <p>Без рекламы и Premium-доступ</p>
+            <div class="premium-plans">
+                <button class="premium-plan active" data-plan="monthly">
+                    <strong>15 000 сум</strong><span>30 дней</span>
+                </button>
+                <button class="premium-plan" data-plan="yearly">
+                    <strong>135 000 сум</strong><span>1 год · скидка 25%</span>
+                </button>
+            </div>
             <button class="premium-button" id="buyPremiumButton" disabled>Войдите через Google</button>
             <div class="premium-status" id="premiumStatus"></div>
         </section>
@@ -65,10 +73,22 @@
   import { getPremiumStatus, openPaymePayment } from './js/premium.js';
   const button = document.getElementById('buyPremiumButton');
   const status = document.getElementById('premiumStatus');
+  let selectedPlan = 'monthly';
+  document.querySelectorAll('.premium-plan').forEach(planButton => {
+    planButton.addEventListener('click', () => {
+      document.querySelectorAll('.premium-plan').forEach(x => x.classList.remove('active'));
+      planButton.classList.add('active');
+      selectedPlan = planButton.dataset.plan;
+      refreshPremium();
+    });
+  });
+  function updateBuyText(){
+    button.textContent = selectedPlan === 'yearly' ? 'Купить Premium — 135 000 сум' : 'Купить Premium — 15 000 сум';
+  }
   async function refreshPremium(){
     const user = JSON.parse(localStorage.getItem('netija_user') || 'null');
     if(!user?.email){ button.disabled=true; button.textContent='Войдите через Google'; return; }
-    button.disabled=false; button.textContent='Купить Premium — 10 000 сум';
+    button.disabled=false; updateBuyText();
     try{
       const data=await getPremiumStatus();
       if(data.premium){ button.disabled=true; button.textContent='Premium уже активен'; status.className='premium-status premium-ok'; status.textContent=data.premiumUntil ? `Активен до ${new Date(data.premiumUntil).toLocaleDateString('ru-RU')}` : 'Premium активен'; }
@@ -77,8 +97,8 @@
   }
   button.addEventListener('click',async()=>{
     button.disabled=true; button.textContent='Создаём заказ...'; status.textContent='';
-    try{ await openPaymePayment(); }
-    catch(e){ button.disabled=false; button.textContent='Купить Premium — 10 000 сум'; status.className='premium-status premium-error'; status.textContent=e.message==='LOGIN_REQUIRED'?'Сначала войдите через Google':(e.message||'Оплата пока не настроена'); }
+    try{ await openPaymePayment(selectedPlan); }
+    catch(e){ button.disabled=false; updateBuyText(); status.className='premium-status premium-error'; status.textContent=e.message==='LOGIN_REQUIRED'?'Сначала войдите через Google':(e.message||'Оплата пока не настроена'); }
   });
   window.addEventListener('netija:auth-changed',refreshPremium); refreshPremium();
 </script>
