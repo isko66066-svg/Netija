@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netija Premium</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="premium.css">
+  <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header__container">
+      <nav class="header__nav">
+        <a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a>
+        <ul class="header__list">
+          <li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li>
+          <li class="header__list-item"><a class="header__list-link" href="/">Дтм</a></li>
+          <li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li>
+        </ul>
+        <div class="site-header__account">
+          <a class="premium-nav-link active" href="premium.html">👑 Premium</a>
+          <div class="sign__button" id="googleSignInButton"></div>
+          <div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div>
+          <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="premium-page">
+    <section class="premium-hero">
+      <span class="premium-hero__badge">👑 NETIJA PREMIUM</span>
+      <h1>Подготовка без лишнего — только нужные возможности</h1>
+      <p>Выбери тариф Premium и продолжай готовиться к экзаменам в удобном формате.</p>
+    </section>
+
+    <section class="premium-offer">
+      <div class="premium-benefits">
+        <h2>Что входит в Premium</h2>
+        <ul>
+          <li><span class="premium-check">✓</span><div><strong>Без рекламы</strong><span>Ничто не отвлекает во время подготовки.</span></div></li>
+          <li><span class="premium-check">✓</span><div><strong>Premium-доступ</strong><span>Доступ к возможностям платформы, доступным для Premium.</span></div></li>
+          <li><span class="premium-check">✓</span><div><strong>Удобная подготовка</strong><span>Все тесты и результаты остаются в одном месте.</span></div></li>
+          <li><span class="premium-check">✓</span><div><strong>Payme</strong><span>Оплата проходит через Payme после создания заказа.</span></div></li>
+        </ul>
+      </div>
+
+      <div class="premium-purchase">
+        <h2>Выбери тариф</h2>
+        <p class="premium-purchase__subtitle">После выбора нажми кнопку покупки.</p>
+        <div class="premium-plans">
+          <button class="premium-plan active" data-plan="monthly" type="button"><strong>15 000 сум</strong><span>30 дней</span></button>
+          <button class="premium-plan" data-plan="yearly" type="button"><span class="premium-save">25% выгода</span><strong>135 000 сум</strong><span>1 год</span></button>
+        </div>
+        <button class="premium-buy" id="premiumBuy" disabled>Войдите через Google</button>
+        <div class="premium-status" id="premiumStatus"></div>
+        <a class="premium-back" href="index.html">← Вернуться на главную</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script src="js/menu.js"></script>
+  <script type="module">
+    import { getPremiumStatus, openPaymePayment } from './js/premium.js';
+
+    const button = document.getElementById('premiumBuy');
+    const status = document.getElementById('premiumStatus');
+    let selectedPlan = 'monthly';
+
+    document.querySelectorAll('.premium-plan').forEach(plan => {
+      plan.addEventListener('click', () => {
+        document.querySelectorAll('.premium-plan').forEach(x => x.classList.remove('active'));
+        plan.classList.add('active');
+        selectedPlan = plan.dataset.plan;
+        refresh();
+      });
+    });
+
+    function updateText(){
+      button.textContent = selectedPlan === 'yearly' ? 'Купить Premium — 135 000 сум' : 'Купить Premium — 15 000 сум';
+    }
+
+    async function refresh(){
+      const user = JSON.parse(localStorage.getItem('netija_user') || 'null');
+      if(!user?.email){ button.disabled = true; button.textContent = 'Войдите через Google'; return; }
+      button.disabled = false; updateText();
+      try{
+        const data = await getPremiumStatus();
+        if(data.premium){
+          button.disabled = true;
+          button.textContent = 'Premium уже активен';
+          status.className = 'premium-status ok';
+          status.textContent = data.premiumUntil ? `Активен до ${new Date(data.premiumUntil).toLocaleDateString('ru-RU')}` : 'Premium активен';
+        }else{
+          status.className = 'premium-status';
+          status.textContent = 'Premium не активен';
+        }
+      }catch(e){
+        status.className = 'premium-status error';
+        status.textContent = 'Не удалось проверить статус Premium';
+      }
+    }
+
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      button.textContent = 'Создаём заказ...';
+      status.textContent = '';
+      try{
+        await openPaymePayment(selectedPlan);
+      }catch(e){
+        button.disabled = false;
+        updateText();
+        status.className = 'premium-status error';
+        status.textContent = e.message === 'LOGIN_REQUIRED' ? 'Сначала войдите через Google' : (e.message || 'Оплата пока не настроена');
+      }
+    });
+
+    window.addEventListener('netija:auth-changed', refresh);
+    refresh();
+  </script>
+</body>
+</html>
