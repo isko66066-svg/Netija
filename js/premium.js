@@ -18,7 +18,7 @@ export async function getAccount(){
 
 export async function getPremiumStatus(){
   const user = getCurrentUser();
-  if (!user?.email) return { premium: false, premiumUntil: null, subscriptionStatus: 'inactive' };
+  if(!user?.email) return { premium: false, premiumUntil: null, subscriptionStatus: 'inactive' };
   const r = await fetch(`${BACKEND_URL}/api/premium/status?email=${encodeURIComponent(user.email)}`);
   if(!r.ok) return { premium: false, premiumUntil: null, subscriptionStatus: 'inactive' };
   return r.json();
@@ -87,7 +87,7 @@ export function setupRewardedResultGate({onReward}){
   }};
 }
 
-/* Exam-page fixes: remove account text from navigation and reliably build the question map. */
+/* Exam-page fixes: load the dedicated exam CSS and repair the 34/35 matching items. */
 (function initExamFixes(){
   if(!document.getElementById('questionGrid')) return;
 
@@ -100,91 +100,85 @@ export function setupRewardedResultGate({onReward}){
   }
 
   const EXPECTED=45;
-  let lastSignature='';
+  const resultByNumber=new Map();
+  window.netijaExamResultByNumber=resultByNumber;
 
-  function buildQuestionMap(){
-    const grid=document.getElementById('questionGrid');
-    const map=document.getElementById('answerMapGrid');
-    const container=document.getElementById('quizContainer');
-    const total=document.getElementById('totalQuestions');
-    if(!grid||!map||!container) return;
-
-    const blocks=Array.from(container.querySelectorAll('.question-block'));
-    if(blocks.length<EXPECTED) return;
-
-    const signature=blocks.slice(0,EXPECTED).map(b=>b.id).join('|');
-    if(signature===lastSignature && grid.children.length===EXPECTED) return;
-    lastSignature=signature;
-
-    grid.innerHTML='';
-    map.innerHTML='';
-    if(total) total.textContent=String(EXPECTED);
-
-    const buttons=[];
-    const mapButtons=[];
-
-    blocks.slice(0,EXPECTED).forEach((block,index)=>{
-      const text=block.querySelector('.question-text');
-      const match=text?.textContent.match(/^(\d+)/);
-      const number=match?match[1]:String(index+1);
-
-      const button=document.createElement('button');
-      button.type='button';
-      button.className='question-number';
-      button.textContent=number;
-      button.addEventListener('click',()=>block.scrollIntoView({behavior:'smooth',block:'start'}));
-      grid.appendChild(button);
-      buttons.push(button);
-
-      const mapButton=document.createElement('button');
-      mapButton.type='button';
-      mapButton.className='answer-map-cell';
-      mapButton.textContent=number;
-      mapButton.addEventListener('click',()=>block.scrollIntoView({behavior:'smooth',block:'start'}));
-      map.appendChild(mapButton);
-      mapButtons.push(mapButton);
-    });
-
-    function answered(block){
-      return [...block.querySelectorAll('input[type="radio"]')].some(i=>i.checked)
-        || [...block.querySelectorAll('input[type="text"]')].some(i=>i.value.trim()!=='')
-        || [...block.querySelectorAll('select')].some(s=>s.value!=='');
-    }
-
-    function updateStates(){
-      blocks.slice(0,EXPECTED).forEach((block,index)=>{
-        const isAnswered=answered(block);
-        buttons[index]?.classList.toggle('answered',isAnswered);
-        mapButtons[index]?.classList.toggle('answered',isAnswered);
-        mapButtons[index]?.classList.toggle('correct',block.classList.contains('question-correct'));
-        mapButtons[index]?.classList.toggle('incorrect',block.classList.contains('question-incorrect'));
-      });
-    }
-
-    container.addEventListener('change',updateStates);
-    container.addEventListener('input',updateStates);
-
-    const current=document.getElementById('currentQuestion');
-    if(window.IntersectionObserver){
-      const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
-        if(!entry.isIntersecting) return;
-        const index=blocks.indexOf(entry.target);
-        if(index<0||index>=EXPECTED) return;
-        buttons.forEach((b,n)=>b.classList.toggle('current',n===index));
-        mapButtons.forEach((b,n)=>b.classList.toggle('current',n===index));
-        if(current) current.textContent=String(index+1);
-      }),{root:null,rootMargin:'-18% 0px -62% 0px',threshold:0});
-      blocks.slice(0,EXPECTED).forEach(block=>observer.observe(block));
-    }
-
-    updateStates();
+  function getBlocks(){
+    return Array.from(document.querySelectorAll('#quizContainer .question-block'));
   }
 
-  const observer=new MutationObserver(buildQuestionMap);
+  function findBlockForNumber(id){
+    const direct=document.getElementById(`question-block-${id}`);
+    if(direct) return direct;
+    return getBlocks().find(block =>
+      block.querySelector(`select[data-item-id="${id}"]`) ||
+      Array.from(block.querySelectorAll('.sub-question-text')).some(el => new RegExp(`^\\s*${id}\\.`).test(el.textContent || ''))
+    ) || null;
+  }
+
+  function isAnsweredForNumber(block,id){
+    if(!block) return false;
+    const matching=block.querySelector(`select[data-item-id="${id}"]`);
+    if(matching) return matching.value !== '';
+    const textInput=block.querySelector(`input[data-question-id="${id}"]`);
+    if(textInput) return textInput.value.trim() !== '';
+    return !!block.querySelector('input[type="radio"]:checked') ||
+      Array.from(block.querySelectorAll('input[type="text"]')).some(i=>i.value.trim()!=='') ||
+      Array.from(block.querySelectorAll('select')).some(s=>s.value!=='');
+  }
+
+  function patchQuestionMap(){
+    const grid=document.getElementById('questionGrid');
+    if(!grid) return;
+    const buttons=Array.from(grid.querySelectorAll('.question-number'));
+    if(buttons.length!==EXPECTED) return;
+
+    for(let id=1;id<=EXPECTED;id++){
+      const button=buttons[id-1];
+      const block=findBlockForNumber(id);
+      if(!button || !block) continue;
+
+      button.disabled=false;
+      button.classList.remove('missing');
+      button.title=`Перейти к вопросу ${id}`;
+      button.onclick=(event)=>{
+        event.preventDefault();
+        event.stopPropagation();
+        block.scrollIntoView({behavior:'smooth',block:'start'});
+      };
+
+      const result=resultByNumber.get(String(id)) || resultByNumber.get(id);
+      const answered=isAnsweredForNumber(block,id);
+      button.classList.toggle('answered',answered && !window.quizSubmitted);
+      button.classList.toggle('correct',!!result && result.isCorrect===true);
+      button.classList.toggle('incorrect',!!result && result.isCorrect===false);
+    }
+  }
+
+  function captureResults(event){
+    const details=event?.detail?.details || [];
+    resultByNumber.clear();
+    details.forEach(item=>{
+      resultByNumber.set(String(item.number),item);
+      resultByNumber.set(item.number,item);
+    });
+    patchQuestionMap();
+    requestAnimationFrame(patchQuestionMap);
+    setTimeout(patchQuestionMap,100);
+  }
+
+  document.addEventListener('netija:quizRendered',()=>{
+    setTimeout(patchQuestionMap,0);
+    setTimeout(patchQuestionMap,100);
+    setTimeout(patchQuestionMap,400);
+  });
+  document.addEventListener('netija:testSubmitted',captureResults);
+
+  const observer=new MutationObserver(()=>patchQuestionMap());
   const start=()=>{
     const container=document.getElementById('quizContainer');
     if(container) observer.observe(container,{childList:true,subtree:true});
-    buildQuestionMap();
+    patchQuestionMap();
   };
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
