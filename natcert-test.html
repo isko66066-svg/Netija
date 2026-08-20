@@ -37,16 +37,33 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
     <main class="exam-page" id="main">
         <div class="exam-layout">
             <section class="questions-area">
-                <div class="exam-testbar"><div class="exam-testbar__info"><div class="exam-testbar__title" id="testTitle">Загрузка теста...</div><div class="exam-testbar__progress">Вопрос <strong id="currentQuestion">1</strong> из <strong id="totalQuestions">45</strong></div></div><div class="exam-testbar__timer"><span class="exam-clock">◷</span><div><strong id="timer">02:30:00</strong><small>Оставшееся время</small></div></div><button id="submitBtn" class="finish-test" type="button">Завершить тест</button></div>
+                <div class="exam-testbar exam-testbar--title">
+                    <div class="exam-testbar__info">
+                        <div class="exam-testbar__title" id="testTitle">Загрузка теста...</div>
+                        <div class="exam-testbar__progress">Вопрос <strong id="currentQuestion">1</strong> из <strong id="totalQuestions">45</strong></div>
+                    </div>
+                </div>
                 <div id="quizContainer"></div>
             </section>
+
             <aside class="questions-sidebar">
+                <div class="exam-sidebar-controls">
+                    <div class="sidebar-timer">
+                        <span class="exam-clock">◷</span>
+                        <div><strong id="sidebarTimer">02:30:00</strong><small>Оставшееся время</small></div>
+                    </div>
+                    <button id="submitBtn" class="finish-test finish-test--full" type="button">Завершить тест</button>
+                </div>
+
                 <h2>Вопросы</h2>
                 <div class="question-status"><span class="status-dot answered"></span>Ответ дан</div>
                 <div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div>
                 <div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>
                 <div class="question-grid" id="questionGrid"></div>
-                <div class="answer-map-panel" id="answerMapPanel" style="display:none;"><h3>Карта ответов по заданиям:</h3><div class="answer-map-grid" id="answerMapGrid"></div></div>
+                <div class="answer-map-panel" id="answerMapPanel" style="display:none;">
+                    <h3>Карта ответов по заданиям:</h3>
+                    <div class="answer-map-grid" id="answerMapGrid"></div>
+                </div>
                 <div id="resultBox" class="test-result" style="display:none;"></div>
             </aside>
         </div>
@@ -55,21 +72,13 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
     <script src="js/auth.js"></script><script src="js/menu.js"></script><script src="js/quiz-loader.js"></script><script src="js/premium.js"></script><script src="js/quiz.js"></script><script src="js/router.js"></script>
     <script>
     (function () {
-        function wrapSingleChoiceOptions(blocks) {
-            blocks.forEach(block => {
-                if (block.querySelector('.options-list')) return;
+        let examNavigationReady = false;
 
-                const labels = Array.from(block.children).filter(
-                    el => el.classList && el.classList.contains('option-label')
-                );
-
-                if (!labels.length) return;
-
-                const wrapper = document.createElement('div');
-                wrapper.className = 'options-list';
-                labels[0].before(wrapper);
-                labels.forEach(label => wrapper.appendChild(label));
-            });
+        function scrollToQuestion(block) {
+            if (!block) return;
+            const headerOffset = 74;
+            const top = block.getBoundingClientRect().top + window.scrollY - headerOffset;
+            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
         }
 
         function setupExamNavigation() {
@@ -81,19 +90,15 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
             if (!grid || !container) return;
 
             const blocks = Array.from(container.querySelectorAll('.question-block'));
-
             if (!blocks.length) {
                 setTimeout(setupExamNavigation, 150);
                 return;
             }
 
-            wrapSingleChoiceOptions(blocks);
-
             grid.innerHTML = '';
             if (answerMap) answerMap.innerHTML = '';
 
-            const totalCount = blocks.length;
-            if (total) total.textContent = String(totalCount);
+            if (total) total.textContent = String(blocks.length);
 
             blocks.forEach((block, index) => {
                 const text = block.querySelector('.question-text');
@@ -104,9 +109,7 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
                 button.type = 'button';
                 button.className = 'question-number';
                 button.textContent = number;
-                button.addEventListener('click', () => {
-                    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
+                button.addEventListener('click', () => scrollToQuestion(block));
                 grid.appendChild(button);
 
                 if (answerMap) {
@@ -114,15 +117,13 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
                     mapButton.type = 'button';
                     mapButton.className = 'answer-map-cell';
                     mapButton.textContent = number;
-                    mapButton.addEventListener('click', () => {
-                        block.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    });
+                    mapButton.addEventListener('click', () => scrollToQuestion(block));
                     answerMap.appendChild(mapButton);
                 }
             });
 
             function isAnswered(block) {
-                return Array.from(block.querySelectorAll('input[type="radio"]')).some(i => i.checked)
+                return !!block.querySelector('input[type="radio"]:checked')
                     || Array.from(block.querySelectorAll('input[type="text"]')).some(i => i.value.trim() !== '')
                     || Array.from(block.querySelectorAll('select')).some(s => s.value !== '');
             }
@@ -134,12 +135,17 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
                     if (!button) return;
 
                     const answered = isAnswered(block);
+                    const correct = block.classList.contains('question-correct');
+                    const incorrect = block.classList.contains('question-incorrect');
+
                     button.classList.toggle('answered', answered);
+                    button.classList.toggle('correct', correct);
+                    button.classList.toggle('incorrect', incorrect);
 
                     if (mapButton) {
                         mapButton.classList.toggle('answered', answered);
-                        mapButton.classList.toggle('correct', block.classList.contains('question-correct'));
-                        mapButton.classList.toggle('incorrect', block.classList.contains('question-incorrect'));
+                        mapButton.classList.toggle('correct', correct);
+                        mapButton.classList.toggle('incorrect', incorrect);
                     }
                 });
             }
@@ -148,7 +154,6 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
             container.addEventListener('input', updateStates);
 
             const current = document.getElementById('currentQuestion');
-
             if ('IntersectionObserver' in window) {
                 const observer = new IntersectionObserver(entries => {
                     entries.forEach(entry => {
@@ -168,11 +173,7 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
 
                         if (current) current.textContent = String(index + 1);
                     });
-                }, {
-                    root: null,
-                    rootMargin: '-18% 0px -62% 0px',
-                    threshold: 0
-                });
+                }, { root: null, rootMargin: '-18% 0px -62% 0px', threshold: 0 });
 
                 blocks.forEach(block => observer.observe(block));
             }
@@ -184,6 +185,39 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
             }));
 
             updateStates();
+            examNavigationReady = true;
+        }
+
+        function syncSidebarTimer() {
+            const mainTimer = document.getElementById('timer');
+            const sidebar = document.getElementById('sidebarTimer');
+            if (!sidebar) return;
+
+            if (!mainTimer) {
+                sidebar.textContent = '02:30:00';
+                return;
+            }
+
+            const sync = () => {
+                sidebar.textContent = mainTimer.textContent;
+                sidebar.classList.toggle('timer--warning', mainTimer.classList.contains('timer--warning'));
+            };
+
+            new MutationObserver(sync).observe(mainTimer, {
+                childList: true,
+                characterData: true,
+                subtree: true,
+                attributes: true
+            });
+            sync();
+        }
+
+        function hideOldTimer() {
+            const mainTimer = document.getElementById('timer');
+            if (mainTimer) {
+                const timerBox = mainTimer.closest('.exam-testbar__timer');
+                if (timerBox) timerBox.remove();
+            }
         }
 
         function showAnswerMapAfterSubmit() {
@@ -197,12 +231,13 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
                 }
                 setTimeout(check, 250);
             };
-
             check();
         }
 
         function initExamUI() {
             setupExamNavigation();
+            syncSidebarTimer();
+            hideOldTimer();
             showAnswerMapAfterSubmit();
         }
 
