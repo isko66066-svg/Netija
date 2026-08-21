@@ -1,9 +1,5 @@
 // Netija navigation guard
-//
-// IMPORTANT: test pages must be opened as real documents. The old SPA router
-// replaced only <main>, so natcert-test.html kept the previous page header and
-// its page-specific CSS was not reloaded. That caused the test page to look
-// broken until a manual refresh.
+// Protect an active test from accidental reload, Back, and internal navigation.
 
 window.quizInProgress = window.quizInProgress === true;
 window.quizSubmitted = window.quizSubmitted === true;
@@ -12,107 +8,40 @@ function isActiveQuiz() {
     return window.quizInProgress === true && window.quizSubmitted !== true;
 }
 
+// Browser refresh / close / leaving the page.
+// Browsers intentionally show their own standard confirmation text.
 window.addEventListener('beforeunload', function (event) {
     if (!isActiveQuiz()) return;
     event.preventDefault();
     event.returnValue = '';
 });
 
-// The shared menu.js replaces .header with .site-header on every page.
-// Keep the same dark-blue header styling after that replacement too.
-(function injectGlobalHeaderFix() {
-    if (document.getElementById('netija-site-header-fix')) return;
-
-    const style = document.createElement('style');
-    style.id = 'netija-site-header-fix';
-    style.textContent = `
-        .site-header {
-            width: 100% !important;
-            max-width: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #08172d !important;
-            border: 0 !important;
-            border-radius: 0 !important;
-            box-shadow: 0 2px 14px rgba(15,23,42,.14) !important;
-            position: sticky !important;
-            top: 0 !important;
-            z-index: 2000 !important;
-            color: #fff !important;
-        }
-
-        .site-header .header__container,
-        .site-header .header__nav {
-            width: 100% !important;
-            max-width: none !important;
-            background: transparent !important;
-            border: 0 !important;
-            border-radius: 0 !important;
-        }
-
-        .site-header .header__nav {
-            min-height: 58px !important;
-            padding: 0 24px !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 24px !important;
-        }
-
-        .site-header .header__list-link {
-            color: #dbe4f1 !important;
-            background: transparent !important;
-        }
-
-        .site-header .header__list-link:hover,
-        .site-header .header__list-link.active {
-            color: #fff !important;
-        }
-
-        .site-header .header__list-link.active::after {
-            background: #3b82f6 !important;
-        }
-
-        .site-header .user-profile,
-        .site-header .user-profile__name {
-            color: #fff !important;
-        }
-
-        .site-header .burger span {
-            background: #fff !important;
-        }
-
-        @media (max-width: 700px) {
-            .site-header .header__nav {
-                min-height: 60px !important;
-                height: 60px !important;
-                padding: 0 10px !important;
-                gap: 6px !important;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-})();
-
-// Reliable warning when a user tries to leave an active test through
-// Netija navigation or the browser Back button. beforeunload above remains
-// responsible for refresh/close/external navigation.
 (function installQuizLeaveGuard() {
     let guardReady = false;
     let allowNavigation = false;
 
     function ensureHistoryGuard() {
         if (guardReady || !isActiveQuiz()) return;
+
         guardReady = true;
-        history.pushState({ netijaQuizGuard: true }, '', window.location.href);
+        history.pushState(
+            { netijaQuizGuard: true },
+            '',
+            window.location.href
+        );
     }
 
     function confirmLeave() {
-        const ok = window.confirm('Вы сейчас проходите тест. Выйти из теста?\n\nВаши ответы могут быть потеряны.');
+        const ok = window.confirm(
+            'Вы сейчас проходите тест. Выйти из теста?\n\nВаши ответы могут быть потеряны.'
+        );
+
         if (ok) {
             allowNavigation = true;
             window.quizInProgress = false;
             window.quizSubmitted = true;
         }
+
         return ok;
     }
 
@@ -121,9 +50,13 @@ window.addEventListener('beforeunload', function (event) {
             window.location.href = destination;
             return;
         }
-        if (confirmLeave()) window.location.href = destination;
+
+        if (confirmLeave()) {
+            window.location.href = destination;
+        }
     }
 
+    // Internal links: ask before leaving an active test.
     function handleLinkClick(event) {
         if (!isActiveQuiz()) return;
         if (event.defaultPrevented || event.button !== 0) return;
@@ -135,6 +68,7 @@ window.addEventListener('beforeunload', function (event) {
         if (link.hasAttribute('download')) return;
 
         const url = new URL(link.href, window.location.href);
+
         if (url.origin !== window.location.origin) return;
         if (url.href === window.location.href) return;
 
@@ -144,19 +78,48 @@ window.addEventListener('beforeunload', function (event) {
 
     document.addEventListener('click', handleLinkClick, true);
 
+    // Browser Back button.
+    // A duplicate history entry is installed while the test is active:
+    // [previous page] -> [test] -> [test guard].
+    // On Back we are first returned to the duplicate test URL. We ask there;
+    // if cancelled, restore the guard entry. If confirmed, go back once more
+    // to the actual previous page. Do NOT push a new entry before confirming,
+    // otherwise the Back button can never leave the test.
     window.addEventListener('popstate', function () {
         if (allowNavigation || !isActiveQuiz()) return;
 
-        history.pushState({ netijaQuizGuard: true }, '', window.location.href);
-        if (confirmLeave()) history.back();
+        const ok = confirmLeave();
+
+        if (ok) {
+            // The browser is already at the duplicate test history entry.
+            // One more Back reaches the real previous page.
+            history.back();
+        } else {
+            // User cancelled: restore the protected entry at the current URL.
+            history.pushState(
+                { netijaQuizGuard: true },
+                '',
+                window.location.href
+            );
+            guardReady = true;
+        }
     });
 
+    // quiz.js sets quizInProgress when the test starts. Keep checking until
+    // that happens, then install the history guard.
     const historyCheck = setInterval(function () {
         if (isActiveQuiz()) {
             ensureHistoryGuard();
             clearInterval(historyCheck);
         }
+
+        if (window.quizSubmitted === true) {
+            clearInterval(historyCheck);
+        }
     }, 100);
+
+    document.addEventListener('netija:quizRendered', ensureHistoryGuard);
+    document.addEventListener('netija:testStarted', ensureHistoryGuard);
 })();
 
 // After submission: highlight correct open answers and move the result card
@@ -179,13 +142,8 @@ window.addEventListener('beforeunload', function (event) {
                 background: #fef2f2 !important;
             }
 
-            .open-answer-feedback--correct {
-                color: #15803d !important;
-            }
-
-            .open-answer-feedback--wrong {
-                color: #b91c1c !important;
-            }
+            .open-answer-feedback--correct { color: #15803d !important; }
+            .open-answer-feedback--wrong { color: #b91c1c !important; }
 
             .questions-sidebar > #resultBox.test-result {
                 width: 100% !important;
@@ -325,11 +283,5 @@ window.addEventListener('beforeunload', function (event) {
     });
 })();
 
-// Do not intercept internal .html navigation.
-// Let the browser load the complete document so that:
-// - the correct header is rendered;
-// - style.css/test.css are loaded normally;
-// - page-specific scripts start once, in the correct order;
-// - stale SPA DOM/CSS cannot remain on the screen.
-//
-// We intentionally keep this file as a navigation guard only.
+// Do not intercept internal .html navigation. Let the browser load the
+// complete document so each page gets its own header, CSS and scripts.
