@@ -4,327 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netija Premium</title>
-
     <link rel="stylesheet" href="style.css?v=20260821-4">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
-
-    <!-- menu.js replaces .header with .site-header, so keep the header dark blue -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .site-header,
-        .header {
-            width: 100% !important;
-            max-width: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #08172d !important;
-            border: 0 !important;
-            border-radius: 0 !important;
-            box-shadow: 0 2px 14px rgba(15, 23, 42, .14) !important;
-            position: sticky !important;
-            top: 0 !important;
-            z-index: 2000 !important;
-            color: #fff !important;
-        }
-
-        .site-header .header__container,
-        .site-header .header__nav,
-        .header .header__container,
-        .header .header__nav {
-            background: transparent !important;
-        }
-
-        .site-header .header__nav,
-        .header .header__nav {
-            min-height: 58px !important;
-        }
+        .site-header,.header{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;background:#08172d!important;border:0!important;border-radius:0!important;box-shadow:0 2px 14px rgba(15,23,42,.14)!important;position:sticky!important;top:0!important;z-index:2000!important;color:#fff!important}
+        .site-header .header__container,.site-header .header__nav,.header .header__container,.header .header__nav{background:transparent!important}
+        .site-header .header__nav,.header .header__nav{min-height:58px!important}
     </style>
-
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
-
 <body>
     <header class="header">
-        <div class="header__container">
-            <nav class="header__nav">
-                <a
-                    class="site-header__logo"
-                    href="index.html"
-                    aria-label="Netija"
-                >
-                    <img class="logo" src="./images/logo.svg" alt="Netija">
-                </a>
-
-                <ul class="header__list">
-                    <li class="header__list-item">
-                        <a class="header__list-link" href="index.html">
-                            Главная страница
-                        </a>
-                    </li>
-                    <li class="header__list-item">
-                        <a class="header__list-link" href="/">
-                            Дтм
-                        </a>
-                    </li>
-                    <li class="header__list-item">
-                        <a class="header__list-link" href="natcert.html">
-                            Национальный сертификат
-                        </a>
-                    </li>
-                </ul>
-
-                <div class="site-header__account">
-                    <a class="premium-nav-link active" href="premium.html">
-                        👑 Premium
-                    </a>
-
-                    <div class="sign__button" id="googleSignInButton"></div>
-
-                    <div
-                        id="userProfile"
-                        class="user-profile"
-                        style="display: none;"
-                    >
-                        <img
-                            id="userAvatar"
-                            class="user-profile__avatar"
-                            src=""
-                            alt=""
-                        >
-                        <span
-                            id="userName"
-                            class="user-profile__name"
-                        ></span>
-                    </div>
-
-                    <button
-                        class="burger"
-                        id="burgerBtn"
-                        type="button"
-                        aria-label="Меню"
-                    >
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                </div>
-            </nav>
-        </div>
+        <div class="header__container"><nav class="header__nav">
+            <a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a>
+            <ul class="header__list">
+                <li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li>
+                <li class="header__list-item"><a class="header__list-link" href="/">Дтм</a></li>
+                <li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li>
+            </ul>
+            <div class="site-header__account">
+                <a class="premium-nav-link active" href="premium.html">👑 Premium</a>
+                <div class="sign__button" id="googleSignInButton"></div>
+                <div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div>
+                <button class="burger" id="burgerBtn" type="button" aria-label="Меню"><span></span><span></span><span></span></button>
+            </div>
+        </nav></div>
     </header>
 
     <main class="premium-page">
-        <section class="premium-hero">
-            <span class="premium-hero__badge">
-                👑 NETIJA PREMIUM
-            </span>
-
-            <h1>
-                Подготовка без лишнего — только нужные возможности
-            </h1>
-
-            <p>
-                Выбери тариф Premium и продолжай готовиться к экзаменам
-                в удобном формате.
-            </p>
-        </section>
-
+        <section class="premium-hero"><span class="premium-hero__badge">👑 NETIJA PREMIUM</span><h1>Подготовка без лишнего — только нужные возможности</h1><p>Выбери тариф Premium и продолжай готовиться к экзаменам в удобном формате.</p></section>
         <section class="premium-offer">
-            <div class="premium-benefits">
-                <h2>Что входит в Premium</h2>
-
-                <ul>
-                    <li>
-                        <span class="premium-check">✓</span>
-                        <div>
-                            <strong>Без рекламы</strong>
-                            <span>
-                                Ничто не отвлекает во время подготовки.
-                            </span>
-                        </div>
-                    </li>
-
-                    <li>
-                        <span class="premium-check">✓</span>
-                        <div>
-                            <strong>Premium-доступ</strong>
-                            <span>
-                                Доступ к возможностям платформы,
-                                доступным для Premium.
-                            </span>
-                        </div>
-                    </li>
-
-                    <li>
-                        <span class="premium-check">✓</span>
-                        <div>
-                            <strong>Удобная подготовка</strong>
-                            <span>
-                                Все тесты и результаты остаются в одном месте.
-                            </span>
-                        </div>
-                    </li>
-
-                    <li>
-                        <span class="premium-check">✓</span>
-                        <div>
-                            <strong>Payme</strong>
-                            <span>
-                                Оплата проходит через Payme после создания заказа.
-                            </span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="premium-purchase">
-                <h2>Выбери тариф</h2>
-
-                <p class="premium-purchase__subtitle">
-                    После выбора нажми кнопку покупки.
-                </p>
-
+            <div class="premium-benefits"><h2>Что входит в Premium</h2><ul>
+                <li><span class="premium-check">✓</span><div><strong>Без рекламы</strong><span>Ничто не отвлекает во время подготовки.</span></div></li>
+                <li><span class="premium-check">✓</span><div><strong>Premium-доступ</strong><span>Доступ к возможностям платформы, доступным для Premium.</span></div></li>
+                <li><span class="premium-check">✓</span><div><strong>Удобная подготовка</strong><span>Все тесты и результаты остаются в одном месте.</span></div></li>
+                <li><span class="premium-check">✓</span><div><strong>Payme</strong><span>Оплата проходит через Payme после создания заказа.</span></div></li>
+            </ul></div>
+            <div class="premium-purchase"><h2>Выбери тариф</h2><p class="premium-purchase__subtitle">После выбора нажми кнопку покупки.</p>
                 <div class="premium-plans">
-                    <button
-                        class="premium-plan active"
-                        data-plan="monthly"
-                        type="button"
-                    >
-                        <strong>15 000 сум</strong>
-                        <span>30 дней</span>
-                    </button>
-
-                    <button
-                        class="premium-plan"
-                        data-plan="yearly"
-                        type="button"
-                    >
-                        <span class="premium-save">25% выгода</span>
-                        <strong>135 000 сум</strong>
-                        <span>1 год</span>
-                    </button>
+                    <button class="premium-plan active" data-plan="monthly" type="button"><strong>15 000 сум</strong><span>30 дней</span></button>
+                    <button class="premium-plan" data-plan="yearly" type="button"><span class="premium-save">25% выгода</span><strong>135 000 сум</strong><span>1 год</span></button>
                 </div>
-
-                <button
-                    class="premium-buy"
-                    id="premiumBuy"
-                    disabled
-                >
-                    Войдите через Google
-                </button>
-
-                <div
-                    class="premium-status"
-                    id="premiumStatus"
-                ></div>
-
-                <a
-                    class="premium-back"
-                    href="index.html"
-                >
-                    ← Вернуться на главную
-                </a>
+                <button class="premium-buy" id="premiumBuy" disabled>Войдите через Google</button>
+                <div class="premium-status" id="premiumStatus"></div>
+                <a class="premium-back" href="index.html">← Вернуться на главную</a>
             </div>
         </section>
     </main>
 
     <script src="js/auth.js"></script>
     <script src="js/menu.js"></script>
-
+    <script src="js/premium-header.js?v=20260821"></script>
     <script type="module">
-        import {
-            getPremiumStatus,
-            openPaymePayment
-        } from './js/premium.js';
-
-        const button = document.getElementById('premiumBuy');
-        const status = document.getElementById('premiumStatus');
-
-        let selectedPlan = 'monthly';
-
-        document
-            .querySelectorAll('.premium-plan')
-            .forEach((plan) => {
-                plan.addEventListener('click', () => {
-                    document
-                        .querySelectorAll('.premium-plan')
-                        .forEach((item) => {
-                            item.classList.remove('active');
-                        });
-
-                    plan.classList.add('active');
-                    selectedPlan = plan.dataset.plan;
-                    refresh();
-                });
-            });
-
-        function updateText() {
-            button.textContent =
-                selectedPlan === 'yearly'
-                    ? 'Купить Premium — 135 000 сум'
-                    : 'Купить Premium — 15 000 сум';
+        import { getPremiumStatus, openPaymePayment } from './js/premium.js';
+        const button=document.getElementById('premiumBuy');
+        const status=document.getElementById('premiumStatus');
+        let selectedPlan='monthly';
+        document.querySelectorAll('.premium-plan').forEach(plan=>plan.addEventListener('click',()=>{document.querySelectorAll('.premium-plan').forEach(item=>item.classList.remove('active'));plan.classList.add('active');selectedPlan=plan.dataset.plan;refresh();}));
+        function updateText(){button.textContent=selectedPlan==='yearly'?'Купить Premium — 135 000 сум':'Купить Premium — 15 000 сум';}
+        async function refresh(){
+            const user=JSON.parse(localStorage.getItem('netija_user')||'null');
+            if(!user?.email){button.disabled=true;button.textContent='Войдите через Google';return;}
+            button.disabled=false;updateText();
+            try{const data=await getPremiumStatus();if(data.premium){button.disabled=true;button.textContent='Premium уже активен';status.className='premium-status ok';status.textContent=data.premiumUntil?`Активен до ${new Date(data.premiumUntil).toLocaleDateString('ru-RU')}`:'Premium активен';}else{status.className='premium-status';status.textContent='Premium не активен';}}catch(error){status.className='premium-status error';status.textContent='Не удалось проверить статус Premium';}
         }
-
-        async function refresh() {
-            const user = JSON.parse(
-                localStorage.getItem('netija_user') || 'null'
-            );
-
-            if (!user?.email) {
-                button.disabled = true;
-                button.textContent = 'Войдите через Google';
-                return;
-            }
-
-            button.disabled = false;
-            updateText();
-
-            try {
-                const data = await getPremiumStatus();
-
-                if (data.premium) {
-                    button.disabled = true;
-                    button.textContent = 'Premium уже активен';
-                    status.className = 'premium-status ok';
-                    status.textContent = data.premiumUntil
-                        ? `Активен до ${new Date(data.premiumUntil).toLocaleDateString('ru-RU')}`
-                        : 'Premium активен';
-                } else {
-                    status.className = 'premium-status';
-                    status.textContent = 'Premium не активен';
-                }
-            } catch (error) {
-                status.className = 'premium-status error';
-                status.textContent = 'Не удалось проверить статус Premium';
-            }
-        }
-
-        button.addEventListener('click', async () => {
-            button.disabled = true;
-            button.textContent = 'Создаём заказ...';
-            status.textContent = '';
-
-            try {
-                await openPaymePayment(selectedPlan);
-            } catch (error) {
-                button.disabled = false;
-                updateText();
-                status.className = 'premium-status error';
-                status.textContent =
-                    error.message === 'LOGIN_REQUIRED'
-                        ? 'Сначала войдите через Google'
-                        : (error.message || 'Оплата пока не настроена');
-            }
-        });
-
-        window.addEventListener('netija:auth-changed', refresh);
-
-        refresh();
+        button.addEventListener('click',async()=>{button.disabled=true;button.textContent='Создаём заказ...';status.textContent='';try{await openPaymePayment(selectedPlan);}catch(error){button.disabled=false;updateText();status.className='premium-status error';status.textContent=error.message==='LOGIN_REQUIRED'?'Сначала войдите через Google':(error.message||'Оплата пока не настроена');}});
+        window.addEventListener('netija:auth-changed',refresh);refresh();
     </script>
 </body>
 </html>
