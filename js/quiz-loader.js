@@ -70,15 +70,17 @@
             q33.context='Задания (33–35) и варианты ответов (A–F) сопоставьте между собой. На рисунке даны конус, цилиндр и шар равных объёмов. Осевое сечение цилиндра — квадрат, а осевое сечение конуса — правильный треугольник.';
             q33.image='images/2-mart_2-img/matching.svg';
             q33.optionsPool={A:'$\\frac{\\sqrt[6]{12}}{2}$',B:'$\\frac{\\sqrt[6]{3}}{\\sqrt[3]{6}}$',C:'$\\frac{\\sqrt[3]{18}}{2}$',D:'$\\frac{\\sqrt[3]{12}}{6}$',E:'$\\frac{\\sqrt[3]{18}}{3}$',F:'$\\frac{\\sqrt[3]{6}}{2}$'};
-            q33.items=[{id:33,text:'Найдите отношение радиуса основания цилиндра к радиусу основания конуса.',correctAnswer:'B'},{id:34,text:'Найдите отношение радиуса шара к радиусу конуса.',correctAnswer:'A'},{id:35,text:'Найдите отношение радиуса основания цилиндра к радиусу шара.',correctAnswer:'E'}];
-            q34.type='matching_hidden'; q35.type='matching_hidden';
+            q33.items=[{id:33,text:'Найдите отношение радиуса основания цилиндра к радиусу основания конуса.',correctAnswer:'B'}];
+            q34.type='matching'; q34.question=''; q34.context=''; q34.optionsPool=q33.optionsPool; q34.items=[{id:34,text:'Найдите отношение радиуса шара к радиусу конуса.',correctAnswer:'A'}];
+            q35.type='matching'; q35.question=''; q35.context=''; q35.optionsPool=q33.optionsPool; q35.items=[{id:35,text:'Найдите отношение радиуса основания цилиндра к радиусу шара.',correctAnswer:'E'}];
         }
         if(String(testId)==='7'){
             q33.type='matching'; q33.question='';
             q33.context='Задания (33–35) и варианты ответов (A–F) сопоставьте между собой. Если высота цилиндра равна 8, а полная площадь поверхности равна 232,5π, вычислите следующие величины.';
             q33.optionsPool={A:'$\\frac{\\sqrt{161}}{2}$',B:'$\\frac{\\sqrt{161}}{4}$',C:'$\\frac{17}{2}$',D:'$\\frac{3\\sqrt{21}}{2}$',E:'$\\frac{3\\sqrt{21}}{4}$',F:'$\\frac{19}{2}$'};
-            q33.items=[{id:33,text:'Найдите наименьшее расстояние от оси цилиндра до отрезка длиной 10 см, расположенного на одинаковом расстоянии от оснований.',correctAnswer:'D'},{id:34,text:'Через цилиндр проведено сечение, параллельное его оси. Если сечение — квадрат, найдите наименьшее расстояние до оси.',correctAnswer:'B'},{id:35,text:'Найдите радиус шара, описанного около цилиндра.',correctAnswer:'C'}];
-            q34.type='matching_hidden'; q35.type='matching_hidden';
+            q33.items=[{id:33,text:'Найдите наименьшее расстояние от оси цилиндра до отрезка длиной 10 см, расположенного на одинаковом расстоянии от оснований.',correctAnswer:'D'}];
+            q34.type='matching'; q34.question=''; q34.context=''; q34.optionsPool=q33.optionsPool; q34.items=[{id:34,text:'Через цилиндр проведено сечение, параллельное его оси. Если сечение — квадрат, найдите наименьшее расстояние до оси.',correctAnswer:'B'}];
+            q35.type='matching'; q35.question=''; q35.context=''; q35.optionsPool=q33.optionsPool; q35.items=[{id:35,text:'Найдите радиус шара, описанного около цилиндра.',correctAnswer:'C'}];
         }
     }
 
@@ -87,6 +89,8 @@
         const style=document.createElement('style');style.id='matching-visual-fix';style.textContent=`
             .matching-context{background:#fff!important;border:0!important;padding:0!important;color:#172033!important;font-size:16px!important;line-height:1.55!important;margin-bottom:12px!important}
             .question-image{max-width:100%;height:auto;max-height:330px;object-fit:contain;background:#fff;border:0!important;border-radius:0!important;margin:14px auto 20px!important}
+            #question-block-34,#question-block-35{box-shadow:none!important;margin-top:-24px!important;border-top:0!important;border-radius:0!important;padding-top:0!important}
+            #question-block-35{border-radius:0 0 12px 12px!important;padding-bottom:24px!important}
         `;document.head.appendChild(style);
     }
 
