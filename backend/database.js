@@ -1,17 +1,15 @@
-const { Pool } = require("@neondatabase/serverless");
+const { neon } = require("@neondatabase/serverless");
 
-if (!process.env.DATABASE_URL) {
+const DATABASE_URL = process.env.DATABASE_URL;
+
+if (!DATABASE_URL) {
     throw new Error("DATABASE_URL не настроен на сервере");
 }
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    max: 10,
-    idleTimeoutMillis: 30000
-});
+const sql = neon(DATABASE_URL);
 
 async function query(text, params = []) {
-    return pool.query(text, params);
+    return sql.query(text, params, { fullResults: true });
 }
 
 async function one(text, params = []) {
@@ -30,8 +28,10 @@ async function init() {
             payme_token TEXT,
             subscription_status TEXT NOT NULL DEFAULT 'inactive',
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        );
+        )
+    `);
 
+    await query(`
         CREATE TABLE IF NOT EXISTS daily_test_usage (
             id BIGSERIAL PRIMARY KEY,
             user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -39,8 +39,10 @@ async function init() {
             test_id TEXT NOT NULL,
             created_at BIGINT NOT NULL,
             UNIQUE(user_id, usage_date)
-        );
+        )
+    `);
 
+    await query(`
         CREATE TABLE IF NOT EXISTS premium_orders (
             id BIGSERIAL PRIMARY KEY,
             order_id TEXT UNIQUE NOT NULL,
@@ -50,8 +52,10 @@ async function init() {
             status TEXT NOT NULL DEFAULT 'pending',
             created_at BIGINT NOT NULL,
             paid_at BIGINT
-        );
+        )
+    `);
 
+    await query(`
         CREATE TABLE IF NOT EXISTS payme_transactions (
             id BIGSERIAL PRIMARY KEY,
             payme_id TEXT UNIQUE NOT NULL,
@@ -63,22 +67,27 @@ async function init() {
             cancel_time BIGINT NOT NULL DEFAULT 0,
             reason INTEGER,
             created_at BIGINT NOT NULL
-        );
+        )
+    `);
 
+    await query(`
         CREATE INDEX IF NOT EXISTS idx_premium_orders_email
-            ON premium_orders(email);
+        ON premium_orders(email)
+    `);
 
+    await query(`
         CREATE INDEX IF NOT EXISTS idx_payme_transactions_order
-            ON payme_transactions(order_id);
+        ON payme_transactions(order_id)
+    `);
 
+    await query(`
         CREATE INDEX IF NOT EXISTS idx_daily_test_usage_user_date
-            ON daily_test_usage(user_id, usage_date);
+        ON daily_test_usage(user_id, usage_date)
     `);
 }
 
 module.exports = {
     query,
     one,
-    init,
-    pool
+    init
 };
