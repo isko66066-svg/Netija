@@ -89,6 +89,7 @@
         const style=document.createElement('style');style.id='matching-visual-fix';style.textContent=`
             .matching-context{background:#fff!important;border:0!important;padding:0!important;color:#172033!important;font-size:16px!important;line-height:1.55!important;margin-bottom:12px!important}
             .question-image{max-width:100%;height:auto;max-height:330px;object-fit:contain;background:#fff;border:0!important;border-radius:0!important;margin:14px auto 20px!important}
+            #question-block-33>.question-text,#question-block-34>.question-text,#question-block-35>.question-text{display:none!important}
             #question-block-34,#question-block-35{box-shadow:none!important;margin-top:-24px!important;border-top:0!important;border-radius:0!important;padding-top:0!important}
             #question-block-35{border-radius:0 0 12px 12px!important;padding-bottom:24px!important}
         `;document.head.appendChild(style);
