@@ -11,6 +11,21 @@
         }
     }
 
+    function loadStyles() {
+        if (document.getElementById('netija-premium-header-css')) return;
+
+        const style = document.createElement('style');
+        style.id = 'netija-premium-header-css';
+        style.textContent = `
+            .premium-nav-link.premium-active {
+                background: #1f9d63 !important;
+                color: #fff !important;
+                border-color: #1f9d63 !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     function updateHeader(status) {
         const link = document.querySelector('.premium-nav-link');
         if (!link) return false;
@@ -48,6 +63,7 @@
     }
 
     function init() {
+        loadStyles();
         checkPremium();
 
         // После входа Google localStorage меняется в этой же вкладке,
