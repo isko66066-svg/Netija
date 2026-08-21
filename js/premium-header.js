@@ -69,14 +69,6 @@
                 overflow: hidden !important;
             }
 
-            #googleSignInButton,
-            .site-header #googleSignInButton,
-            .header #googleSignInButton,
-            .site-header .sign__button,
-            .header .sign__button {
-                display: none !important;
-            }
-
             .premium-nav-link.premium-active {
                 background: #1f9d63 !important;
                 color: #fff !important;
