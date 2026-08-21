@@ -4,33 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест | Netija</title>
+
     <script>
-window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], macros: { tg: "\\operatorname{tg}", ctg: "\\operatorname{ctg}" } }, svg: { fontCache: 'global' } };
-</script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                macros: {
+                    tg: "\\operatorname{tg}",
+                    ctg: "\\operatorname{ctg}"
+                }
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async defer></script>
+
     <link rel="stylesheet" href="style.css?v=20260821">
     <link rel="stylesheet" href="test.css?v=20260821">
     <link rel="stylesheet" href="header.css?v=20260821">
     <link rel="stylesheet" href="site-shell.css?v=20260821">
     <link rel="stylesheet" href="premium.css?v=20260821">
+    <link rel="stylesheet" href="mobile-exam.css?v=20260821">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
+
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
+
 <body data-question-count="45">
+
     <header class="header">
         <div class="header__container">
             <nav class="header__nav">
-                <a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a>
+                <a class="site-header__logo" href="index.html" aria-label="Netija">
+                    <img class="logo" src="./images/logo.svg" alt="Netija">
+                </a>
+
                 <ul class="header__list">
-                    <li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li>
-                    <li class="header__list-item"><a class="header__list-link" href="/">Дтм</a></li>
-                    <li class="header__list-item"><a class="header__list-link active" href="natcert.html">Национальный сертификат</a></li>
+                    <li class="header__list-item">
+                        <a class="header__list-link" href="index.html">Главная страница</a>
+                    </li>
+                    <li class="header__list-item">
+                        <a class="header__list-link" href="/">Дтм</a>
+                    </li>
+                    <li class="header__list-item">
+                        <a class="header__list-link active" href="natcert.html">Национальный сертификат</a>
+                    </li>
                 </ul>
+
                 <div class="site-header__account">
                     <a class="premium-nav-link" href="premium.html">👑 Premium</a>
+
+                    <!-- Google-кнопка остаётся в DOM для auth.js,
+                         но на телефоне скрывается через mobile-exam.css. -->
                     <div class="sign__button" id="googleSignInButton"></div>
-                    <div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div>
-                    <button class="burger" id="burgerBtn" type="button" aria-label="Меню"><span></span><span></span><span></span></button>
+
+                    <div id="userProfile" class="user-profile" style="display:none;">
+                        <img id="userAvatar" class="user-profile__avatar" src="" alt="">
+                        <span id="userName" class="user-profile__name"></span>
+                    </div>
+
+                    <button class="burger" id="burgerBtn" type="button" aria-label="Меню">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
                 </div>
             </nav>
         </div>
@@ -38,13 +78,20 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
 
     <main class="exam-page" id="main">
         <div class="exam-layout">
+
             <section class="questions-area">
                 <div class="exam-testbar exam-testbar--title">
                     <div class="exam-testbar__info">
-                        <div class="exam-testbar__title" id="testTitle">Загрузка теста...</div>
-                        <div class="exam-testbar__progress">Вопрос <strong id="currentQuestion">1</strong> из <strong id="totalQuestions">45</strong></div>
+                        <div class="exam-testbar__title" id="testTitle">
+                            Загрузка теста...
+                        </div>
+                        <div class="exam-testbar__progress">
+                            Вопрос <strong id="currentQuestion">1</strong>
+                            из <strong id="totalQuestions">45</strong>
+                        </div>
                     </div>
                 </div>
+
                 <div id="quizContainer"></div>
                 <div id="resultBox" class="test-result" style="display:none;"></div>
             </section>
@@ -53,17 +100,34 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
                 <div class="exam-sidebar-controls">
                     <div class="sidebar-timer">
                         <span class="exam-clock">◷</span>
-                        <div><strong id="timer">02:30:00</strong><small>Оставшееся время</small></div>
+                        <div>
+                            <strong id="timer">02:30:00</strong>
+                            <small>Оставшееся время</small>
+                        </div>
                     </div>
-                    <button id="submitBtn" class="finish-test finish-test--full" type="button">Завершить тест</button>
+
+                    <button id="submitBtn" class="finish-test finish-test--full" type="button">
+                        Завершить тест
+                    </button>
                 </div>
 
                 <h2>Вопросы</h2>
+
                 <div id="questionLegend" class="question-legend question-legend--progress">
-                    <div class="question-status"><span class="status-dot answered"></span>Ответ дан</div>
-                    <div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div>
-                    <div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>
+                    <div class="question-status">
+                        <span class="status-dot answered"></span>
+                        Ответ дан
+                    </div>
+                    <div class="question-status">
+                        <span class="status-dot current"></span>
+                        Текущий вопрос
+                    </div>
+                    <div class="question-status">
+                        <span class="status-dot empty"></span>
+                        Ответ не дан
+                    </div>
                 </div>
+
                 <div class="question-grid" id="questionGrid"></div>
             </aside>
         </div>
@@ -75,92 +139,322 @@ window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath:
     <script src="js/premium.js"></script>
     <script src="js/quiz.js"></script>
     <script src="js/router.js"></script>
-    <script>
-    (function () {
-        let initialized = false;
-        let blocksById = new Map();
-        let navButtons = [];
-        let intersectionObserver = null;
 
-        function getExpectedCount() { return Number(document.body.dataset.questionCount) || 45; }
-        function getBlocks() { return Array.from(document.querySelectorAll('#quizContainer .question-block')); }
-        function getQuestionId(block, fallback) {
-            const idMatch = block && block.id && block.id.match(/question-block-(\d+)/);
-            if (idMatch) return Number(idMatch[1]);
-            const text = block && block.querySelector('.question-text');
-            const match = text && text.textContent.match(/^\s*(\d+)\./);
-            return match ? Number(match[1]) : fallback;
-        }
-        function scrollToQuestion(id) {
-            const block = blocksById.get(Number(id)); if (!block) return;
-            const header = document.querySelector('.header');
-            const headerHeight = header ? header.getBoundingClientRect().height : 0;
-            const rect = block.getBoundingClientRect();
-            const targetY = Math.max(0, window.scrollY + rect.top - headerHeight - 14);
-            setCurrent(Number(id));
-            window.scrollTo({ top: targetY, behavior: 'smooth' });
-        }
-        function isAnswered(block) {
-            if (!block) return false;
-            return !!block.querySelector('input[type="radio"]:checked') || Array.from(block.querySelectorAll('input[type="text"]')).some(i => i.value.trim() !== '') || Array.from(block.querySelectorAll('select')).some(s => s.value !== '');
-        }
-        function refreshStates() {
-            const submitted = !!window.quizSubmitted;
-            for (let id = 1; id <= getExpectedCount(); id++) {
-                const block = blocksById.get(id); const answered = isAnswered(block);
-                const correct = !!block && block.classList.contains('question-correct');
-                const incorrect = !!block && block.classList.contains('question-incorrect');
-                const button = navButtons[id - 1]; if (!button) continue;
-                button.classList.toggle('answered', answered && !submitted);
-                button.classList.toggle('correct', submitted && correct);
-                button.classList.toggle('incorrect', submitted && incorrect);
-                button.classList.toggle('missing', !block);
+    <script>
+        (function () {
+            let initialized = false;
+            let blocksById = new Map();
+            let navButtons = [];
+            let intersectionObserver = null;
+
+            function getExpectedCount() {
+                return Number(document.body.dataset.questionCount) || 45;
             }
-        }
-        function setCurrent(id) {
-            id = Number(id); navButtons.forEach((button, index) => button.classList.toggle('current', index === id - 1));
-            const current = document.getElementById('currentQuestion'); if (current) current.textContent = String(id);
-        }
-        function updateLegend() {
-            const legend = document.getElementById('questionLegend'); if (!legend) return;
-            if (window.quizSubmitted) {
-                legend.className = 'question-legend question-legend--result';
-                legend.innerHTML = '<div class="question-status question-status--correct"><span class="status-dot status-dot--correct"></span>Правильно</div><div class="question-status question-status--incorrect"><span class="status-dot status-dot--incorrect"></span>Неправильно</div>';
-            } else {
+
+            function getBlocks() {
+                return Array.from(
+                    document.querySelectorAll('#quizContainer .question-block')
+                );
+            }
+
+            function getQuestionId(block, fallback) {
+                const idMatch = block && block.id
+                    ? block.id.match(/question-block-(\d+)/)
+                    : null;
+
+                if (idMatch) {
+                    return Number(idMatch[1]);
+                }
+
+                const text = block && block.querySelector('.question-text');
+                const match = text
+                    ? text.textContent.match(/^\s*(\d+)\./)
+                    : null;
+
+                return match ? Number(match[1]) : fallback;
+            }
+
+            function scrollToQuestion(id) {
+                const block = blocksById.get(Number(id));
+
+                if (!block) {
+                    return;
+                }
+
+                const header = document.querySelector('.header');
+                const headerHeight = header
+                    ? header.getBoundingClientRect().height
+                    : 0;
+
+                const rect = block.getBoundingClientRect();
+                const targetY = Math.max(
+                    0,
+                    window.scrollY + rect.top - headerHeight - 14
+                );
+
+                setCurrent(Number(id));
+
+                window.scrollTo({
+                    top: targetY,
+                    behavior: 'smooth'
+                });
+            }
+
+            function isAnswered(block) {
+                if (!block) {
+                    return false;
+                }
+
+                const hasRadioAnswer = !!block.querySelector(
+                    'input[type="radio"]:checked'
+                );
+
+                const hasTextAnswer = Array.from(
+                    block.querySelectorAll('input[type="text"]')
+                ).some((input) => input.value.trim() !== '');
+
+                const hasSelectAnswer = Array.from(
+                    block.querySelectorAll('select')
+                ).some((select) => select.value !== '');
+
+                return hasRadioAnswer || hasTextAnswer || hasSelectAnswer;
+            }
+
+            function refreshStates() {
+                const submitted = !!window.quizSubmitted;
+
+                for (let id = 1; id <= getExpectedCount(); id++) {
+                    const block = blocksById.get(id);
+                    const answered = isAnswered(block);
+                    const correct = !!block && block.classList.contains('question-correct');
+                    const incorrect = !!block && block.classList.contains('question-incorrect');
+                    const button = navButtons[id - 1];
+
+                    if (!button) {
+                        continue;
+                    }
+
+                    button.classList.toggle('answered', answered && !submitted);
+                    button.classList.toggle('correct', submitted && correct);
+                    button.classList.toggle('incorrect', submitted && incorrect);
+                    button.classList.toggle('missing', !block);
+                }
+            }
+
+            function setCurrent(id) {
+                id = Number(id);
+
+                navButtons.forEach((button, index) => {
+                    button.classList.toggle('current', index === id - 1);
+                });
+
+                const current = document.getElementById('currentQuestion');
+
+                if (current) {
+                    current.textContent = String(id);
+                }
+            }
+
+            function updateLegend() {
+                const legend = document.getElementById('questionLegend');
+
+                if (!legend) {
+                    return;
+                }
+
+                if (window.quizSubmitted) {
+                    legend.className = 'question-legend question-legend--result';
+                    legend.innerHTML = `
+                        <div class="question-status question-status--correct">
+                            <span class="status-dot status-dot--correct"></span>
+                            Правильно
+                        </div>
+                        <div class="question-status question-status--incorrect">
+                            <span class="status-dot status-dot--incorrect"></span>
+                            Неправильно
+                        </div>
+                    `;
+                    return;
+                }
+
                 legend.className = 'question-legend question-legend--progress';
-                legend.innerHTML = '<div class="question-status"><span class="status-dot answered"></span>Ответ дан</div><div class="question-status"><span class="status-dot current"></span>Текущий вопрос</div><div class="question-status"><span class="status-dot empty"></span>Ответ не дан</div>';
+                legend.innerHTML = `
+                    <div class="question-status">
+                        <span class="status-dot answered"></span>
+                        Ответ дан
+                    </div>
+                    <div class="question-status">
+                        <span class="status-dot current"></span>
+                        Текущий вопрос
+                    </div>
+                    <div class="question-status">
+                        <span class="status-dot empty"></span>
+                        Ответ не дан
+                    </div>
+                `;
             }
-        }
-        function setupIntersectionObserver() {
-            const blocks = getBlocks(); if (!('IntersectionObserver' in window) || !blocks.length) return;
-            if (intersectionObserver) intersectionObserver.disconnect();
-            intersectionObserver = new IntersectionObserver(entries => {
-                let best = null; entries.forEach(entry => { if (entry.isIntersecting && (!best || entry.intersectionRatio > best.intersectionRatio)) best = entry; });
-                if (best) setCurrent(getQuestionId(best.target, 1));
-            }, { root:null, rootMargin:'-90px 0px -55% 0px', threshold:[0,.15,.4,.7] });
-            blocks.forEach(block => intersectionObserver.observe(block));
-        }
-        function setupNavigation() {
-            const container = document.getElementById('quizContainer'); const grid = document.getElementById('questionGrid'); const total = document.getElementById('totalQuestions');
-            if (!container || !grid) return false; const blocks = getBlocks(); if (!blocks.length) return false;
-            blocksById = new Map(); blocks.forEach((block,index) => blocksById.set(getQuestionId(block,index+1),block));
-            const count = getExpectedCount(); grid.innerHTML=''; navButtons=[]; if (total) total.textContent=String(count);
-            for (let id=1; id<=count; id++) {
-                const block=blocksById.get(id); const button=document.createElement('button'); button.type='button'; button.className='question-number'+(!block?' missing':''); button.textContent=String(id); button.title=block?`Перейти к вопросу ${id}`:`Вопрос ${id} отсутствует в данных теста`;
-                if(block) button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();scrollToQuestion(id);}); else button.disabled=true;
-                grid.appendChild(button); navButtons.push(button);
+
+            function setupIntersectionObserver() {
+                const blocks = getBlocks();
+
+                if (!('IntersectionObserver' in window) || !blocks.length) {
+                    return;
+                }
+
+                if (intersectionObserver) {
+                    intersectionObserver.disconnect();
+                }
+
+                intersectionObserver = new IntersectionObserver(
+                    (entries) => {
+                        let best = null;
+
+                        entries.forEach((entry) => {
+                            if (
+                                entry.isIntersecting &&
+                                (!best || entry.intersectionRatio > best.intersectionRatio)
+                            ) {
+                                best = entry;
+                            }
+                        });
+
+                        if (best) {
+                            setCurrent(getQuestionId(best.target, 1));
+                        }
+                    },
+                    {
+                        root: null,
+                        rootMargin: '-90px 0px -55% 0px',
+                        threshold: [0, 0.15, 0.4, 0.7]
+                    }
+                );
+
+                blocks.forEach((block) => {
+                    intersectionObserver.observe(block);
+                });
             }
-            if(!container.dataset.navListenersAttached){container.addEventListener('change',refreshStates);container.addEventListener('input',refreshStates);container.dataset.navListenersAttached='1';}
-            blocks.forEach(block=>{if(block.dataset.stateObserverAttached)return;const observer=new MutationObserver(refreshStates);observer.observe(block,{attributes:true,attributeFilter:['class']});block.dataset.stateObserverAttached='1';});
-            setupIntersectionObserver(); updateLegend(); refreshStates(); setCurrent(1); initialized=true; return true;
-        }
-        function handleSubmitted() {
-            updateLegend(); refreshStates(); requestAnimationFrame(refreshStates); setTimeout(refreshStates,50); setTimeout(refreshStates,250);
-            if (window.innerWidth <= 900) setTimeout(() => window.scrollTo({top:0,behavior:'smooth'}), 50);
-        }
-        document.addEventListener('netija:quizRendered',setupNavigation); document.addEventListener('netija:testSubmitted',handleSubmitted);
-        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(setupNavigation,0)); else setTimeout(setupNavigation,0);
-    })();
+
+            function setupNavigation() {
+                const container = document.getElementById('quizContainer');
+                const grid = document.getElementById('questionGrid');
+                const total = document.getElementById('totalQuestions');
+
+                if (!container || !grid) {
+                    return false;
+                }
+
+                const blocks = getBlocks();
+
+                if (!blocks.length) {
+                    return false;
+                }
+
+                blocksById = new Map();
+
+                blocks.forEach((block, index) => {
+                    blocksById.set(getQuestionId(block, index + 1), block);
+                });
+
+                const count = getExpectedCount();
+
+                grid.innerHTML = '';
+                navButtons = [];
+
+                if (total) {
+                    total.textContent = String(count);
+                }
+
+                for (let id = 1; id <= count; id++) {
+                    const block = blocksById.get(id);
+                    const button = document.createElement('button');
+
+                    button.type = 'button';
+                    button.className = 'question-number' + (!block ? ' missing' : '');
+                    button.textContent = String(id);
+                    button.title = block
+                        ? `Перейти к вопросу ${id}`
+                        : `Вопрос ${id} отсутствует в данных теста`;
+
+                    if (block) {
+                        button.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            scrollToQuestion(id);
+                        });
+                    } else {
+                        button.disabled = true;
+                    }
+
+                    grid.appendChild(button);
+                    navButtons.push(button);
+                }
+
+                if (!container.dataset.navListenersAttached) {
+                    container.addEventListener('change', refreshStates);
+                    container.addEventListener('input', refreshStates);
+                    container.dataset.navListenersAttached = '1';
+                }
+
+                blocks.forEach((block) => {
+                    if (block.dataset.stateObserverAttached) {
+                        return;
+                    }
+
+                    const observer = new MutationObserver(refreshStates);
+
+                    observer.observe(block, {
+                        attributes: true,
+                        attributeFilter: ['class']
+                    });
+
+                    block.dataset.stateObserverAttached = '1';
+                });
+
+                setupIntersectionObserver();
+                updateLegend();
+                refreshStates();
+                setCurrent(1);
+                initialized = true;
+
+                return true;
+            }
+
+            function handleSubmitted() {
+                updateLegend();
+                refreshStates();
+
+                requestAnimationFrame(refreshStates);
+                setTimeout(refreshStates, 50);
+                setTimeout(refreshStates, 250);
+
+                if (window.innerWidth <= 900) {
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    }, 50);
+                }
+            }
+
+            document.addEventListener(
+                'netija:quizRendered',
+                setupNavigation
+            );
+
+            document.addEventListener(
+                'netija:testSubmitted',
+                handleSubmitted
+            );
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(setupNavigation, 0);
+                });
+            } else {
+                setTimeout(setupNavigation, 0);
+            }
+        })();
     </script>
 </body>
 </html>
