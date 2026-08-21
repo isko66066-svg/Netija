@@ -8,8 +8,7 @@ function createSvgIcon(type, className) {
     const icons = {
         calendar: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3.5" y="5.5" width="17" height="15" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M7.5 3.5V7M16.5 3.5V7M3.5 9.5H20.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M8 13H8.01M12 13H12.01M16 13H16.01M8 17H8.01M12 17H12.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
         document: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.5 3.5H14L18 7.5V20.5H6.5V3.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3.5V8H18M9 12H16M9 15.5H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-        star: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3.7L14.55 8.86L20.25 9.69L16.13 13.72L17.1 19.4L12 16.72L6.9 19.4L7.87 13.72L3.75 9.69L9.45 8.86L12 3.7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>`,
-        arrow: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12H18M13 6L19 12L13 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+        star: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3.7L14.55 8.86L20.25 9.69L16.13 13.72L17.1 19.4L12 16.72L6.9 19.4L7.87 13.72L3.75 9.69L9.45 8.86L12 3.7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>`
     };
 
     wrapper.innerHTML = icons[type] || '';
@@ -40,7 +39,6 @@ if (testCards) {
         const actionBtn = document.createElement('span');
         actionBtn.className = 'btn-card-action';
         actionBtn.appendChild(document.createTextNode('Пройти тест'));
-        actionBtn.appendChild(createSvgIcon('arrow', 'btn-card-action__icon'));
 
         card.appendChild(statusBox);
         card.appendChild(title);
@@ -81,7 +79,7 @@ function loadResultsFromStorage() {
         renderStatus(statusBox, result);
 
         if (btn) {
-            btn.firstChild.textContent = 'Пройти повторно';
+            btn.textContent = 'Пройти повторно';
             btn.classList.add('completed');
         }
     });
