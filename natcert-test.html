@@ -419,6 +419,25 @@
                 return true;
             }
 
+            function scrollToResultAndQuestionMap() {
+                const resultBox = document.getElementById('resultBox');
+
+                if (!resultBox) {
+                    return;
+                }
+
+                /*
+                   На телефоне resultBox находится перед questions-sidebar.
+                   Поэтому прокрутка к результату приводит пользователя
+                   в самый низ теста, где сразу после результата находится
+                   карта вопросов.
+                */
+                resultBox.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+
             function handleSubmitted() {
                 updateLegend();
                 refreshStates();
@@ -428,12 +447,7 @@
                 setTimeout(refreshStates, 250);
 
                 if (window.innerWidth <= 900) {
-                    setTimeout(() => {
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                    }, 50);
+                    setTimeout(scrollToResultAndQuestionMap, 300);
                 }
             }
 
