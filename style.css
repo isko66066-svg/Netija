@@ -1154,3 +1154,246 @@ ul {
         font-size: 9px;
     }
 }
+
+/* =========================================================
+   NATIONAL CERTIFICATE — MODERN PAGE STYLES
+   ========================================================= */
+
+.main__natcert {
+    max-width: 1320px;
+    padding: 56px 32px 88px;
+}
+
+.main__natcert .test-title {
+    margin: 0;
+    font-size: clamp(36px, 4vw, 52px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -1.8px;
+}
+
+.main__natcert .test-subtitle {
+    margin: 12px 0 30px;
+    color: #718096;
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.main__natcert .filter-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0 0 32px;
+    padding: 5px;
+    background: rgba(235, 241, 248, 0.9);
+    border: 1px solid #dce5ef;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.main__natcert .filter-btn {
+    min-width: 88px;
+    padding: 11px 20px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: #66758a;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.main__natcert .filter-btn:hover {
+    background: rgba(255, 255, 255, 0.8);
+    color: #172033;
+}
+
+.main__natcert .filter-btn.active {
+    background: #17268f;
+    color: #ffffff;
+    box-shadow: 0 6px 14px rgba(23, 38, 143, 0.22);
+}
+
+.main__natcert .test-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.main__natcert .test-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 330px;
+    padding: 24px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e3e9f1;
+    border-radius: 22px;
+    box-shadow: 0 8px 26px rgba(15, 23, 42, 0.055);
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.main__natcert .test-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #2639a8 0%, #4f7cff 100%);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+}
+
+.main__natcert .test-card:hover {
+    border-color: #cdd8e8;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.09);
+    transform: translateY(-4px);
+}
+
+.main__natcert .test-card:hover::before {
+    opacity: 1;
+}
+
+.main__natcert .card-status {
+    width: 100%;
+    margin: 0 0 22px;
+}
+
+.main__natcert .card-badge {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.main__natcert .card-badge--warning {
+    background: #fff8df;
+    border: 1px solid #f5df8b;
+    color: #a96313;
+}
+
+.main__natcert .card-badge--success {
+    background: #ecfdf3;
+    border: 1px solid #bdebcf;
+    color: #16834b;
+}
+
+.main__natcert .test-card__title {
+    margin: 0 0 8px;
+    color: #172033;
+    font-size: 21px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.35px;
+}
+
+.main__natcert .test-card__count {
+    margin: 0;
+    color: #7b8798;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.main__natcert .btn-card-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    margin-top: auto;
+    padding: 13px 18px;
+    border: 1px solid #d6dfeb;
+    border-radius: 13px;
+    background: #f6f8fb;
+    color: #334155;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 750;
+    text-align: center;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.main__natcert .btn-card-action:hover {
+    background: #17268f;
+    border-color: #17268f;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.main__natcert .btn-card-action.completed {
+    background: #f1f5f9;
+    border-color: #cfd9e6;
+    color: #334155;
+}
+
+.main__natcert .btn-card-action.completed:hover {
+    background: #e8eef7;
+    border-color: #bfcddd;
+    color: #172033;
+}
+
+@media (max-width: 1050px) {
+    .main__natcert {
+        padding: 46px 24px 72px;
+    }
+
+    .main__natcert .test-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .main__natcert {
+        padding: 36px 16px 60px;
+    }
+
+    .main__natcert .test-title {
+        font-size: 34px;
+        letter-spacing: -1px;
+    }
+
+    .main__natcert .test-subtitle {
+        margin-bottom: 22px;
+        font-size: 15px;
+    }
+
+    .main__natcert .filter-container {
+        width: 100%;
+        margin-bottom: 22px;
+    }
+
+    .main__natcert .filter-btn {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+
+    .main__natcert .test-cards {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .main__natcert .test-card {
+        min-height: 300px;
+        padding: 20px;
+        border-radius: 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .main__natcert .test-card,
+    .main__natcert .filter-btn,
+    .main__natcert .btn-card-action {
+        transition: none;
+    }
+}
