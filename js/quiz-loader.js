@@ -210,6 +210,38 @@
         }
     }
 
+    // Картинки для заданий, где они есть в исходных листах.
+    // SVG сделаны чистыми: без водяных знаков и фона.
+    function applyQuestionImages() {
+        if (typeof questions === 'undefined' || !Array.isArray(questions)) {
+            return;
+        }
+
+        const imageMap = {
+            '6': {
+                23: 'images/2-mart_2-img/23.svg',
+                25: 'images/2-mart_2-img/25.svg',
+                26: 'images/2-mart_2-img/26.svg',
+                27: 'images/2-mart_2-img/27.svg'
+            },
+            '7': {
+                23: 'images/7-mart_1-img/23.svg',
+                25: 'images/7-mart_1-img/25.svg',
+                26: 'images/7-mart_1-img/26.svg',
+                27: 'images/7-mart_1-img/27.svg'
+            }
+        };
+
+        const testImages = imageMap[String(testId)] || {};
+
+        questions.forEach((question) => {
+            const image = testImages[question.id];
+            if (image) {
+                question.image = image;
+            }
+        });
+    }
+
     async function loadQuiz() {
         const allowed = await checkDailyAccess();
 
@@ -233,6 +265,8 @@
         script.dataset.questionsLoader = 'true';
 
         script.onload = function () {
+            applyQuestionImages();
+
             if (typeof initQuiz === 'function') {
                 initQuiz();
             }
