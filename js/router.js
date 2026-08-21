@@ -93,6 +93,71 @@ window.addEventListener('beforeunload', function (event) {
     document.head.appendChild(style);
 })();
 
+// Reliable warning when a user tries to leave an active test through
+// Netija navigation or the browser Back button. beforeunload above remains
+// responsible for refresh/close/external navigation.
+(function installQuizLeaveGuard() {
+    let guardReady = false;
+    let allowNavigation = false;
+
+    function ensureHistoryGuard() {
+        if (guardReady || !isActiveQuiz()) return;
+        guardReady = true;
+        history.pushState({ netijaQuizGuard: true }, '', window.location.href);
+    }
+
+    function leaveQuiz(destination) {
+        if (!isActiveQuiz()) {
+            window.location.href = destination;
+            return;
+        }
+
+        const ok = window.confirm('Вы сейчас проходите тест. Выйти из теста?\n\nВаши ответы могут быть потеряны.');
+        if (ok) {
+            allowNavigation = true;
+            window.location.href = destination;
+        }
+    }
+
+    function handleLinkClick(event) {
+        if (!isActiveQuiz()) return;
+        if (event.defaultPrevented || event.button !== 0) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+        const link = event.target.closest && event.target.closest('a[href]');
+        if (!link) return;
+        if (link.target && link.target !== '_self') return;
+        if (link.hasAttribute('download')) return;
+
+        const url = new URL(link.href, window.location.href);
+        if (url.origin !== window.location.origin) return;
+        if (url.href === window.location.href) return;
+
+        event.preventDefault();
+        leaveQuiz(url.href);
+    }
+
+    document.addEventListener('click', handleLinkClick, true);
+
+    window.addEventListener('popstate', function () {
+        if (allowNavigation || !isActiveQuiz()) return;
+
+        history.pushState({ netijaQuizGuard: true }, '', window.location.href);
+        const ok = window.confirm('Вы сейчас проходите тест. Выйти из теста?\n\nВаши ответы могут быть потеряны.');
+        if (ok) {
+            allowNavigation = true;
+            history.back();
+        }
+    });
+
+    const historyCheck = setInterval(function () {
+        if (isActiveQuiz()) {
+            ensureHistoryGuard();
+            clearInterval(historyCheck);
+        }
+    }, 100);
+})();
+
 // Do not intercept internal .html navigation.
 // Let the browser load the complete document so that:
 // - the correct header is rendered;
