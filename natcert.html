@@ -10,7 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        /* ===== National certificate: exact card/filter icon alignment ===== */
+        /* ===== National certificate: exact reference alignment ===== */
+        .main__natcert::before,
+        .main__natcert::after {
+            content: none !important;
+            display: none !important;
+        }
+
         .main__natcert .test-card__title::before,
         .main__natcert .test-card__count::before,
         .main__natcert .card-badge::before,
@@ -21,7 +27,6 @@
 
         .main__natcert .test-card__title-icon {
             position: static !important;
-            inset: auto !important;
             width: 56px !important;
             height: 56px !important;
             min-width: 56px !important;
@@ -47,7 +52,7 @@
         }
 
         .main__natcert .test-card__count {
-            margin: 0 0 0 0 !important;
+            margin: 0 !important;
             display: flex !important;
             align-items: center !important;
             gap: 8px !important;
@@ -56,7 +61,6 @@
 
         .main__natcert .test-card__count-icon {
             position: static !important;
-            inset: auto !important;
             width: 17px !important;
             height: 17px !important;
             min-width: 17px !important;
@@ -79,7 +83,6 @@
 
         .main__natcert .card-badge__icon {
             position: static !important;
-            inset: auto !important;
             width: 21px !important;
             height: 21px !important;
             min-width: 21px !important;
@@ -105,63 +108,95 @@
             padding-left: 24px !important;
         }
 
-        /* Reference-style year navigation */
+        /* Compact reference-style year navigation */
         .main__natcert .filter-container {
             display: flex !important;
             align-items: center !important;
-            gap: 12px !important;
-            padding: 2px !important;
+            gap: 10px !important;
+            width: 100% !important;
+            min-height: 68px !important;
+            margin-top: 38px !important;
+            margin-bottom: 24px !important;
+            padding: 6px !important;
             background: rgba(255,255,255,.92) !important;
             border: 1px solid #e0e6ef !important;
             border-radius: 17px !important;
             box-shadow: 0 8px 26px rgba(30,64,175,.055) !important;
+            backdrop-filter: blur(10px) !important;
         }
 
-        .main__natcert .filter-btn {
+        .main__natcert .filter-btn,
+        .main__natcert .filter-btn[data-filter="all"] {
             position: relative !important;
-            min-width: 140px !important;
-            height: 56px !important;
-            padding: 0 20px !important;
+            width: 112px !important;
+            min-width: 112px !important;
+            height: 50px !important;
+            padding: 0 14px !important;
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 11px !important;
+            gap: 9px !important;
             border: 1px solid #dfe5ed !important;
             border-radius: 999px !important;
             background: #fff !important;
             color: #59677b !important;
             font-size: 16px !important;
             font-weight: 650 !important;
+            line-height: 1 !important;
             box-shadow: none !important;
+            cursor: pointer !important;
         }
 
-        .main__natcert .filter-btn::before {
+        /* Empty checkbox for years */
+        .main__natcert .filter-btn[data-filter]:not([data-filter="all"])::before {
             content: "" !important;
             display: block !important;
-            width: 21px !important;
-            height: 21px !important;
-            flex: 0 0 21px !important;
+            width: 24px !important;
+            height: 24px !important;
+            flex: 0 0 24px !important;
             border: 2px solid #98a2ad !important;
             border-radius: 5px !important;
             background: transparent !important;
-            opacity: 1 !important;
+            box-sizing: border-box !important;
         }
 
+        /* Checked checkbox for selected year */
+        .main__natcert .filter-btn.active[data-filter]:not([data-filter="all"])::before {
+            border-color: #aeb8c4 !important;
+            background: transparent !important;
+        }
+
+        .main__natcert .filter-btn.active[data-filter]:not([data-filter="all"])::after {
+            content: "✓" !important;
+            position: absolute !important;
+            left: 14px !important;
+            top: 50% !important;
+            transform: translateY(-52%) !important;
+            width: 24px !important;
+            height: 24px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: #aeb8c4 !important;
+            font-size: 18px !important;
+            font-weight: 800 !important;
+            line-height: 1 !important;
+        }
+
+        /* Four-square icon for "Все" */
         .main__natcert .filter-btn[data-filter="all"]::before {
-            width: 21px !important;
-            height: 21px !important;
+            content: "" !important;
+            width: 22px !important;
+            height: 22px !important;
+            flex: 0 0 22px !important;
             border: 0 !important;
             border-radius: 3px !important;
             background:
                 linear-gradient(currentColor 0 0) 0 0 / 8px 8px,
-                linear-gradient(currentColor 0 0) 13px 0 / 8px 8px,
-                linear-gradient(currentColor 0 0) 0 13px / 8px 8px,
-                linear-gradient(currentColor 0 0) 13px 13px / 8px 8px !important;
+                linear-gradient(currentColor 0 0) 14px 0 / 8px 8px,
+                linear-gradient(currentColor 0 0) 0 14px / 8px 8px,
+                linear-gradient(currentColor 0 0) 14px 14px / 8px 8px !important;
             background-repeat: no-repeat !important;
-        }
-
-        .main__natcert .filter-btn[data-filter="all"] {
-            min-width: 134px !important;
         }
 
         .main__natcert .filter-btn.active {
@@ -178,34 +213,105 @@
             transform: none !important;
         }
 
+        /* Reference graduation-cap badge */
+        .main__natcert .natcert-title-row {
+            position: relative !important;
+            z-index: 3 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 24px !important;
+            max-width: 900px !important;
+            margin: 0 !important;
+        }
+
+        .main__natcert .natcert-title-icon {
+            width: 78px !important;
+            height: 78px !important;
+            min-width: 78px !important;
+            flex: 0 0 78px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: #eeeaff !important;
+            color: #6246e5 !important;
+            clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%) !important;
+            box-shadow: 0 8px 20px rgba(98,70,229,.10) !important;
+        }
+
+        .main__natcert .natcert-title-icon svg {
+            width: 43px !important;
+            height: 43px !important;
+            display: block !important;
+        }
+
+        .main__natcert .natcert-hero-art {
+            right: 18px !important;
+            top: 4px !important;
+            width: 340px !important;
+            height: 250px !important;
+            z-index: 2 !important;
+        }
+
+        @media (max-width: 1050px) {
+            .main__natcert .natcert-hero-art { right: -35px !important; opacity: .75; }
+        }
+
         @media (max-width: 700px) {
             .main__natcert .filter-container {
-                gap: 6px !important;
+                gap: 5px !important;
+                min-height: 58px !important;
                 padding: 4px !important;
+                margin-top: 26px !important;
+                border-radius: 14px !important;
             }
 
             .main__natcert .filter-btn,
             .main__natcert .filter-btn[data-filter="all"] {
+                width: auto !important;
                 min-width: 0 !important;
-                height: 46px !important;
-                padding: 0 8px !important;
-                gap: 6px !important;
+                flex: 1 1 0 !important;
+                height: 44px !important;
+                padding: 0 6px !important;
+                gap: 5px !important;
                 font-size: 12px !important;
             }
 
-            .main__natcert .filter-btn::before,
-            .main__natcert .filter-btn[data-filter="all"]::before {
-                width: 16px !important;
-                height: 16px !important;
-                flex-basis: 16px !important;
+            .main__natcert .filter-btn[data-filter]:not([data-filter="all"])::before {
+                width: 18px !important;
+                height: 18px !important;
+                flex-basis: 18px !important;
+                border-radius: 4px !important;
             }
 
-            .main__natcert .test-card__title-icon {
-                width: 50px !important;
-                height: 50px !important;
-                min-width: 50px !important;
-                flex-basis: 50px !important;
+            .main__natcert .filter-btn.active[data-filter]:not([data-filter="all"])::after {
+                left: 50% !important;
+                margin-left: -9px !important;
+                width: 18px !important;
+                height: 18px !important;
+                font-size: 14px !important;
             }
+
+            .main__natcert .filter-btn[data-filter="all"]::before {
+                width: 18px !important;
+                height: 18px !important;
+                flex-basis: 18px !important;
+                background:
+                    linear-gradient(currentColor 0 0) 0 0 / 7px 7px,
+                    linear-gradient(currentColor 0 0) 11px 0 / 7px 7px,
+                    linear-gradient(currentColor 0 0) 0 11px / 7px 7px,
+                    linear-gradient(currentColor 0 0) 11px 11px / 7px 7px !important;
+                background-repeat: no-repeat !important;
+            }
+
+            .main__natcert .natcert-title-row { gap: 14px !important; }
+            .main__natcert .natcert-title-icon {
+                width: 58px !important;
+                height: 58px !important;
+                min-width: 58px !important;
+                flex-basis: 58px !important;
+            }
+            .main__natcert .natcert-title-icon svg { width: 34px !important; height: 34px !important; }
+            .main__natcert .natcert-hero-art { display: none !important; }
         }
     </style>
 </head>
@@ -266,9 +372,9 @@
             </svg>
         </div>
 
-        <div style="position:relative;z-index:3;display:flex;align-items:center;gap:18px;max-width:900px;margin:0;">
-            <span aria-hidden="true" style="width:58px;height:58px;flex:0 0 58px;display:flex;align-items:center;justify-content:center;border-radius:18px;background:#eeeaff;color:#6246e5;box-shadow:0 8px 20px rgba(98,70,229,.10);">
-                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div class="natcert-title-row">
+            <span class="natcert-title-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M3 9L12 4L21 9L12 14L3 9Z" fill="currentColor" opacity=".16" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
                     <path d="M6 11.2V15.5C7.8 17 9.8 17.8 12 17.8C14.2 17.8 16.2 17 18 15.5V11.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
                     <path d="M21 9V14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
