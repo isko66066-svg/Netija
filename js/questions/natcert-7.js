@@ -159,7 +159,7 @@ var questions = [
         id: 23,
         type: "single_choice",
         question: "Если две окружности радиусов 5 и 2 имеют общую касательную, а расстояние между точками касания по рисунку равно 11, найдите длину $AB$.",
-        image: "images/7-mart_1-img/23.svg",
+        image: "images/7-mart_1-img/23.png",
         options: ["$4\\sqrt7$", "$\\sqrt{117}$", "$\\sqrt{130}$", "$3\\sqrt7$"],
         correctAnswer: 3
     },
@@ -174,7 +174,7 @@ var questions = [
         id: 25,
         type: "single_choice",
         question: "В треугольнике $ABC$ точки $B,D,C$ лежат на одной прямой; $AC=AD$, $AE=DE$. По рисунку найдите $\\angle FLB$.",
-        image: "images/7-mart_1-img/25.svg",
+        image: "images/7-mart_1-img/25.png",
         options: ["90°", "99°", "100°", "108°"],
         correctAnswer: 2
     },
@@ -182,7 +182,7 @@ var questions = [
         id: 26,
         type: "single_choice",
         question: "В равностороннем треугольнике сторона равна 8. Отрезок $AD$ делит основание на 5 и 3. Найдите сумму площадей окружностей, вписанных в треугольники $ADC$ и $ADB$.",
-        image: "images/7-mart_1-img/26.svg",
+        image: "images/7-mart_1-img/26.png",
         options: ["$14\\pi/7$", "$14\\pi$", "$13\\pi/7$", "$6\\pi$"],
         correctAnswer: 1
     },
@@ -190,7 +190,7 @@ var questions = [
         id: 27,
         type: "single_choice",
         question: "Диагонали трапеции $ABCD$ пересекаются в $O$. Площадь $BOC$ равна 3. Если отношение оснований задано на рисунке, найдите площадь $AOB$.",
-        image: "images/7-mart_1-img/27.svg",
+        image: "images/7-mart_1-img/27.png",
         options: ["12", "27", "9", "15"],
         correctAnswer: 2
     },
@@ -291,6 +291,7 @@ var questions = [
         id: 40,
         type: "open_ended",
         question: "Для кубической функции $f(x)=x^3+ax^2+bx+c$, проходящей через $(-1;0)$ и касающейся оси $Ox$ в $(2;0)$, найдите параметры и требуемую величину из пункта б).",
+        image: "images/7-mart_1-img/40.png",
         subQuestions: [
             { id: "a", text: "а) Ответ", correctAnswer: "3,5" },
             { id: "b", text: "б) Ответ", correctAnswer: "9" }
@@ -309,6 +310,7 @@ var questions = [
         id: 42,
         type: "open_ended",
         question: "В прямоугольном треугольнике катеты $AC=3$ и $AB=4$. На $AC$ и гипотенузе $BC$ построены квадраты. Найдите $|MF|$ и величину $AO_1O_2$.",
+         image: "images/7-mart_1-img/42.png",
         subQuestions: [
             { id: "a", text: "а) Ответ", correctAnswer: "√2" },
             { id: "b", text: "б) Ответ", correctAnswer: "15°" }
@@ -318,6 +320,7 @@ var questions = [
         id: 43,
         type: "open_ended",
         question: "В трапеции из задания 43 малая и большая основания равны 3 и 13; по условию $BE=BD=10$. Найдите $AE$ и площадь пятиугольника $ABCDE$.",
+         image: "images/7-mart_1-img/43.png",
         subQuestions: [
             { id: "a", text: "а) Ответ", correctAnswer: "1" },
             { id: "b", text: "б) Ответ", correctAnswer: "√(4+2√2)" }
@@ -336,6 +339,7 @@ var questions = [
         id: 45,
         type: "open_ended",
         question: "Подвесной мост имеет форму параболы. Расстояние между крайними высокими стойками 300 м, остальные стойки расположены через 15 м, высота крайних стоек 67 м. Начало координат находится в центре моста. Найдите уравнение параболы и сумму длин десяти самых коротких стоек.",
+         image: "images/7-mart_1-img/45.png",
         subQuestions: [
             { id: "a", text: "а) Ответ", correctAnswer: "3125000" },
             { id: "b", text: "б) Ответ", correctAnswer: "12500000" }
