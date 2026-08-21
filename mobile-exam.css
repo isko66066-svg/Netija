@@ -1,13 +1,14 @@
 /* =========================================================
    МОБИЛЬНЫЙ РЕЖИМ ТЕСТА
-   Таймер и кнопка завершения всегда остаются внизу экрана.
+   На телефоне карта вопросов находится в самом низу теста.
+   Таймер и кнопка завершения остаются доступными снизу.
    ========================================================= */
 
 @media (max-width: 900px) {
     /* Оставляем место снизу, чтобы фиксированная панель
-       не закрывала последний вопрос. */
+       не закрывала последний вопрос и карту вопросов. */
     .exam-page {
-        padding-bottom: 110px !important;
+        padding-bottom: 120px !important;
     }
 
     /* Убираем значок уведомлений между Premium и аватаром. */
@@ -24,27 +25,62 @@
         display: none !important;
     }
 
-    /* На телефоне карта вопросов не занимает место сверху.
-       Она остаётся доступной на десктопе. */
+    /*
+       Порядок на телефоне:
+       1. Все вопросы
+       2. Результат
+       3. Карта вопросов
+
+       Поэтому sidebar переносится после questions-area.
+    */
+    .exam-layout {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 14px !important;
+    }
+
+    .questions-area {
+        order: 1 !important;
+    }
+
     .questions-sidebar {
         position: static !important;
-        order: 0 !important;
+        order: 2 !important;
+        width: 100% !important;
         max-height: none !important;
-        padding: 0 !important;
+        padding: 14px !important;
         margin: 0 !important;
-        background: transparent !important;
-        border: 0 !important;
-        box-shadow: none !important;
+        background: #fff !important;
+        border: 1px solid #e4e9ef !important;
+        border-radius: 13px !important;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05) !important;
         overflow: visible !important;
     }
 
+    /* На телефоне карта вопросов показывается внизу. */
     .questions-sidebar > h2,
     .questions-sidebar > .question-legend,
     .questions-sidebar > .question-grid {
-        display: none !important;
+        display: block !important;
     }
 
-    /* Нижняя панель управления тестом. */
+    .questions-sidebar > h2 {
+        margin: 0 0 12px !important;
+        font-size: 18px !important;
+    }
+
+    .questions-sidebar > .question-legend {
+        margin-bottom: 10px !important;
+    }
+
+    /* Сетка вопросов внизу страницы. */
+    .question-grid {
+        grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        margin: 12px 0 0 !important;
+    }
+
+    /* Нижняя панель управления тестом остаётся фиксированной. */
     .exam-sidebar-controls {
         position: fixed !important;
         left: 10px !important;
@@ -53,9 +89,9 @@
         z-index: 2000 !important;
 
         display: grid !important;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        align-items: stretch;
-        gap: 8px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+        align-items: stretch !important;
+        gap: 8px !important;
 
         margin: 0 !important;
         padding: 8px !important;
@@ -91,13 +127,20 @@
         border-radius: 11px !important;
         font-size: 13px !important;
     }
+
+    /* Результат всегда находится перед картой вопросов. */
+    .questions-area #resultBox {
+        width: 100% !important;
+        margin: 18px 0 0 !important;
+        scroll-margin-top: 20px !important;
+    }
 }
 
 @media (max-width: 420px) {
     .exam-sidebar-controls {
         left: 8px !important;
         right: 8px !important;
-        gap: 6px;
+        gap: 6px !important;
         padding: 7px !important;
     }
 
@@ -107,5 +150,37 @@
 
     .finish-test {
         font-size: 12px !important;
+    }
+
+    .question-grid {
+        grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+        gap: 5px !important;
+    }
+
+    .question-number {
+        font-size: 11px !important;
+    }
+}
+
+/* =========================================================
+   DESKTOP
+   Результат остаётся под всеми вопросами, а карта вопросов
+   находится справа.
+   ========================================================= */
+
+@media (min-width: 901px) {
+    .questions-area {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .questions-area #quizContainer {
+        order: 1 !important;
+    }
+
+    .questions-area #resultBox {
+        order: 2 !important;
+        width: 100% !important;
+        margin: 18px 0 0 !important;
     }
 }
