@@ -10,6 +10,18 @@
         padding-bottom: 110px !important;
     }
 
+    /* Убираем значок уведомлений между Premium и аватаром. */
+    .site-notification {
+        display: none !important;
+    }
+
+    /* Убираем Google Sign-In иконку из шапки теста.
+       Вход по-прежнему доступен через мобильное меню. */
+    .header #googleSignInButton,
+    .header .sign__button {
+        display: none !important;
+    }
+
     /* На телефоне карта вопросов не занимает место сверху.
        Она остаётся доступной на десктопе. */
     .questions-sidebar {
@@ -76,13 +88,6 @@
         padding: 10px 8px !important;
         border-radius: 11px !important;
         font-size: 13px !important;
-    }
-
-    /* Убираем Google Sign-In иконку между Premium и аватаром.
-       Вход по-прежнему доступен через мобильное меню. */
-    .header #googleSignInButton,
-    .header .sign__button {
-        display: none !important;
     }
 }
 
