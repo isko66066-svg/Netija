@@ -159,7 +159,7 @@ var questions = [
         id: 23,
         type: "single_choice",
         question: "В треугольник $ABC$ вписана окружность. Если $\\angle CBO=40^\\circ$, где $O$ — центр окружности, найдите угол $\\alpha$ на рисунке.",
-        image: "images/2-mart_2-img/23.svg",
+        image: "images/2-mart_2-img/23.jpeg",
         options: ["40°", "20°", "50°", "60°"],
         correctAnswer: 2
     },
@@ -174,7 +174,7 @@ var questions = [
         id: 25,
         type: "single_choice",
         question: "В треугольнике $ABC$ биссектриса $BE$ делит $AC$ на отрезки 4 и 8. Если $AB=6$, найдите длину $BE$.",
-        image: "images/2-mart_2-img/25.svg",
+        image: "images/2-mart_2-img/25.jpeg",
         options: ["$2\\sqrt{10}$", "$\\sqrt{10}$", "$4\\sqrt{10}$", "$2\\sqrt5$"],
         correctAnswer: 2
     },
@@ -182,7 +182,7 @@ var questions = [
         id: 26,
         type: "single_choice",
         question: "В треугольнике $ABC$ точки $D$ и $E$ лежат соответственно на $AB$ и $BC$, $AE$ и $CD$ пересекаются в $O$. Дано $BD:AB=1:3$ и $BE:BC=1:2$. Если площадь $ABC$ равна 60, найдите площадь $AOC$.",
-        image: "images/2-mart_2-img/26.svg",
+        image: "images/2-mart_2-img/26.jpeg",
         options: ["30", "20", "24", "28"],
         correctAnswer: 2
     },
@@ -190,7 +190,7 @@ var questions = [
         id: 27,
         type: "single_choice",
         question: "В трапецию $ABCD$ вписана окружность. Расстояния от её центра до вершин $C$ и $D$ равны соответственно 2 и 4. Найдите площадь трапеции.",
-        image: "images/2-mart_2-img/27.svg",
+        image: "images/2-mart_2-img/27.jpeg",
         options: ["15", "16", "$16\\frac12$", "$14\\frac12$"],
         correctAnswer: 3
     },
@@ -295,6 +295,7 @@ var questions = [
         id: 40,
         type: "open_ended",
         question: "По условию задания 40 найдите параметры квадратичной функции и площадь закрашенной области на рисунке.",
+         image: "images/2-mart_2-img/40.jpeg",
         subQuestions: [
             { id: "a", text: "а) Ответ", correctAnswer: "1" },
             { id: "b", text: "б) Ответ", correctAnswer: "27/4" }
@@ -304,6 +305,7 @@ var questions = [
         id: 41,
         type: "open_ended",
         question: "В прямоугольном треугольнике из прямого угла проведены высота и биссектриса к гипотенузе. Их длины 6 и 8. Найдите площадь и затем требуемый угол из пункта б).",
+         image: "images/2-mart_2-img/41.jpeg",
         subQuestions: [
             { id: "a", text: "а) Ответ", correctAnswer: "10" },
             { id: "b", text: "б) Ответ", correctAnswer: "4√10/3" }
@@ -313,6 +315,7 @@ var questions = [
         id: 42,
         type: "open_ended",
         question: "В задаче с квадратами, построенными на катетах и гипотенузе треугольника, найдите $|MF|$ и величину угла $AO_1O_2$.",
+         image: "images/2-mart_2-img/42.jpeg",
         subQuestions: [
             { id: "a", text: "а) Ответ", correctAnswer: "2√13" },
             { id: "b", text: "б) Ответ", correctAnswer: "21/4" }
@@ -321,6 +324,7 @@ var questions = [
     {
         id: 43,
         type: "open_ended",
+         image: "images/2-mart_2-img/43.jpeg",
         question: "В трапеции из задания 43 найдите требуемое отношение и площадь указанного параллелограмма/пятиугольника.",
         subQuestions: [
             { id: "a", text: "а) Ответ", correctAnswer: "3" },
@@ -331,6 +335,7 @@ var questions = [
         id: 44,
         type: "open_ended",
         question: "В правильной четырёхугольной пирамиде вписан цилиндр. Площадь основания пирамиды 144, объём 288. Найдите максимальный объём цилиндра и максимальную площадь его поверхности.",
+         image: "images/2-mart_2-img/44.jpeg",
         subQuestions: [
             { id: "a", text: "а) Ответ", correctAnswer: "81π" },
             { id: "b", text: "б) Ответ", correctAnswer: "102π" }
@@ -340,6 +345,7 @@ var questions = [
         id: 45,
         type: "open_ended",
         question: "Анвар взял кредит 60 млн сум на 2 года под 20% годовых. Используя таблицу ежемесячных платежей из оригинала, найдите платёж за 10-й месяц и общую сумму начисленных процентов за 2 года.",
+         image: "images/2-mart_2-img/45.jpeg",
         subQuestions: [
             { id: "a", text: "а) Ответ", correctAnswer: "67x^2/22500" },
             { id: "b", text: "б) Ответ", correctAnswer: "341,7" }
