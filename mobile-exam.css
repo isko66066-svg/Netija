@@ -18,7 +18,9 @@
     /* Убираем Google Sign-In иконку из шапки теста.
        Вход по-прежнему доступен через мобильное меню. */
     .header #googleSignInButton,
-    .header .sign__button {
+    .header .sign__button,
+    .site-header #googleSignInButton,
+    .site-header .sign__button {
         display: none !important;
     }
 
