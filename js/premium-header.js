@@ -14,10 +14,7 @@
 
     function getCachedStatus() {
         try {
-            const cached = JSON.parse(
-                localStorage.getItem(CACHE_KEY) || 'null'
-            );
-
+            const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
             if (!cached) return null;
 
             if (cached.premiumUntil) {
@@ -35,16 +32,19 @@
 
     function saveStatus(status) {
         try {
-            localStorage.setItem(
-                CACHE_KEY,
-                JSON.stringify({
-                    premium: !!status?.premium,
-                    premiumUntil: status?.premiumUntil || null
-                })
-            );
+            localStorage.setItem(CACHE_KEY, JSON.stringify({
+                premium: !!status?.premium,
+                premiumUntil: status?.premiumUntil || null
+            }));
         } catch {
-            // localStorage may be unavailable in private/restricted modes.
+            // localStorage may be unavailable.
         }
+    }
+
+    function hideHeaderNotification() {
+        document.querySelectorAll('.site-notification').forEach((element) => {
+            element.remove();
+        });
     }
 
     function loadStyles() {
@@ -53,7 +53,22 @@
         const style = document.createElement('style');
         style.id = 'netija-premium-header-css';
         style.textContent = `
-            /* Desktop Google icon is intentionally never shown in the header. */
+            /* The notification/reward button must never appear in the header. */
+            .site-notification,
+            .site-header .site-notification,
+            .header .site-notification {
+                display: none !important;
+                visibility: hidden !important;
+                width: 0 !important;
+                min-width: 0 !important;
+                max-width: 0 !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: 0 !important;
+                overflow: hidden !important;
+            }
+
             #googleSignInButton,
             .site-header #googleSignInButton,
             .header #googleSignInButton,
@@ -72,33 +87,24 @@
     }
 
     function updateAuthControls() {
-        const user = getUser();
         const header = document.querySelector('.site-header, .header');
-
-        if (header) {
-            header.classList.add('netija-authenticated');
-        }
+        if (header) header.classList.add('netija-authenticated');
+        hideHeaderNotification();
     }
 
     function updateHeader(status) {
         const link = document.querySelector('.premium-nav-link');
-        if (!link) return false;
+        if (!link) return;
 
         const active = !!status?.premium;
         link.textContent = active ? ACTIVE_TEXT : DEFAULT_TEXT;
         link.classList.toggle('premium-active', active);
-        link.setAttribute(
-            'aria-label',
-            active ? 'Premium активен' : 'Premium'
-        );
-        return true;
+        link.setAttribute('aria-label', active ? 'Premium активен' : 'Premium');
     }
 
     function applyCachedStatus() {
         const cached = getCachedStatus();
-        if (cached) {
-            updateHeader(cached);
-        }
+        if (cached) updateHeader(cached);
     }
 
     async function checkPremium() {
@@ -116,9 +122,7 @@
                 { cache: 'no-store' }
             );
 
-            if (!response.ok) {
-                return;
-            }
+            if (!response.ok) return;
 
             const status = await response.json();
             saveStatus(status);
@@ -134,14 +138,17 @@
         applyCachedStatus();
         checkPremium();
 
+        // menu.js creates the header dynamically, so keep the unwanted button
+        // removed even if it is inserted after this script runs.
+        const observer = new MutationObserver(() => hideHeaderNotification());
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+
         let attempts = 0;
         const loginCheck = setInterval(() => {
             updateAuthControls();
             checkPremium();
             attempts += 1;
-            if (getUser()?.email || attempts >= 10) {
-                clearInterval(loginCheck);
-            }
+            if (getUser()?.email || attempts >= 10) clearInterval(loginCheck);
         }, 1000);
 
         window.addEventListener('netija:auth-changed', () => {
@@ -149,6 +156,7 @@
             applyCachedStatus();
             checkPremium();
         });
+
         window.addEventListener('pageshow', () => {
             updateAuthControls();
             applyCachedStatus();
