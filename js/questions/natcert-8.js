@@ -159,6 +159,7 @@ var questions = [
         id: 23,
         type: "single_choice",
         question: "В четверть круга радиуса $1+\\sqrt2$ вписана окружность с центром $O_1$. Найдите радиус окружности с центром $O_1$.",
+        image: "images/7-mart_2-img/23.jpeg",
         options: ["$\\sqrt2$", "1", "$\\sqrt3$", "$\\frac{\\sqrt2}{2}$"],
         correctAnswer: 1
     },
@@ -180,6 +181,7 @@ var questions = [
         id: 26,
         type: "single_choice",
         question: "В треугольнике $ABC$ даны $AB=8$, $BC=13$, $AC=15$. $L$ — точка пересечения биссектрис, $M$ — точка пересечения медиан. Найдите длину отрезка $LM$.",
+        image: "images/7-mart_2-img/23.jpeg",
         options: ["$\\frac{2\\sqrt5}{3}$", "$\\frac{\\sqrt{19}}{3}$", "$\\frac{\\sqrt{17}}{3}$", "$\\frac{\\sqrt7}{3}$"],
         correctAnswer: 0
     },
@@ -187,6 +189,7 @@ var questions = [
         id: 27,
         type: "single_choice",
         question: "По данным на рисунке найдите площадь квадрата. Ломаная внутри квадрата имеет последовательные отрезки длиной $5,2,4,2,3$, причём соседние отрезки перпендикулярны.",
+        image: "images/7-mart_2-img/27.jpeg",
         options: ["100", "80", "81", "40"],
         correctAnswer: 1
     },
@@ -214,6 +217,7 @@ var questions = [
     {
         id: 31,
         type: "single_choice",
+        image: "images/7-mart_2-img/31.jpeg",
         question: "Определите, какому множеству соответствует заштрихованная область на диаграмме Венна.",
         options: ["$(A\\cap C)\\setminus B$", "$B\\setminus(A\\cap C)$", "$B\\setminus(A\\cup C)$", "$(A\\cup C)\\setminus B$"],
         correctAnswer: 0
@@ -230,6 +234,7 @@ var questions = [
         type: "matching",
         question: "",
         context: "Задания 33–35 и варианты ответов A–F сопоставьте между собой. В основание конуса вписан квадрат со стороной 4 см. Две вершины одной стороны квадрата соединены с вершиной конуса, образуя треугольное сечение. Угол между двумя боковыми рёбрами этого сечения равен 60°.",
+        image: "images/7-mart_2-img/33-35.jpeg",
         optionsPool: {
             A: "$16\\sqrt2$",
             B: "$8\\sqrt2$",
@@ -341,6 +346,7 @@ var questions = [
         id: 39,
         type: "open_ended",
         question: "На отрезке $(-1;13)$ задан график производной $y=f'(x)$. По графику: $f'(x)=0$ при $x=5,9,11$; знак производной меняется с «−» на «+» в точках $5$ и $11$, а с «+» на «−» в точке $9$.",
+        image: "images/7-mart_2-img/39.jpeg",
         subQuestions: [
             {
                 id: "a",
@@ -357,6 +363,7 @@ var questions = [
     {
         id: 40,
         type: "open_ended",
+        image: "images/7-mart_2-img/40.jpeg",
         question: "Дана функция $f(x)=x^2-4x+5$. Также даны $g(x)=x+1$ и $h(x)=x+5$.",
         subQuestions: [
             {
@@ -375,6 +382,7 @@ var questions = [
         id: 41,
         type: "open_ended",
         question: "В треугольнике $ABC$ внутри взята точка $P$. Дано $BP=\\sqrt3$, $PC=1$. Отрезок $AP$ — биссектриса угла $BAC$. Если $\\angle BAC=30^\\circ$ и $\\angle BPC=120^\\circ$.",
+        image: "images/7-mart_2-img/41.jpeg",
         subQuestions: [
             {
                 id: "a",
@@ -391,6 +399,7 @@ var questions = [
     {
         id: 42,
         type: "open_ended",
+        image: "images/7-mart_2-img/42.jpeg",
         question: "Внутри прямоугольника $ABCD$ взята точка $E$. Дано $AE=1$, $ED=4$, $EB=\\sqrt2$ и $BC=3AB$.",
         subQuestions: [
             {
