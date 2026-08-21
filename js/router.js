@@ -106,17 +106,24 @@ window.addEventListener('beforeunload', function (event) {
         history.pushState({ netijaQuizGuard: true }, '', window.location.href);
     }
 
+    function confirmLeave() {
+        const ok = window.confirm('Вы сейчас проходите тест. Выйти из теста?\n\nВаши ответы могут быть потеряны.');
+        if (ok) {
+            allowNavigation = true;
+            // Disable the unload warning for this deliberate exit. The
+            // confirmation above is the warning the user should see.
+            window.quizInProgress = false;
+            window.quizSubmitted = true;
+        }
+        return ok;
+    }
+
     function leaveQuiz(destination) {
         if (!isActiveQuiz()) {
             window.location.href = destination;
             return;
         }
-
-        const ok = window.confirm('Вы сейчас проходите тест. Выйти из теста?\n\nВаши ответы могут быть потеряны.');
-        if (ok) {
-            allowNavigation = true;
-            window.location.href = destination;
-        }
+        if (confirmLeave()) window.location.href = destination;
     }
 
     function handleLinkClick(event) {
@@ -143,11 +150,7 @@ window.addEventListener('beforeunload', function (event) {
         if (allowNavigation || !isActiveQuiz()) return;
 
         history.pushState({ netijaQuizGuard: true }, '', window.location.href);
-        const ok = window.confirm('Вы сейчас проходите тест. Выйти из теста?\n\nВаши ответы могут быть потеряны.');
-        if (ok) {
-            allowNavigation = true;
-            history.back();
-        }
+        if (confirmLeave()) history.back();
     });
 
     const historyCheck = setInterval(function () {
