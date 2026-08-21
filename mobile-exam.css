@@ -1,0 +1,104 @@
+/* =========================================================
+   МОБИЛЬНЫЙ РЕЖИМ ТЕСТА
+   Таймер и кнопка завершения всегда остаются внизу экрана.
+   ========================================================= */
+
+@media (max-width: 900px) {
+    /* Оставляем место снизу, чтобы фиксированная панель
+       не закрывала последний вопрос. */
+    .exam-page {
+        padding-bottom: 110px !important;
+    }
+
+    /* На телефоне карта вопросов не занимает место сверху.
+       Она остаётся доступной на десктопе. */
+    .questions-sidebar {
+        position: static !important;
+        order: 0 !important;
+        max-height: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    .questions-sidebar > h2,
+    .questions-sidebar > .question-legend,
+    .questions-sidebar > .question-grid {
+        display: none !important;
+    }
+
+    /* Нижняя панель управления тестом. */
+    .exam-sidebar-controls {
+        position: fixed !important;
+        left: 10px !important;
+        right: 10px !important;
+        bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+        z-index: 2000 !important;
+
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: stretch;
+        gap: 8px;
+
+        margin: 0 !important;
+        padding: 8px !important;
+        background: rgba(255, 255, 255, 0.97) !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.16) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .sidebar-timer {
+        min-width: 0 !important;
+        min-height: 54px !important;
+        margin: 0 !important;
+        padding: 8px 10px !important;
+        border-radius: 11px !important;
+    }
+
+    .sidebar-timer strong {
+        font-size: 17px !important;
+    }
+
+    .sidebar-timer small {
+        font-size: 10px !important;
+    }
+
+    .finish-test {
+        min-width: 0 !important;
+        min-height: 54px !important;
+        margin: 0 !important;
+        padding: 10px 8px !important;
+        border-radius: 11px !important;
+        font-size: 13px !important;
+    }
+
+    /* Убираем Google Sign-In иконку между Premium и аватаром.
+       Вход по-прежнему доступен через мобильное меню. */
+    .header #googleSignInButton,
+    .header .sign__button {
+        display: none !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .exam-sidebar-controls {
+        left: 8px !important;
+        right: 8px !important;
+        gap: 6px;
+        padding: 7px !important;
+    }
+
+    .sidebar-timer strong {
+        font-size: 16px !important;
+    }
+
+    .finish-test {
+        font-size: 12px !important;
+    }
+}
