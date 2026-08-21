@@ -5,5 +5,6 @@ var testsList = [
     { id: 4, title: "1-марта, 2 смена", questionsCount: 45, year: '2026' },
     { id: 5, title: "2-марта, 1 смена", questionsCount: 45, year: '2026' },
     { id: 6, title: "2-марта, 2 смена", questionsCount: 45, year: '2026' },
-    { id: 7, title: "7-марта, 1 смена", questionsCount: 45, year: '2026' }
+    { id: 7, title: "7-марта, 1 смена", questionsCount: 45, year: '2026' },
+    { id: 8, title: "7-марта, 2 смена", questionsCount: 45, year: '2026' }
 ];
