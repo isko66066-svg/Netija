@@ -53,15 +53,19 @@
         const style = document.createElement('style');
         style.id = 'netija-premium-header-css';
         style.textContent = `
+            /* Desktop Google icon is intentionally never shown in the header. */
+            #googleSignInButton,
+            .site-header #googleSignInButton,
+            .header #googleSignInButton,
+            .site-header .sign__button,
+            .header .sign__button {
+                display: none !important;
+            }
+
             .premium-nav-link.premium-active {
                 background: #1f9d63 !important;
                 color: #fff !important;
                 border-color: #1f9d63 !important;
-            }
-
-            .site-header.netija-authenticated .sign__button,
-            .header.netija-authenticated .sign__button {
-                display: none !important;
             }
         `;
         document.head.appendChild(style);
@@ -69,11 +73,10 @@
 
     function updateAuthControls() {
         const user = getUser();
-        const authenticated = !!user?.email;
         const header = document.querySelector('.site-header, .header');
 
         if (header) {
-            header.classList.toggle('netija-authenticated', authenticated);
+            header.classList.add('netija-authenticated');
         }
     }
 
@@ -114,8 +117,6 @@
             );
 
             if (!response.ok) {
-                // Do not turn an already-known active Premium into inactive
-                // just because Render is waking from sleep or the request failed.
                 return;
             }
 
@@ -130,9 +131,6 @@
     function init() {
         loadStyles();
         updateAuthControls();
-
-        // Render's free instance can sleep. Paint the last known valid state
-        // immediately so the header does not flash "Premium" for several seconds.
         applyCachedStatus();
         checkPremium();
 
