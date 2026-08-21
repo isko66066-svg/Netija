@@ -9,6 +9,205 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        /* ===== National certificate: exact card/filter icon alignment ===== */
+        .main__natcert .test-card__title::before,
+        .main__natcert .test-card__count::before,
+        .main__natcert .card-badge::before,
+        .main__natcert .btn-card-action::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        .main__natcert .test-card__title-icon {
+            position: static !important;
+            inset: auto !important;
+            width: 56px !important;
+            height: 56px !important;
+            min-width: 56px !important;
+            flex: 0 0 56px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 13px !important;
+            border-radius: 15px !important;
+            background: var(--card-soft) !important;
+            color: var(--card-accent) !important;
+        }
+
+        .main__natcert .test-card__title-icon svg {
+            width: 30px !important;
+            height: 30px !important;
+            display: block !important;
+        }
+
+        .main__natcert .test-card__title {
+            gap: 14px !important;
+            min-height: 56px !important;
+        }
+
+        .main__natcert .test-card__count {
+            margin: 0 0 0 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            color: #7b8798 !important;
+        }
+
+        .main__natcert .test-card__count-icon {
+            position: static !important;
+            inset: auto !important;
+            width: 17px !important;
+            height: 17px !important;
+            min-width: 17px !important;
+            flex: 0 0 17px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: #8d9aab !important;
+        }
+
+        .main__natcert .test-card__count-icon svg {
+            width: 17px !important;
+            height: 17px !important;
+            display: block !important;
+        }
+
+        .main__natcert .card-badge {
+            gap: 9px !important;
+        }
+
+        .main__natcert .card-badge__icon {
+            position: static !important;
+            inset: auto !important;
+            width: 21px !important;
+            height: 21px !important;
+            min-width: 21px !important;
+            flex: 0 0 21px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: inherit !important;
+        }
+
+        .main__natcert .card-badge__icon svg {
+            width: 21px !important;
+            height: 21px !important;
+            display: block !important;
+        }
+
+        .main__natcert .card-badge__text {
+            margin: 0 !important;
+        }
+
+        .main__natcert .btn-card-action {
+            justify-content: flex-start !important;
+            padding-left: 24px !important;
+        }
+
+        /* Reference-style year navigation */
+        .main__natcert .filter-container {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            padding: 2px !important;
+            background: rgba(255,255,255,.92) !important;
+            border: 1px solid #e0e6ef !important;
+            border-radius: 17px !important;
+            box-shadow: 0 8px 26px rgba(30,64,175,.055) !important;
+        }
+
+        .main__natcert .filter-btn {
+            position: relative !important;
+            min-width: 140px !important;
+            height: 56px !important;
+            padding: 0 20px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 11px !important;
+            border: 1px solid #dfe5ed !important;
+            border-radius: 999px !important;
+            background: #fff !important;
+            color: #59677b !important;
+            font-size: 16px !important;
+            font-weight: 650 !important;
+            box-shadow: none !important;
+        }
+
+        .main__natcert .filter-btn::before {
+            content: "" !important;
+            display: block !important;
+            width: 21px !important;
+            height: 21px !important;
+            flex: 0 0 21px !important;
+            border: 2px solid #98a2ad !important;
+            border-radius: 5px !important;
+            background: transparent !important;
+            opacity: 1 !important;
+        }
+
+        .main__natcert .filter-btn[data-filter="all"]::before {
+            width: 21px !important;
+            height: 21px !important;
+            border: 0 !important;
+            border-radius: 3px !important;
+            background:
+                linear-gradient(currentColor 0 0) 0 0 / 8px 8px,
+                linear-gradient(currentColor 0 0) 13px 0 / 8px 8px,
+                linear-gradient(currentColor 0 0) 0 13px / 8px 8px,
+                linear-gradient(currentColor 0 0) 13px 13px / 8px 8px !important;
+            background-repeat: no-repeat !important;
+        }
+
+        .main__natcert .filter-btn[data-filter="all"] {
+            min-width: 134px !important;
+        }
+
+        .main__natcert .filter-btn.active {
+            background: #11118b !important;
+            border-color: #11118b !important;
+            color: #fff !important;
+            box-shadow: 0 8px 18px rgba(17,17,139,.22) !important;
+        }
+
+        .main__natcert .filter-btn:hover:not(.active) {
+            background: #fff !important;
+            border-color: #cfd8e6 !important;
+            color: #59677b !important;
+            transform: none !important;
+        }
+
+        @media (max-width: 700px) {
+            .main__natcert .filter-container {
+                gap: 6px !important;
+                padding: 4px !important;
+            }
+
+            .main__natcert .filter-btn,
+            .main__natcert .filter-btn[data-filter="all"] {
+                min-width: 0 !important;
+                height: 46px !important;
+                padding: 0 8px !important;
+                gap: 6px !important;
+                font-size: 12px !important;
+            }
+
+            .main__natcert .filter-btn::before,
+            .main__natcert .filter-btn[data-filter="all"]::before {
+                width: 16px !important;
+                height: 16px !important;
+                flex-basis: 16px !important;
+            }
+
+            .main__natcert .test-card__title-icon {
+                width: 50px !important;
+                height: 50px !important;
+                min-width: 50px !important;
+                flex-basis: 50px !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <header class="header">
