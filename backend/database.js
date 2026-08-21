@@ -1,6 +1,15 @@
 const Database = require("better-sqlite3");
+const path = require("path");
+const fs = require("fs");
 
-const db = new Database("netija.db");
+// On Render, point DB_PATH to a directory mounted on a Persistent Disk
+// (for example /var/data/netija.db). Locally, keep the database beside this file.
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, "netija.db");
+
+const dbDirectory = path.dirname(DB_PATH);
+fs.mkdirSync(dbDirectory, { recursive: true });
+
+const db = new Database(DB_PATH);
 
 db.pragma("journal_mode = WAL");
 
