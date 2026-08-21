@@ -103,3 +103,50 @@ filterButtons.forEach(button => {
         });
     });
 });
+
+/* ===== National certificate visual fixes ===== */
+(function applyNatcertVisualFixes() {
+    if (!document.querySelector('.main__natcert')) return;
+
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Keep the year filter clearly below the decorative hero illustration. */
+        .main__natcert .filter-container {
+            margin-top: 72px !important;
+        }
+
+        /* Draw a real geometric checkmark instead of the slanted text glyph. */
+        .main__natcert .filter-btn.active[data-filter]:not([data-filter="all"])::after {
+            content: "" !important;
+            position: absolute !important;
+            left: 21px !important;
+            top: 50% !important;
+            width: 11px !important;
+            height: 6px !important;
+            border-left: 2.5px solid #aeb8c4 !important;
+            border-bottom: 2.5px solid #aeb8c4 !important;
+            border-radius: 1px !important;
+            display: block !important;
+            transform: translateY(-65%) rotate(-45deg) !important;
+            transform-origin: center !important;
+            color: transparent !important;
+            font-size: 0 !important;
+        }
+
+        @media (max-width: 700px) {
+            .main__natcert .filter-container {
+                margin-top: 26px !important;
+            }
+
+            .main__natcert .filter-btn.active[data-filter]:not([data-filter="all"])::after {
+                left: 17px !important;
+                width: 8px !important;
+                height: 5px !important;
+                border-left-width: 2px !important;
+                border-bottom-width: 2px !important;
+                transform: translateY(-65%) rotate(-45deg) !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+})();
