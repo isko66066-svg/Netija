@@ -383,7 +383,6 @@
         script.dataset.questionsLoader = 'true';
 
         script.onload = function () {
-            applyQuestionImages();
             applyMatchingQuestions();
             addMatchingVisualFix();
 
