@@ -1,14 +1,49 @@
 (function () {
     const BACKEND_URL = 'https://netija.onrender.com';
+    const CACHE_KEY = 'netija_premium_header_status';
     const ACTIVE_TEXT = '👑 Premium активен';
     const DEFAULT_TEXT = '👑 Premium';
-    const CACHE_KEY = 'netija_premium_header_status';
 
     function getUser() {
         try {
             return JSON.parse(localStorage.getItem('netija_user') || 'null');
         } catch {
             return null;
+        }
+    }
+
+    function getCachedStatus() {
+        try {
+            const cached = JSON.parse(
+                localStorage.getItem(CACHE_KEY) || 'null'
+            );
+
+            if (!cached) return null;
+
+            if (cached.premiumUntil) {
+                const until = new Date(cached.premiumUntil).getTime();
+                if (!Number.isFinite(until) || until <= Date.now()) {
+                    return { premium: false };
+                }
+            }
+
+            return cached;
+        } catch {
+            return null;
+        }
+    }
+
+    function saveStatus(status) {
+        try {
+            localStorage.setItem(
+                CACHE_KEY,
+                JSON.stringify({
+                    premium: !!status?.premium,
+                    premiumUntil: status?.premiumUntil || null
+                })
+            );
+        } catch {
+            // localStorage may be unavailable in private/restricted modes.
         }
     }
 
@@ -23,8 +58,23 @@
                 color: #fff !important;
                 border-color: #1f9d63 !important;
             }
+
+            .site-header.netija-authenticated .sign__button,
+            .header.netija-authenticated .sign__button {
+                display: none !important;
+            }
         `;
         document.head.appendChild(style);
+    }
+
+    function updateAuthControls() {
+        const user = getUser();
+        const authenticated = !!user?.email;
+        const header = document.querySelector('.site-header, .header');
+
+        if (header) {
+            header.classList.toggle('netija-authenticated', authenticated);
+        }
     }
 
     function updateHeader(status) {
@@ -34,51 +84,23 @@
         const active = !!status?.premium;
         link.textContent = active ? ACTIVE_TEXT : DEFAULT_TEXT;
         link.classList.toggle('premium-active', active);
-        link.setAttribute('aria-label', active ? 'Premium активен' : 'Premium');
+        link.setAttribute(
+            'aria-label',
+            active ? 'Premium активен' : 'Premium'
+        );
         return true;
     }
 
-    function saveCachedStatus(user, status) {
-        if (!user?.email) return;
-
-        try {
-            localStorage.setItem(CACHE_KEY, JSON.stringify({
-                email: user.email,
-                premium: !!status?.premium,
-                premiumUntil: status?.premiumUntil || null,
-                savedAt: Date.now()
-            }));
-        } catch {
-            // Cache is only a visual optimization; server status remains authoritative.
-        }
-    }
-
-    function getCachedStatus(user) {
-        if (!user?.email) return null;
-
-        try {
-            const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-            if (!cached || cached.email !== user.email) return null;
-
-            // Never show a cached Premium state after its known expiry time.
-            if (cached.premium && cached.premiumUntil) {
-                const until = new Date(cached.premiumUntil).getTime();
-                if (!Number.isNaN(until) && until <= Date.now()) {
-                    return { premium: false };
-                }
-            }
-
-            return {
-                premium: !!cached.premium,
-                premiumUntil: cached.premiumUntil || null
-            };
-        } catch {
-            return null;
+    function applyCachedStatus() {
+        const cached = getCachedStatus();
+        if (cached) {
+            updateHeader(cached);
         }
     }
 
     async function checkPremium() {
         const user = getUser();
+        updateAuthControls();
 
         if (!user?.email) {
             updateHeader({ premium: false });
@@ -91,58 +113,47 @@
                 { cache: 'no-store' }
             );
 
-            if (!response.ok) return;
+            if (!response.ok) {
+                // Do not turn an already-known active Premium into inactive
+                // just because Render is waking from sleep or the request failed.
+                return;
+            }
 
             const status = await response.json();
-            saveCachedStatus(user, status);
+            saveStatus(status);
             updateHeader(status);
         } catch {
-            // Keep the cached visual state if the network is temporarily unavailable.
+            // Keep the last known valid Premium state while the backend wakes up.
         }
     }
 
     function init() {
         loadStyles();
+        updateAuthControls();
 
-        const user = getUser();
-        const cachedStatus = getCachedStatus(user);
-
-        // Apply the last confirmed server state immediately, before the network request.
-        // This prevents the Premium button from flashing back to the default state
-        // while moving between Netija pages.
-        if (cachedStatus) {
-            updateHeader(cachedStatus);
-        }
-
+        // Render's free instance can sleep. Paint the last known valid state
+        // immediately so the header does not flash "Premium" for several seconds.
+        applyCachedStatus();
         checkPremium();
 
         let attempts = 0;
         const loginCheck = setInterval(() => {
-            const currentUser = getUser();
-            const currentCachedStatus = getCachedStatus(currentUser);
-
-            if (currentCachedStatus) {
-                updateHeader(currentCachedStatus);
-            }
-
+            updateAuthControls();
             checkPremium();
             attempts += 1;
-            if (currentUser?.email || attempts >= 10) {
+            if (getUser()?.email || attempts >= 10) {
                 clearInterval(loginCheck);
             }
         }, 1000);
 
         window.addEventListener('netija:auth-changed', () => {
-            const currentUser = getUser();
-            const currentCachedStatus = getCachedStatus(currentUser);
-            updateHeader(currentCachedStatus || { premium: false });
+            updateAuthControls();
+            applyCachedStatus();
             checkPremium();
         });
-
         window.addEventListener('pageshow', () => {
-            const currentUser = getUser();
-            const currentCachedStatus = getCachedStatus(currentUser);
-            if (currentCachedStatus) updateHeader(currentCachedStatus);
+            updateAuthControls();
+            applyCachedStatus();
             checkPremium();
         });
     }
