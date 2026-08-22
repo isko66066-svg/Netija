@@ -1,0 +1,50 @@
+name: Fix NatCert syntax
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.event.head_commit.message != 'Fix NatCert 11 and 12 syntax'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fix broken apostrophe notation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              'js/questions/natcert-11.js': {
+                  r"f\''(0)": r"f^{\\prime\\prime}(0)",
+                  r"f\''(x)": r"f^{\\prime\\prime}(x)",
+                  r"f\'(0)": r"f^{\\prime}(0)",
+                  r"f\'(x)": r"f^{\\prime}(x)",
+              },
+              'js/questions/natcert-12.js': {
+                  r"f\'(1/\\pi)": r"f^{\\prime}(1/\\pi)",
+                  r"f\''(x)": r"f^{\\prime\\prime}(x)",
+                  r"f\'(x)": r"f^{\\prime}(x)",
+              },
+          }
+
+          for filename, pairs in replacements.items():
+              path = Path(filename)
+              text = path.read_text(encoding='utf-8')
+              for old, new in pairs.items():
+                  text = text.replace(old, new)
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add js/questions/natcert-11.js js/questions/natcert-12.js
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Fix NatCert 11 and 12 syntax"
+          git push
