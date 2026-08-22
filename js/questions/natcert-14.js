@@ -1,13 +1,49 @@
-// Национальный сертификат — 05.10.2025, 2 смена.
-// Ответы сверены по листу ключей из исходного PDF.
+// Национальный сертификат — 05.10.2025, 2-смена.
+// 45 заданий: 1–32 single_choice, 33–35 matching, 36–45 open_ended.
+// Ключи взяты непосредственно из листа ответов на исходном материале.
 var questions = [];
-const answers = [3,3,2,1,2,2,2,2,2,1,0,1,1,1,0,2,3,1,1,0,2,2,1,2,2,1,3,2,3,1,3,1];
-answers.forEach((correctAnswer,index)=>questions.push({id:index+1,type:'single_choice',question:`Оригинальное задание №${index+1} из теста 05.10.2025 (см. исходный вариант).`,options:['A','B','C','D'],correctAnswer}));
-questions.push({id:33,type:'matching',context:'Задания 33–35 из оригинального теста 05.10.2025.',optionsPool:{A:'A',B:'B',C:'C',D:'D',E:'E',F:'F'},items:[{id:33,text:'Выберите вариант A–F.',correctAnswer:'F'}]});
-questions.push({id:34,type:'matching',context:'Задания 33–35 из оригинального теста 05.10.2025.',optionsPool:{A:'A',B:'B',C:'C',D:'D',E:'E',F:'F'},items:[{id:34,text:'Выберите вариант A–F.',correctAnswer:'C'}]});
-questions.push({id:35,type:'matching',context:'Задания 33–35 из оригинального теста 05.10.2025.',optionsPool:{A:'A',B:'B',C:'C',D:'D',E:'E',F:'F'},items:[{id:35,text:'Выберите вариант A–F.',correctAnswer:'A'}]});
-const open=[
-[36,'-3','1/2'],[37,'π/11','5'],[38,'1','2'],[39,'-1','5/4'],[40,'9','19/3'],
-[41,'145 1/24','294'],[42,'√3/2','13√3'],[43,'3','45√3'],[44,'75π','63π'],[45,'3','285']
-];
-open.forEach(([id,a,b])=>questions.push({id,type:'open_ended',question:`Оригинальное задание №${id} из теста 05.10.2025.`,subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:a},{id:'b',text:'Введите ответ пункта b).',correctAnswer:b}]}));
+questions.push({id:1,type:'single_choice',question:'Оригинальное задание №1 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:3});
+questions.push({id:2,type:'single_choice',question:'Оригинальное задание №2 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:3});
+questions.push({id:3,type:'single_choice',question:'Оригинальное задание №3 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:4,type:'single_choice',question:'Оригинальное задание №4 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:5,type:'single_choice',question:'Оригинальное задание №5 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:6,type:'single_choice',question:'Оригинальное задание №6 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:7,type:'single_choice',question:'Оригинальное задание №7 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:8,type:'single_choice',question:'Оригинальное задание №8 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:9,type:'single_choice',question:'Оригинальное задание №9 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:10,type:'single_choice',question:'Оригинальное задание №10 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:11,type:'single_choice',question:'Оригинальное задание №11 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:0});
+questions.push({id:12,type:'single_choice',question:'Оригинальное задание №12 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:13,type:'single_choice',question:'Оригинальное задание №13 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:14,type:'single_choice',question:'Оригинальное задание №14 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:0});
+questions.push({id:15,type:'single_choice',question:'Оригинальное задание №15 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:16,type:'single_choice',question:'Оригинальное задание №16 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:3});
+questions.push({id:17,type:'single_choice',question:'Оригинальное задание №17 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:18,type:'single_choice',question:'Оригинальное задание №18 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:19,type:'single_choice',question:'Оригинальное задание №19 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:20,type:'single_choice',question:'Оригинальное задание №20 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:0});
+questions.push({id:21,type:'single_choice',question:'Оригинальное задание №21 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:22,type:'single_choice',question:'Оригинальное задание №22 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:23,type:'single_choice',question:'Оригинальное задание №23 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:24,type:'single_choice',question:'Оригинальное задание №24 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:25,type:'single_choice',question:'Оригинальное задание №25 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:26,type:'single_choice',question:'Оригинальное задание №26 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:27,type:'single_choice',question:'Оригинальное задание №27 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:3});
+questions.push({id:28,type:'single_choice',question:'Оригинальное задание №28 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:2});
+questions.push({id:29,type:'single_choice',question:'Оригинальное задание №29 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:3});
+questions.push({id:30,type:'single_choice',question:'Оригинальное задание №30 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:31,type:'single_choice',question:'Оригинальное задание №31 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:3});
+questions.push({id:32,type:'single_choice',question:'Оригинальное задание №32 из теста 05.10.2025. Откройте исходный вариант и выберите правильный ответ.',options:['A','B','C','D'],correctAnswer:1});
+questions.push({id:33,type:'matching',context:'Задания 33–35 из теста 05.10.2025. Сопоставьте по исходному варианту.',optionsPool:{A:'A',B:'B',C:'C',D:'D',E:'E',F:'F'},items:[{id:33,text:'Оригинальное задание №33',correctAnswer:'F'}]});
+questions.push({id:34,type:'matching',context:'Задания 33–35 из теста 05.10.2025. Сопоставьте по исходному варианту.',optionsPool:{A:'A',B:'B',C:'C',D:'D',E:'E',F:'F'},items:[{id:34,text:'Оригинальное задание №34',correctAnswer:'C'}]});
+questions.push({id:35,type:'matching',context:'Задания 33–35 из теста 05.10.2025. Сопоставьте по исходному варианту.',optionsPool:{A:'A',B:'B',C:'C',D:'D',E:'E',F:'F'},items:[{id:35,text:'Оригинальное задание №35',correctAnswer:'A'}]});
+questions.push({id:36,type:'open_ended',question:'Оригинальное задание №36 из теста 05.10.2025.',subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:'-3'},{id:'b',text:'Введите ответ пункта b).',correctAnswer:'1/2'}]});
+questions.push({id:37,type:'open_ended',question:'Оригинальное задание №37 из теста 05.10.2025.',subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:'π/11'},{id:'b',text:'Введите ответ пункта b).',correctAnswer:'5'}]});
+questions.push({id:38,type:'open_ended',question:'Оригинальное задание №38 из теста 05.10.2025.',subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:'1'},{id:'b',text:'Введите ответ пункта b).',correctAnswer:'2'}]});
+questions.push({id:39,type:'open_ended',question:'Оригинальное задание №39 из теста 05.10.2025.',subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:'-1'},{id:'b',text:'Введите ответ пункта b).',correctAnswer:'5/4'}]});
+questions.push({id:40,type:'open_ended',question:'Оригинальное задание №40 из теста 05.10.2025.',subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:'9'},{id:'b',text:'Введите ответ пункта b).',correctAnswer:'19/3'}]});
+questions.push({id:41,type:'open_ended',question:'Оригинальное задание №41 из теста 05.10.2025.',subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:'145 1/24'},{id:'b',text:'Введите ответ пункта b).',correctAnswer:'294'}]});
+questions.push({id:42,type:'open_ended',question:'Оригинальное задание №42 из теста 05.10.2025.',subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:'√3/2'},{id:'b',text:'Введите ответ пункта b).',correctAnswer:'13√3'}]});
+questions.push({id:43,type:'open_ended',question:'Оригинальное задание №43 из теста 05.10.2025.',subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:'3'},{id:'b',text:'Введите ответ пункта b).',correctAnswer:'45√3'}]});
+questions.push({id:44,type:'open_ended',question:'Оригинальное задание №44 из теста 05.10.2025.',subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:'75π'},{id:'b',text:'Введите ответ пункта b).',correctAnswer:'63π'}]});
+questions.push({id:45,type:'open_ended',question:'Оригинальное задание №45 из теста 05.10.2025.',subQuestions:[{id:'a',text:'Введите ответ пункта a).',correctAnswer:'3'},{id:'b',text:'Введите ответ пункта b).',correctAnswer:'285'}]});
