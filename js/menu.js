@@ -8,6 +8,18 @@
                     </a>
 
                     <ul class="header__list">
+                        <li class="header__list-item mobile-premium-item">
+                            <a class="mobile-premium-card" href="premium.html">
+                                <span class="mobile-premium-icon" aria-hidden="true">♛</span>
+                                <span class="mobile-premium-copy">
+                                    <strong>Premium активен</strong>
+                                    <small>Спасибо, что вы с нами!</small>
+                                </span>
+                                <span class="mobile-premium-avatar" aria-hidden="true"></span>
+                                <span class="mobile-premium-arrow" aria-hidden="true">›</span>
+                            </a>
+                        </li>
+
                         <li class="header__list-item menu-nav-item">
                             <a class="header__list-link" href="index.html">
                                 <span class="menu-icon menu-icon--home" aria-hidden="true">⌂</span>
@@ -46,16 +58,15 @@
 
     function setActiveLink(header) {
         const path = window.location.pathname.toLowerCase();
-        header.querySelectorAll('.header__list-link, .premium-nav-link').forEach(link => link.classList.remove('active'));
+        header.querySelectorAll('.header__list-link, .premium-nav-link, .mobile-premium-card').forEach(link => link.classList.remove('active'));
 
         let selector = '.header__list-link[href="index.html"]';
         if (path.includes('natcert-test')) selector = '.header__list-link[href="natcert.html"]';
         else if (path.includes('natcert')) selector = '.header__list-link[href="natcert.html"]';
-        else if (path.includes('premium')) selector = '.premium-nav-link';
+        else if (path.includes('premium')) selector = '.premium-nav-link, .mobile-premium-card';
         else if (path.endsWith('/') || path.endsWith('/index.html')) selector = '.header__list-link[href="index.html"]';
 
-        const active = header.querySelector(selector);
-        if (active) active.classList.add('active');
+        header.querySelectorAll(selector).forEach(link => link.classList.add('active'));
     }
 
     function closeMobileMenu() {
@@ -106,7 +117,7 @@
             });
 
             headerList.addEventListener('click', (event) => {
-                const link = event.target.closest('a.header__list-link');
+                const link = event.target.closest('a.header__list-link, a.mobile-premium-card');
                 if (link) closeMobileMenu();
             });
         }
