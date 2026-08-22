@@ -170,7 +170,7 @@ var questions = [
     type: "single_choice",
     question:
       "По графику функции $f(x)=ax^2+bx+c$ определите знаки коэффициентов.",
-    "image": "/images/5-oct2025_1/20.jpeg",
+    image: "/images/5-oct2025_1/20.jpeg",
     options: [
       "$a>0,b<0,c>0$",
       "$a<0,b<0,c>0$",
@@ -214,7 +214,7 @@ var questions = [
     type: "single_choice",
     question:
       "В треугольнике $ABC$ точки $F\\in AB$, $E\\in BC$. $AE$ и $CF$ пересекаются в $O$. Если $BF/FA=1/3$, $BE/BC=1/4$, а $S_{AOC}=144$, найдите $S_{FOE}$.",
-    "image": "/images/5-oct2025_1/25.jpeg",
+    image: "/images/5-oct2025_1/25.jpeg",
     options: ["16", "9", "12", "25"],
     correctAnswer: 1,
   },
@@ -231,7 +231,7 @@ var questions = [
     type: "single_choice",
     question:
       "Диагонали трапеции $ABCD$ пересекаются в $O$. Если $BO/BD=1/3$ и $S_{ABCD}=162$, найдите $S_{ABO}$.",
-    "image": "/images/5-oct2025_1/27.jpeg",
+    image: "/images/5-oct2025_1/27.jpeg",
     options: ["18", "36", "42", "27"],
     correctAnswer: 3,
   },
@@ -240,7 +240,7 @@ var questions = [
     type: "single_choice",
     question:
       "Из всех диагоналей правильного пятиугольника $ABCDE$ образован правильный пятиугольник $FGHKL$. Если $FG=2$, найдите периметр $ABCDE$.",
-    "image": "/images/5-oct2025_1/28.jpeg",
+    image: "/images/5-oct2025_1/28.jpeg",
     options: ["20", "$5(3-\\sqrt5)$", "$5(3+\\sqrt5)$", "25"],
     correctAnswer: 0,
   },
@@ -410,7 +410,7 @@ var questions = [
     type: "open_ended",
     question:
       "$f(x)=ax^2+bx+c$ и $g(x)=|x+m|+n$. По графику найдите параметры.",
-    "image": "/images/5-oct2025_1/40.jpeg",
+    image: "/images/5-oct2025_1/40.jpeg",
     subQuestions: [
       {
         id: "a",
@@ -429,7 +429,7 @@ var questions = [
     type: "open_ended",
     question:
       "В прямоугольном треугольнике $ABC$ высота $AH$ делит его на $ABH$ и $AHC$. Прямая через центры вписанных окружностей этих треугольников пересекает $AB$ и $AC$ в $M$ и $N$. Если $BH=4$ см, $HC=9$ см.",
-    "image": "/images/5-oct2025_1/41.jpeg",
+    image: "/images/5-oct2025_1/41.jpeg",
     subQuestions: [
       {
         id: "a",
@@ -480,7 +480,7 @@ var questions = [
     type: "open_ended",
     question:
       "В конус вписан параллелепипед с квадратным основанием. Высота конуса равна диаметру основания. Боковая поверхность параллелепипеда равна $24-16\\sqrt2$, а его высота в 2 раза больше стороны основания.",
-    "image": "/images/5-oct2025_1/44.jpeg",
+    image: "/images/5-oct2025_1/44.jpeg",
     subQuestions: [
       {
         id: "a",
@@ -495,7 +495,7 @@ var questions = [
     type: "open_ended",
     question:
       "Окружность и парабола с вершиной в центре окружности пересекаются в $C$ и $D$. Радиус окружности 3 см. Перпендикуляр из $D$ к диаметру $AB$ равен 2 см.",
-    "image": "/images/5-oct2025_1/45.jpeg",
+    image: "/images/5-oct2025_1/45.jpeg",
     subQuestions: [
       { id: "a", text: "а) Найдите $CD$ (см).", correctAnswer: "2√5" },
       {
