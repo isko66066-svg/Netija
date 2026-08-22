@@ -169,6 +169,7 @@ var questions = [
         id: 24,
         type: 'single_choice',
         question: 'На рисунке изображены окружность и прямоугольник. Найдите отношение площади области, ограниченной окружностью, к площади прямоугольника.',
+        "image": "/images/25-may2025_1/24.jpeg",
         options: ['$\\frac\\pi8$', '$\\frac\\pi{12}$', '$\\frac{\\pi}{3}$', '$\\frac{\\pi}{4}$'],
         correctAnswer: 0
     },
@@ -176,6 +177,7 @@ var questions = [
         id: 25,
         type: 'single_choice',
         question: 'В треугольнике $ABC$ $BC=8$, $AB=13$ и $\\angle AOB=150^\\circ$. Найдите площадь треугольника $ABC$.',
+        "image": "/images/25-may2025_1/25.jpeg",
         options: ['28', '$12\\sqrt3$', '$14\\sqrt3$', '24'],
         correctAnswer: 2
     },
@@ -183,6 +185,7 @@ var questions = [
         id: 26,
         type: 'single_choice',
         question: '$ABCD$ — параллелограмм. Его диагональ $BD$ пересекает отрезок $AF$ в точке $F$. Если площадь параллелограмма равна 48, найдите площадь треугольника, указанного на рисунке.',
+        "image": "/images/25-may2025_1/26.jpeg",
         options: ['21', '18', '15', '12'],
         correctAnswer: 3
     },
@@ -197,6 +200,7 @@ var questions = [
         id: 28,
         type: 'single_choice',
         question: 'На рисунке изображена правильная треугольная призма. Найдите отношение площадей $\\frac{S_1}{S_2}$.',
+        "image": "/images/25-may2025_1/28.jpeg",
         options: ['$\\sqrt2+1$', '$\\sqrt2+2$', '$\\sqrt2+3$', '$\\sqrt2+4$'],
         correctAnswer: 2
     },
@@ -204,6 +208,7 @@ var questions = [
         id: 29,
         type: 'single_choice',
         question: 'На рисунке изображён правильный шестиугольник. Если координаты точки $D$ равны $(x;6)$, найдите абсциссу точки $E$.',
+        "image": "/images/25-may2025_1/29.jpeg",
         options: ['8', '9', '$9\\sqrt3$', '$12\\sqrt3$'],
         correctAnswer: 3
     },
@@ -218,6 +223,7 @@ var questions = [
         id: 31,
         type: 'single_choice',
         question: 'По данным множествам на рисунке найдите сумму числа элементов множества $(A\\cup B)\\cap C$.',
+        "image": "/images/25-may2025_1/31.jpeg",
         options: ['32', '64', '128', '256'],
         correctAnswer: 1
     },
@@ -232,6 +238,7 @@ var questions = [
         id: 33,
         type: 'matching',
         context: 'Задания 33–35 и варианты ответов A–F сопоставьте между собой. На рисунке дана правильная призма, все рёбра которой равны 2.',
+        "image": "/images/25-may2025_1/33_35.jpeg",
         optionsPool: {
             A: '12',
             B: '$4\\sqrt6$',
@@ -326,6 +333,7 @@ var questions = [
         id: 38,
         type: 'open_ended',
         question: 'На рисунке даны графики $f(x)=ax^2+bx+c$ и $g(x)=kx+c$. $f(x)$ пересекает ось $Ox$ в точках $(-4;0)$ и $(5;0)$, а парабола имеет вершину $(2;-4,5)$.',
+        "image": "/images/25-may2025_1/38.jpeg",
         subQuestions: [
             {
                 id: 'a',
@@ -360,6 +368,7 @@ var questions = [
         id: 40,
         type: 'open_ended',
         question: 'На рисунке даны графики прямых и параболы; точки пересечения и оси отмечены.',
+        "image": "/images/25-may2025_1/40.jpeg",
         subQuestions: [
             {
                 id: 'a',
@@ -377,6 +386,7 @@ var questions = [
         id: 41,
         type: 'open_ended',
         question: '$ABC$ — правильный треугольник. $OC=\\frac{14}{\\sqrt3}$, $PB=10$, $AP=6$.',
+        "image": "/images/25-may2025_1/41.jpeg",
         subQuestions: [
             {
                 id: 'a',
@@ -411,6 +421,7 @@ var questions = [
         id: 43,
         type: 'open_ended',
         question: 'На рисунке изображён правильный шестиугольник $ABCDEF$; $P$ — точка внутри него.',
+        "image": "/images/25-may2025_1/43.jpeg",
         subQuestions: [
             {
                 id: 'a',
@@ -428,6 +439,7 @@ var questions = [
         id: 44,
         type: 'open_ended',
         question: 'На рисунке дана правильная четырёхугольная пирамида, вписанная в куб. Куб находится внутри пирамиды.',
+        "image": "/images/25-may2025_1/44.jpeg",
         subQuestions: [
             {
                 id: 'a',
@@ -445,6 +457,7 @@ var questions = [
         id: 45,
         type: 'open_ended',
         question: 'Школьник живёт в 30 км от школы. От дома до дороги 20 км, затем от дороги до школы 50 км по вертикали; длина отрезка $FC=50$ км, $DE=20$ км.',
+        "image": "/images/25-may2025_1/45.jpeg",
         subQuestions: [
             {
                 id: 'a',
