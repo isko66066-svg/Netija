@@ -181,7 +181,7 @@ var questions = [
     type: "single_choice",
     question:
       "$ABC$ — прямоугольный треугольник, в него вписана окружность с центром $O$. Если $AB=DC$, $BD=4$, $AC=9$, найдите $AD$.",
-    "image": "/images/5-oct2025_2/23.jpeg",
+    image: "/images/5-oct2025_2/23.jpeg",
     options: ["$\\sqrt{25}$", "$\\sqrt{30}$", "$\\sqrt{31}$", "$\\sqrt{26}$"],
     correctAnswer: 1,
   },
@@ -198,7 +198,7 @@ var questions = [
     type: "single_choice",
     question:
       "По рисунку и данным исходного варианта найдите площадь заштрихованной области.",
-    "image": "/images/5-oct2025_2/25.jpeg",
+    image: "/images/5-oct2025_2/25.jpeg",
     options: ["$\\sqrt3$", "$2\\sqrt3$", "$3\\sqrt3$", "$4\\sqrt3$"],
     correctAnswer: 2,
   },
@@ -215,7 +215,7 @@ var questions = [
     type: "single_choice",
     question:
       "По рисунку и данным исходного варианта найдите площадь заштрихованной области.",
-    "image": "/images/5-oct2025_2/27.jpeg",
+    image: "/images/5-oct2025_2/27.jpeg",
     options: ["5", "4", "3", "6"],
     correctAnswer: 3,
   },
@@ -224,7 +224,7 @@ var questions = [
     type: "single_choice",
     question:
       "Из диагоналей правильного пятиугольника образован внутренний правильный пятиугольник. Если $FG=2$, найдите периметр исходного пятиугольника.",
-    "image": "/images/5-oct2025_2/28.jpeg",
+    image: "/images/5-oct2025_2/28.jpeg",
     options: ["20", "$5(3-\\sqrt5)$", "$5(3+\\sqrt5)$", "25"],
     correctAnswer: 2,
   },
@@ -233,7 +233,7 @@ var questions = [
     type: "single_choice",
     question:
       "На рисунке изображён правильный шестиугольник. Найдите произведение координат точки $E$.",
-    "image": "/images/5-oct2025_2/29.jpeg",
+    image: "/images/5-oct2025_2/29.jpeg",
     options: ["8", "9", "$9\\sqrt3$", "$12\\sqrt3$"],
     correctAnswer: 3,
   },
@@ -250,7 +250,7 @@ var questions = [
     type: "single_choice",
     question:
       "По диаграмме Венна найдите число элементов множества $(A\\cup B)\\cup C$ в соответствии с исходным условием.",
-    "image": "/images/5-oct2025_2/31.jpeg",
+    image: "/images/5-oct2025_2/31.jpeg",
     options: ["8", "9", "10", "11"],
     correctAnswer: 3,
   },
@@ -392,7 +392,7 @@ var questions = [
     type: "open_ended",
     question:
       "$f(x)=ax^2+bx+c$ и $g(x)=-|x+m|+n$. По рисунку ось симметрии равна 4.",
-    "image": "/images/5-oct2025_2/40.jpeg",
+    image: "/images/5-oct2025_2/40.jpeg",
     subQuestions: [
       { id: "a", text: "а) Найдите $n-m$.", correctAnswer: "9" },
       {
@@ -407,7 +407,7 @@ var questions = [
     type: "open_ended",
     question:
       "В прямоугольном треугольнике $ABC$ внутри находятся две одинаковые касающиеся окружности радиуса 5 см. Гипотенуза $BC=35$ см.",
-    "image": "/images/5-oct2025_2/41.jpeg",
+    image: "/images/5-oct2025_2/41.jpeg",
     subQuestions: [
       {
         id: "a",
@@ -422,7 +422,7 @@ var questions = [
     type: "open_ended",
     question:
       "Четырёхугольник имеет вершины $A(2;2\\sqrt3)$, $B(5;5\\sqrt3)$, $C(9;3\\sqrt3)$, $D(3;\\sqrt3)$. Если $\\angle BAD=\\beta$.",
-    "image": "/images/5-oct2025_2/42.jpeg",
+    image: "/images/5-oct2025_2/42.jpeg",
     subQuestions: [
       { id: "a", text: "а) Найдите $\\sin\\beta$.", correctAnswer: "√3/2" },
       { id: "b", text: "б) Найдите площадь $ABCD$.", correctAnswer: "13√3" },
@@ -433,7 +433,7 @@ var questions = [
     type: "open_ended",
     question:
       "В пятиугольнике $ABCDE$ точки $M,K,N,L$ — середины $AB,BC,CD,DE$. $P$ — середина $MN$, $T$ — середина $KL$. Если $AP=AE=12$ и $\\angle PAE=60^\\circ$.",
-    "image": "/images/5-oct2025_2/43.jpeg",
+    image: "/images/5-oct2025_2/43.jpeg",
     subQuestions: [
       { id: "a", text: "а) Найдите $PT$.", correctAnswer: "3" },
       {
@@ -448,7 +448,7 @@ var questions = [
     type: "open_ended",
     question:
       "Из цилиндрической заготовки радиуса 3 выточили конус и полушар. Если образующая конуса равна 5.",
-    "image": "/images/5-oct2025_2/44.jpeg",
+    image: "/images/5-oct2025_2/44.jpeg",
     subQuestions: [
       {
         id: "a",
@@ -467,7 +467,7 @@ var questions = [
     type: "open_ended",
     question:
       "Из точки $A$ на суше до точки $T$ в воде 150 м. $AB=200$ м. Анвар идёт от $B$ по берегу со скоростью 150 м/мин, затем плывёт от точки $C$ со скоростью 75 м/мин.",
-    "image": "/images/5-oct2025_2/45.jpeg",
+    image: "/images/5-oct2025_2/45.jpeg",
     subQuestions: [
       {
         id: "a",
