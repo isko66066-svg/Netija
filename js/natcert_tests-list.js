@@ -70,5 +70,17 @@ const testsList = [
         title: "25 мая 2025, 2 смена",
         questionsCount: 45,
         year: "2025"
+    },
+    {
+        id: 13,
+        title: "5 октября 2025, 1 смена",
+        questionsCount: 45,
+        year: "2025"
+    },
+    {
+        id: 14,
+        title: "5 октября 2025, 2 смена",
+        questionsCount: 45,
+        year: "2025"
     }
 ];
