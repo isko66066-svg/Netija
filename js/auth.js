@@ -89,14 +89,22 @@ function closeAccountDropdown() {
 
 function refreshAccountMenu() {
     const loggedIn = !!getSavedUser();
+    const isMobile = window.matchMedia('(max-width:700px)').matches;
 
+    // Account controls belong to the mobile burger menu only.
+    // Never inject/display them into the desktop header.
     document.querySelectorAll('.account-item').forEach((el) => {
         if (el.id === 'loginItemMobile') return;
-        el.style.setProperty('display', loggedIn ? 'block' : 'none', 'important');
+        el.style.setProperty('display', isMobile && loggedIn ? 'block' : 'none', 'important');
     });
 
     const loginItem = document.getElementById('loginItemMobile');
     if (!loginItem) return;
+
+    if (!isMobile) {
+        loginItem.style.setProperty('display', 'none', 'important');
+        return;
+    }
 
     if (loggedIn) {
         loginItem.style.setProperty('display', 'block', 'important');
@@ -408,12 +416,11 @@ window.onload = function () {
         const mobileSignIn = document.getElementById('googleSignInButtonMobile');
         if (mobileSignIn) {
             google.accounts.id.renderButton(mobileSignIn, {
-                theme: 'outline',
+                theme: 'filled_blue',
                 size: 'large',
-                type: 'standard',
                 text: 'signin_with',
-                locale: 'ru',
-                width: 400
+                shape: 'rectangular',
+                width: 300
             });
         }
     }
@@ -421,15 +428,10 @@ window.onload = function () {
     const savedUser = getSavedUser();
     if (savedUser) {
         showUserProfile(savedUser);
-        syncUserWithBackend(savedUser.email).then(() => {
-            refreshAccountMenu();
-            updateMobilePremiumCard();
-            window.dispatchEvent(new CustomEvent('netija:login'));
-        });
-    } else {
-        refreshAccountMenu();
-        updateMobilePremiumCard();
     }
 
-    setTimeout(updateMobilePremiumCard, 300);
+    refreshAccountMenu();
+    updateMobilePremiumCard();
+
+    window.addEventListener('resize', refreshAccountMenu);
 };
