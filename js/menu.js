@@ -172,6 +172,10 @@
     }
 
     window.initNetijaHeader = function () {
+        // The original header must remain untouched on desktop.
+        // The burger/menu replacement is intentionally mobile-only.
+        if (!window.matchMedia('(max-width:700px)').matches) return;
+
         const oldHeader = document.querySelector('.site-header, .header, .exam-header');
         if (oldHeader) oldHeader.outerHTML = HEADER_HTML;
         else document.body.insertAdjacentHTML('afterbegin', HEADER_HTML);
