@@ -5,17 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netija — подготовка к экзаменам</title>
 
-    <!-- Global styles -->
     <link rel="stylesheet" href="style.css?v=20260821-3">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Header fix: menu.js changes .header to .site-header -->
     <style>
+        /* Desktop header: keep the original desktop layout untouched. */
         .site-header {
             width: 100% !important;
             max-width: none !important;
@@ -39,9 +37,39 @@
         .site-header .header__nav {
             min-height: 58px !important;
         }
+
+        /* The generated mobile menu is allowed only below the mobile breakpoint. */
+        @media (min-width: 701px) {
+            .site-header .burger,
+            .site-header .mobile-premium-item,
+            .site-header .menu-icon,
+            .site-header .menu-arrow,
+            .site-header .account-item,
+            .site-header .login-item {
+                all: revert;
+            }
+
+            .site-header .header__list {
+                position: static !important;
+                width: auto !important;
+                height: auto !important;
+                transform: none !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+                overflow: visible !important;
+                display: flex !important;
+                flex: 1 1 auto !important;
+                background: transparent !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+        }
     </style>
 
-    <!-- External services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2898376939409244" crossorigin="anonymous"></script>
 </head>
@@ -116,7 +144,7 @@
     </main>
 
     <script src="js/auth.js"></script>
-    <script src="js/menu.js?v=20260822-1"></script>
+    <script src="js/menu.js?v=20260822-2"></script>
     <script src="js/premium-header.js"></script>
     <script src="js/router.js"></script>
 </body>
