@@ -125,6 +125,7 @@ var questions = [
         "id": 18,
         "type": "single_choice",
         "question": "По рисунку сравните параметры $a,b,c$ трёх парабол.",
+        "image": "/images/23-feb2025_2/18.jpeg",
         "options": ["$a>b>c$", "$b>a>c$", "$c>a>b$", "$b>c>a$"],
         "correctAnswer": 1
     },
@@ -181,6 +182,7 @@ var questions = [
         "id": 26,
         "type": "single_choice",
         "question": "В прямоугольном треугольнике $ABC$ гипотенуза равна 15, а $\\sin\\angle ACB=0,6$. Найдите площадь.",
+        "image": "/images/23-feb2025_2/26.jpeg",
         "options": ["56", "54", "108", "36"],
         "correctAnswer": 1
     },
@@ -188,6 +190,7 @@ var questions = [
         "id": 27,
         "type": "single_choice",
         "question": "Два одинаковых квадрата наложены друг на друга, один из них повернут на $45^\\circ$. По рисунку найдите отношение площади закрашенной области к площади квадрата $ABCD$.",
+        "image": "/images/23-feb2025_2/27.jpeg",
         "options": ["$\\frac12$", "$3+2\\sqrt2$", "$3-2\\sqrt2$", "$\\sqrt2-1$"],
         "correctAnswer": 2
     },
@@ -202,6 +205,7 @@ var questions = [
         "id": 29,
         "type": "single_choice",
         "question": "В кубе $ABCDA_1B_1C_1D_1$ с ребром 3 вычислите $(\\vec{AD}+\\vec{DC})\\cdot(\\vec{CC_1}+\\vec{C_1D_1})$.",
+        "image": "/images/23-feb2025_2/29.jpeg",
         "options": ["3", "9", "-9", "-3"],
         "correctAnswer": 2
     },
@@ -230,6 +234,7 @@ var questions = [
         "id": 33,
         "type": "matching",
         "context": "Объёмы призмы и цилиндра равны. Основание призмы — трапеция. Малое основание трапеции равно её высоте и в 2 раза меньше большого основания. Принять π=3.",
+        "image": "/images/23-feb2025_2/33_35.jpeg",
         "optionsPool": {"A":"√3","B":"√2","C":"3","D":"4","E":"5","F":"2"},
         "items": [{"id":33,"text":"Во сколько раз малое основание трапеции больше радиуса цилиндра?","correctAnswer":"B"}]
     },
@@ -269,6 +274,7 @@ var questions = [
         "id": 38,
         "type": "open_ended",
         "question": "На рисунке изображён прямоугольник $ABCD$ с вершинами на графиках $y_1=x^2+2$ и $y_2=6$.",
+        "image": "/images/23-feb2025_2/38.jpeg",
         "subQuestions": [
             {"id":"a","text":"Найдите площадь прямоугольника.","correctAnswer":"\\frac{32\\sqrt3}{9}"},
             {"id":"b","text":"Найдите длину диагонали $AC$.","correctAnswer":"4\\sqrt7"}
@@ -287,6 +293,7 @@ var questions = [
         "id": 40,
         "type": "open_ended",
         "question": "На рисунке $y_1$ — прямая, $y_2$ — парабола, а $x=1$ — ось симметрии. Даны точки $A(-2;0)$, $(0;8)$ и $(0;2)$, а $B=(x;y)$ — точка пересечения.",
+        "image": "/images/23-feb2025_2/40.jpeg",
         "subQuestions": [
             {"id":"a","text":"Найдите $x+y$.","correctAnswer":"12"},
             {"id":"b","text":"Найдите площадь закрашенной области.","correctAnswer":"13"}
@@ -296,6 +303,7 @@ var questions = [
         "id": 41,
         "type": "open_ended",
         "question": "В треугольнике $ABC$ из вершины $A$ проведена высота $AH$. В треугольники $ABH$ и $AHC$ вписаны окружности; точки касания отмечены на рисунке. $AB=13$, $AC=15$, $BC=14$.",
+        "image": "/images/23-feb2025_2/41.jpeg",
         "subQuestions": [
             {"id":"a","text":"Найдите площадь заштрихованной области.","correctAnswer":"12"},
             {"id":"b","text":"Найдите кратчайшее расстояние от точки $K$ до $AH$.","correctAnswer":"150"}
@@ -314,6 +322,7 @@ var questions = [
         "id": 43,
         "type": "open_ended",
         "question": "На рисунке дан выпуклый восьмиугольник $ABCDEFGH$, причём $AB=BC=CD=DE=EF=FG=\\sqrt3$. Отрезок $MN$ делит площадь восьмиугольника пополам.",
+        "image": "/images/23-feb2025_2/43.jpeg",
         "subQuestions": [
             {"id":"a","text":"Найдите положительную разность периметров двух частей.","correctAnswer":"\\sqrt7"},
             {"id":"b","text":"Если $FM=\\sqrt2$, найдите длину $MN$.","correctAnswer":"25"}
