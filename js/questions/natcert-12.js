@@ -181,6 +181,7 @@ var questions = [
         id: 25,
         type: 'single_choice',
         question: 'Если $R=25$ и $r=5$, найдите площадь треугольника $ABC$.',
+        "image": "/images/25-may2025_2/25.jpeg",
         options: ['125', '225', '255', '275'],
         correctAnswer: 3
     },
@@ -188,6 +189,7 @@ var questions = [
         id: 26,
         type: 'single_choice',
         question: '$ABC$ — прямоугольный треугольник. $AD=4$, $CD=6$, $DE=EB=5$. Найдите площадь заштрихованной области.',
+        "image": "/images/25-may2025_2/26.jpeg",
         options: ['6', '8', '9', '12'],
         correctAnswer: 1
     },
@@ -195,6 +197,7 @@ var questions = [
         id: 27,
         type: 'single_choice',
         question: '$ABCD$ — квадрат. $MNC$ — прямоугольный треугольник. Если $CN=4$, $MN=3$, $CM=5$, найдите площадь квадрата $ABCD$.',
+        "image": "/images/25-may2025_2/27.jpeg",
         options: ['$14\\frac2{17}$', '$13\\frac3{17}$', '$15\\frac1{17}$', '$16\\frac3{17}$'],
         correctAnswer: 2
     },
@@ -202,6 +205,7 @@ var questions = [
         id: 28,
         type: 'single_choice',
         question: '$FG=6$ см, $ABCDEF$ — правильный шестиугольник. Найдите площадь заштрихованной области.',
+        "image": "/images/25-may2025_2/28.jpeg",
         options: ['$8\\sqrt3$', '$9\\sqrt3$', '$12\\sqrt3$', '$15\\sqrt3$'],
         correctAnswer: 1
     },
@@ -209,6 +213,7 @@ var questions = [
         id: 29,
         type: 'single_choice',
         question: '$ABCD$ — равнобедренная трапеция, $\\frac{BC}{AD}=\\frac13$. $MN$ — средняя линия, пересекающая высоту $BH$ в точке $O$. Если $\\vec{AO}=a\\vec{AB}+b\\vec{BC}$, найдите $\\frac ab$.',
+        "image": "/images/25-may2025_2/29.jpeg",
         options: ['2', '$\\frac12$', '1', '3'],
         correctAnswer: 2
     },
@@ -237,6 +242,7 @@ var questions = [
         id: 33,
         type: 'matching',
         context: 'Задания 33–35 и варианты ответов A–F сопоставьте между собой. Вершины четырёхугольника имеют координаты $A(-3;2)$, $B(-1;2\\sqrt3+2)$, $C(3;2\\sqrt3+2)$, $D(9;2)$.',
+        "image": "/images/25-may2025_2/33_35.jpeg",
         optionsPool: {
             A: '$12\\sqrt3$',
             B: '$16\\sqrt3$',
@@ -365,6 +371,7 @@ var questions = [
         id: 40,
         type: 'open_ended',
         question: '$ABCDEF$ — правильный шестиугольник площадью $6\\sqrt3$. На рисунке проведены отрезки $LM$, $LK$, $MN$.',
+        "image": "/images/25-may2025_2/40.jpeg",
         subQuestions: [
             {
                 id: 'a',
@@ -416,6 +423,7 @@ var questions = [
         id: 43,
         type: 'open_ended',
         question: 'На рисунке изображён прямоугольник $ABCD$. Даны $S_{ABK}=10$, $S_{FEG}=1$, $S_{AFD}=7$, $S_{KHG}=S_1$, $S_{AKGF}=S_2$.',
+        "image": "/images/25-may2025_2/43.jpeg",
         subQuestions: [
             {
                 id: 'a',
@@ -433,6 +441,7 @@ var questions = [
         id: 44,
         type: 'open_ended',
         question: 'На рисунке изображены шар, конус и цилиндр. $R_{шара}=R_{конуса}=R_{цилиндра}$ и $V_{цилиндра}=V_{конуса}+V_{шара}$.',
+        "image": "/images/25-may2025_2/44.jpeg",
         subQuestions: [
             {
                 id: 'a',
@@ -450,6 +459,7 @@ var questions = [
         id: 45,
         type: 'open_ended',
         question: 'Круг разделён в отношении 1:2 на меньший и больший сектора. Из этих частей изготовлены стаканы.',
+        "image": "/images/25-may2025_2/45.jpeg",
         subQuestions: [
             {
                 id: 'a',
