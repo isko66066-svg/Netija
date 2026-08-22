@@ -241,7 +241,8 @@ button { font-family: inherit; }
     max-width: 690px;
     margin: 14px 0 0;
     color: #64748b;
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: 500;
     line-height: 1.55;
 }
 .main__natcert .test-subtitle::after {
