@@ -48,3 +48,5 @@ jobs:
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Fix NatCert 11 and 12 syntax"
           git push
+
+# temporary syntax repair
