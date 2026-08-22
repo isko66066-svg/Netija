@@ -350,11 +350,11 @@ var questions = [
     {
         id: 39,
         type: 'open_ended',
-        question: 'Если для функции $f(x)$ заданы $f(0)=1$, $f\'(0)=2$ и $f\''(x)=4f\'(x)-3f(x)+1$, найдите значения производных.',
+        question: 'Если для функции $f(x)$ заданы $f(0)=1$, $f^{\\prime}(0)=2$ и $f^{\\prime\\prime}(x)=4f^{\\prime}(x)-3f(x)+1$, найдите значения производных.',
         subQuestions: [
             {
                 id: 'a',
-                text: 'Найдите $f\''(0)$.',
+                text: 'Найдите $f^{\\prime\\prime}(0)$.',
                 correctAnswer: '6'
             },
             {

@@ -357,12 +357,12 @@ var questions = [
         subQuestions: [
             {
                 id: 'a',
-                text: 'Найдите $f\'(1/\\pi)$.',
+                text: 'Найдите $f^{\\prime}(1/\\pi)$.',
                 correctAnswer: '$\\pi^2$'
             },
             {
                 id: 'b',
-                text: 'Если $g(x)=f(x)+2x^3f\'(x)+x^4f\''(x)$, найдите $g(2025)$.',
+                text: 'Если $g(x)=f(x)+2x^3f^{\\prime}(x)+x^4f^{\\prime\\prime}(x)$, найдите $g(2025)$.',
                 correctAnswer: '0'
             }
         ]
@@ -388,7 +388,7 @@ var questions = [
     {
         id: 41,
         type: 'open_ended',
-        question: 'Для функции $f(x)$ выполнены условия $\\int_0^1 f(x)f\'(x)dx=0$ и $\\int_0^1 f^2(x)f\'(x)dx=18$.',
+        question: 'Для функции $f(x)$ выполнены условия $\\int_0^1 f(x)f^{\\prime}(x)dx=0$ и $\\int_0^1 f^2(x)f^{\\prime}(x)dx=18$.',
         subQuestions: [
             {
                 id: 'a',
@@ -397,7 +397,7 @@ var questions = [
             },
             {
                 id: 'b',
-                text: 'Найдите $\\int_0^1 f^4(x)f\'(x)dx$.',
+                text: 'Найдите $\\int_0^1 f^4(x)f^{\\prime}(x)dx$.',
                 correctAnswer: '$\\frac{486}{5}$'
             }
         ]
