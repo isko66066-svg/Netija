@@ -167,6 +167,7 @@ var questions = [
         "id": 24,
         "type": "single_choice",
         "question": "В треугольник $ABC$ вписана окружность, касающаяся $AB,BC,AC$ в $F,D,E$. Если $AB=9$, $BC=7$, $AC=10$, найдите $AE$.",
+        image: "images/23-feb2025_1/24.jpeg",
         "options": ["4", "6", "8", "5"],
         "correctAnswer": 1
     },
@@ -174,6 +175,7 @@ var questions = [
         "id": 25,
         "type": "single_choice",
         "question": "В прямоугольном треугольнике гипотенуза равна 15, $\\sin\\angle ACB=0,6$. Найдите площадь.",
+        image: "images/23-feb2025_1/25.jpeg",
         "options": ["56", "54", "108", "36"],
         "correctAnswer": 1
     },
@@ -181,6 +183,7 @@ var questions = [
         "id": 26,
         "type": "single_choice",
         "question": "В прямоугольный треугольник $ABC$ вписан квадрат $ADEF$, причём общий прямой угол находится в $A$. Если $BE=20$, $EC=30$, найдите площадь закрашенной области.",
+        image: "images/23-feb2025_1/26.jpeg",
         "options": ["600", "325", "300", "225"],
         "correctAnswer": 2
     },
@@ -188,6 +191,7 @@ var questions = [
         "id": 27,
         "type": "single_choice",
         "question": "Квадрат $ABCD$ имеет сторону 6. $AF=2$, $CE=3$, а углы $\\angle FMA=\\beta$ и $\\angle CNE=\\alpha$ заданы на рисунке. Найдите $\\alpha+\\beta$.",
+        image: "images/23-feb2025_1/27.jpeg",
         "options": ["115°", "135°", "150°", "120°"],
         "correctAnswer": 1
     },
@@ -202,6 +206,7 @@ var questions = [
         "id": 29,
         "type": "single_choice",
         "question": "Две плоскости образуют двугранный угол $120^\\circ$. Даны $AC=7\\sqrt3$, $AB=12$, $DC=4\\sqrt3$, $\\angle BAC=30^\\circ$, $\\angle ACD=60^\\circ$. Найдите расстояние между $B$ и $D$.",
+        image: "images/23-feb2025_1/29.jpeg",
         "options": ["$6\\sqrt3$", "12", "$\\sqrt{75+6\\sqrt{39}}$", "$\\sqrt{111}$"],
         "correctAnswer": 3
     },
@@ -209,6 +214,7 @@ var questions = [
         "id": 30,
         "type": "single_choice",
         "question": "Окружность $x^2+y^2=36$ и прямая $y=kx+b$ изображены на рисунке; прямая образует с осью $Ox$ угол $30^\\circ$. Найдите кратчайшее расстояние от точки $A$ до оси $Ox$.",
+        image: "images/23-feb2025_1/30.jpeg",
         "options": ["6", "$3\\sqrt3$", "3", "$6\\sqrt3$"],
         "correctAnswer": 1
     },
@@ -223,6 +229,7 @@ var questions = [
         "id": 32,
         "type": "single_choice",
         "question": "Сколько трёхзначных чисел, кратных 3, можно составить так, чтобы все их цифры были нечётными?",
+        image: "images/23-feb2025_1/32.jpeg",
         "options": ["35", "36", "41", "29"],
         "correctAnswer": 2
     },
@@ -230,6 +237,7 @@ var questions = [
         "id": 33,
         "type": "matching",
         "context": "Палатка состоит из конической крыши и цилиндрической нижней части. Их основания совпадают, а высоты равны; общая высота палатки 6. В заданиях 33–35 используйте условие и варианты A–F.",
+        image: "images/23-feb2025_1/33_35.jpeg",
         "optionsPool": {"A":"64π","B":"68π","C":"54π","D":"56π","E":"60π","F":"72π"},
         "items": [{"id":33,"text":"По условию оригинала найдите объём палатки.","correctAnswer":"A"}]
     },
@@ -278,6 +286,7 @@ var questions = [
         "id": 39,
         "type": "open_ended",
         "question": "Для функции $f(x)$ задано условие из оригинального задания.",
+        image: "images/23-feb2025_1/39.jpeg",
         "subQuestions": [
             {"id":"a","text":"Найдите $f(2)$. ","correctAnswer":"3"},
             {"id":"b","text":"Найдите $f^2(3)$ согласно обозначению оригинального задания.","correctAnswer":"6"}
@@ -287,6 +296,7 @@ var questions = [
         "id": 40,
         "type": "open_ended",
         "question": "На рисунке дана область, ограниченная функциями из оригинального задания.",
+        image: "images/23-feb2025_1/40.jpeg",
         "subQuestions": [
             {"id":"a","text":"Найдите значение $x+y$.","correctAnswer":"12"},
             {"id":"b","text":"Найдите площадь заштрихованной области.","correctAnswer":"13"}
@@ -296,6 +306,7 @@ var questions = [
         "id": 41,
         "type": "open_ended",
         "question": "В треугольнике $ABC$ высота $BH$ делит его на два прямоугольных треугольника; радиусы вписанных окружностей равны 3 и 4.",
+        image: "images/23-feb2025_1/41.jpeg",
         "subQuestions": [
             {"id":"a","text":"Найдите высоту $BH$.","correctAnswer":"12"},
             {"id":"b","text":"Найдите площадь треугольника $ABC$.","correctAnswer":"150"}
@@ -332,6 +343,7 @@ var questions = [
         "id": 45,
         "type": "open_ended",
         "question": "Из металлического листа в форме половины цилиндра изготовили поилку длиной 200 см и диаметром 40 см. Принять $π\\approx3$.",
+        image: "images/23-feb2025_1/45.jpeg",
         "subQuestions": [
             {"id":"a","text":"Сколько $дм^2$ листа потребуется без отходов?","correctAnswer":"132"},
             {"id":"b","text":"Сколько литров воды помещается в поилку?","correctAnswer":"120"}
