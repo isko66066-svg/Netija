@@ -19,9 +19,9 @@
                                 <span class="mobile-premium-arrow" aria-hidden="true">›</span>
                             </a>
                         </li>
-                        <li class="header__list-item menu-nav-item"><a class="header__list-link" href="index.html"><span class="menu-icon menu-icon--home" aria-hidden="true">⌂</span><span>Главная страница</span></a></li>
-                        <li class="header__list-item menu-nav-item"><a class="header__list-link" href="/"><span class="menu-icon menu-icon--dtm" aria-hidden="true">◆</span><span>Дтм</span></a></li>
-                        <li class="header__list-item menu-nav-item"><a class="header__list-link" href="natcert.html"><span class="menu-icon menu-icon--natcert" aria-hidden="true">⬡</span><span>Национальный сертификат</span></a></li>
+                        <li class="header__list-item menu-nav-item"><a class="header__list-link" href="index.html"><span class="menu-icon menu-icon--home" aria-hidden="true">⌂</span><span>Главная страница</span><span class="menu-arrow" aria-hidden="true">›</span></a></li>
+                        <li class="header__list-item menu-nav-item"><a class="header__list-link" href="/"><span class="menu-icon menu-icon--dtm" aria-hidden="true">◆</span><span>Дтм</span><span class="menu-arrow" aria-hidden="true">›</span></a></li>
+                        <li class="header__list-item menu-nav-item"><a class="header__list-link" href="natcert.html"><span class="menu-icon menu-icon--natcert" aria-hidden="true">⬡</span><span>Национальный сертификат</span><span class="menu-arrow" aria-hidden="true">›</span></a></li>
                     </ul>
 
                     <div class="site-header__account">
@@ -94,13 +94,15 @@
             @media (max-width:700px) {
                 .site-header .header__list{left:10px!important;right:10px!important;top:68px!important;padding:10px!important;gap:6px!important;border-radius:18px!important;background:linear-gradient(180deg,#0d2b70 0%,#0a235d 100%)!important;border:1px solid rgba(111,157,255,.22)!important;box-shadow:0 22px 55px rgba(2,8,23,.46)!important}
                 .site-header .header__list-item.menu-nav-item{padding:0!important;border:0!important}
-                .site-header .header__list-link{min-height:56px!important;height:56px!important;padding:7px 12px!important;gap:12px!important;border:1px solid rgba(111,157,255,.13)!important;border-radius:14px!important;background:rgba(24,73,166,.72)!important;color:#fff!important;font-size:13px!important;font-weight:700!important;line-height:1.15!important;letter-spacing:-.1px!important}
+                .site-header .header__list-link{min-height:56px!important;height:56px!important;padding:7px 12px!important;gap:12px!important;border:1px solid rgba(111,157,255,.13)!important;border-radius:14px!important;background:rgba(24,73,166,.72)!important;color:#fff!important;font-size:13px!important;font-weight:700!important;line-height:1.15!important;letter-spacing:-.1px!important;display:flex!important;align-items:center!important}
+                .site-header .header__list-link > span:nth-child(2){min-width:0!important;flex:1!important}
                 .site-header .header__list-link.active{padding-left:12px!important;background:rgba(43,100,218,.82)!important;box-shadow:inset 0 0 0 1px rgba(116,166,255,.16)!important}
                 .site-header .header__list-link.active::after{display:none!important}
                 .site-header .menu-icon{width:40px!important;height:40px!important;min-width:40px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:12px!important;color:#a9d3ff!important;background:rgba(33,105,228,.88)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important}
                 .site-header .menu-icon--dtm{color:#f1a6ff!important;background:linear-gradient(135deg,#5f2bea,#7138f4)!important}
                 .site-header .menu-icon--natcert{color:#72efff!important;background:linear-gradient(135deg,#1477e8,#1689f4)!important}
                 .site-header .menu-icon svg{width:21px!important;height:21px!important}
+                .site-header .menu-arrow{margin-left:auto!important;flex:0 0 auto!important;font-size:27px!important;font-weight:300!important;line-height:1!important;color:rgba(255,255,255,.88)!important}
                 .site-header .mobile-premium-item{padding:0 0 5px!important;border:0!important}
                 .site-header .mobile-premium-card{min-height:104px!important;padding:14px!important;display:grid!important;grid-template-columns:48px minmax(0,1fr) 44px 20px!important;align-items:center!important;gap:11px!important;border-radius:20px!important;background:linear-gradient(135deg,#6a28e8 0%,#4d2ee5 52%,#7a2be8 100%)!important;border:1px solid rgba(174,137,255,.58)!important;box-shadow:0 10px 26px rgba(84,44,226,.34),inset 0 1px 0 rgba(255,255,255,.13)!important;color:#fff!important}
                 .site-header .mobile-premium-icon{width:48px!important;height:48px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:15px!important;background:rgba(255,255,255,.14)!important;color:#ffe35d!important}
@@ -137,7 +139,7 @@
     function applyIcons(header) {
         [['.menu-icon--home','home'],['.menu-icon--dtm','dtm'],['.menu-icon--natcert','natcert'],['.mobile-premium-icon','crown']].forEach(([selector,type]) => {
             const el = header.querySelector(selector);
-            if (el) el.innerHTML = iconSvg(type);
+            if (el && el.innerHTML !== iconSvg(type)) el.innerHTML = iconSvg(type);
         });
 
         header.querySelectorAll('.account-item-link').forEach(link => {
@@ -164,21 +166,9 @@
         }
     }
 
-    function observeDynamicAccountItems(header) {
-        const list = header.querySelector('.header__list');
-        if (!list || list.dataset.iconsObserver) return;
-        list.dataset.iconsObserver = '1';
-        const observer = new MutationObserver(() => {
-            applyIcons(header);
-            syncPremiumAvatar(header);
-        });
-        observer.observe(list, { childList:true, subtree:true });
-        const avatar = document.getElementById('userAvatar');
-        if (avatar) {
-            const avatarObserver = new MutationObserver(() => syncPremiumAvatar(header));
-            avatarObserver.observe(avatar, { attributes:true, attributeFilter:['src'] });
-        }
-        window.addEventListener('netija:login', () => syncPremiumAvatar(header));
+    function refreshDynamicMenu(header) {
+        applyIcons(header);
+        syncPremiumAvatar(header);
     }
 
     window.initNetijaHeader = function () {
@@ -190,9 +180,7 @@
 
         loadMobilePolishStyles();
         setActiveLink(header);
-        applyIcons(header);
-        syncPremiumAvatar(header);
-        observeDynamicAccountItems(header);
+        refreshDynamicMenu(header);
 
         const burgerBtn = document.getElementById('burgerBtn');
         const headerList = header.querySelector('.header__list');
@@ -207,6 +195,7 @@
                 if (link) closeMobileMenu();
             });
         }
+
         document.addEventListener('click', event => {
             if (!window.matchMedia('(max-width:700px)').matches) return;
             if (!header.classList.contains('menu-open')) return;
@@ -215,6 +204,15 @@
         });
         document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMobileMenu(); });
         window.addEventListener('resize', () => { if (window.innerWidth > 700) closeMobileMenu(); });
+
+        window.addEventListener('netija:login', () => refreshDynamicMenu(header));
+        window.addEventListener('netija:auth-changed', () => refreshDynamicMenu(header));
+        let refreshAttempts = 0;
+        const refreshTimer = setInterval(() => {
+            refreshDynamicMenu(header);
+            refreshAttempts += 1;
+            if (refreshAttempts >= 10) clearInterval(refreshTimer);
+        }, 500);
     };
 
     function initExamQuestionMap() {
