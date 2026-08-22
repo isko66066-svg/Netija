@@ -110,41 +110,99 @@ filterButtons.forEach(button => {
 
     const style = document.createElement('style');
     style.textContent = `
-        /* Keep the year filter clearly below the decorative hero illustration. */
+        /* Compact reference-style year filter. */
         .main__natcert .filter-container {
-            margin-top: 72px !important;
+            margin-top: 38px !important;
+            margin-bottom: 24px !important;
+            min-height: 60px !important;
+            padding: 5px !important;
+            gap: 8px !important;
+            border-radius: 16px !important;
         }
 
-        /* Draw a real geometric checkmark instead of the slanted text glyph. */
+        .main__natcert .filter-btn,
+        .main__natcert .filter-btn[data-filter="all"] {
+            width: 105px !important;
+            min-width: 105px !important;
+            height: 48px !important;
+            padding: 0 12px !important;
+            gap: 8px !important;
+            font-size: 15px !important;
+            font-weight: 650 !important;
+        }
+
+        /* Years: small clean square, no checkmark. */
+        .main__natcert .filter-btn[data-filter]:not([data-filter="all"])::before {
+            width: 19px !important;
+            height: 19px !important;
+            flex: 0 0 19px !important;
+            border: 2px solid #9aa5b1 !important;
+            border-radius: 4px !important;
+            background: transparent !important;
+            box-sizing: border-box !important;
+        }
+
+        .main__natcert .filter-btn.active[data-filter]:not([data-filter="all"])::before {
+            border-color: #aeb8c4 !important;
+            background: #aeb8c4 !important;
+        }
+
+        /* Remove the old geometric checkmark completely. */
         .main__natcert .filter-btn.active[data-filter]:not([data-filter="all"])::after {
-            content: "" !important;
-            position: absolute !important;
-            left: 21px !important;
-            top: 50% !important;
-            width: 11px !important;
-            height: 6px !important;
-            border-left: 2.5px solid #aeb8c4 !important;
-            border-bottom: 2.5px solid #aeb8c4 !important;
-            border-radius: 1px !important;
-            display: block !important;
-            transform: translateY(-65%) rotate(-45deg) !important;
-            transform-origin: center !important;
-            color: transparent !important;
-            font-size: 0 !important;
+            content: none !important;
+            display: none !important;
+        }
+
+        .main__natcert .filter-btn[data-filter="all"]::before {
+            width: 20px !important;
+            height: 20px !important;
+            flex: 0 0 20px !important;
+            background:
+                linear-gradient(currentColor 0 0) 0 0 / 7px 7px,
+                linear-gradient(currentColor 0 0) 13px 0 / 7px 7px,
+                linear-gradient(currentColor 0 0) 0 13px / 7px 7px,
+                linear-gradient(currentColor 0 0) 13px 13px / 7px 7px !important;
+            background-repeat: no-repeat !important;
         }
 
         @media (max-width: 700px) {
             .main__natcert .filter-container {
                 margin-top: 26px !important;
+                margin-bottom: 18px !important;
+                min-height: 54px !important;
+                padding: 4px !important;
+                gap: 4px !important;
+                border-radius: 14px !important;
             }
 
-            .main__natcert .filter-btn.active[data-filter]:not([data-filter="all"])::after {
-                left: 17px !important;
-                width: 8px !important;
-                height: 5px !important;
-                border-left-width: 2px !important;
-                border-bottom-width: 2px !important;
-                transform: translateY(-65%) rotate(-45deg) !important;
+            .main__natcert .filter-btn,
+            .main__natcert .filter-btn[data-filter="all"] {
+                width: auto !important;
+                min-width: 0 !important;
+                flex: 0 0 auto !important;
+                height: 44px !important;
+                padding: 0 12px !important;
+                gap: 5px !important;
+                font-size: 13px !important;
+            }
+
+            .main__natcert .filter-btn[data-filter]:not([data-filter="all"])::before {
+                width: 18px !important;
+                height: 18px !important;
+                flex-basis: 18px !important;
+                border-radius: 4px !important;
+            }
+
+            .main__natcert .filter-btn[data-filter="all"]::before {
+                width: 18px !important;
+                height: 18px !important;
+                flex-basis: 18px !important;
+                background:
+                    linear-gradient(currentColor 0 0) 0 0 / 6px 6px,
+                    linear-gradient(currentColor 0 0) 12px 0 / 6px 6px,
+                    linear-gradient(currentColor 0 0) 0 12px / 6px 6px,
+                    linear-gradient(currentColor 0 0) 12px 12px / 6px 6px !important;
+                background-repeat: no-repeat !important;
             }
         }
     `;
