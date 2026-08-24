@@ -129,10 +129,10 @@
 
                 if (input && input.value.trim() && equivalent(input.value, sub.correctAnswer)) {
                     // Перед основной проверкой quiz.js заменяем эквивалентную
-                    // запись на эталонную. Например: (8)/(3) -> 8/3.
-                    input.value = String(sub.correctAnswer)
-                        .replace(/^\$+|\$+$/g, '')
-                        .replace(/\\(?:d?frac)\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2');
+                    // запись на ТОЧНОЕ эталонное значение из базы ответов.
+                    // Например: 8/3, (8)/(3) и $\\frac{8}{3}$ будут
+                    // приведены к одной и той же строке, которую проверяет quiz.js.
+                    input.value = String(sub.correctAnswer);
                 }
             });
         });
