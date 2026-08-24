@@ -1,6 +1,17 @@
 (function () {
     'use strict';
 
+    function loadFreshExamStyles() {
+        if (document.getElementById('netija-mobile-exam-fresh')) return;
+        const link = document.createElement('link');
+        link.id = 'netija-mobile-exam-fresh';
+        link.rel = 'stylesheet';
+        link.href = 'mobile-exam.css?v=20260824';
+        document.head.appendChild(link);
+    }
+
+    loadFreshExamStyles();
+
     const KEYS = [
         ['√', '√()', -1], ['π', 'π'], ['x²', '²'], ['x³', '³'],
         ['a⁄b', '()/()', -4], ['xⁿ', '^()', -1], ['(', '('], [')', ')'],
