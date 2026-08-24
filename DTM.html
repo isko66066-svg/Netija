@@ -10,32 +10,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        .dtm-page{max-width:1280px;margin:0 auto;padding:34px 28px 80px}
-        .dtm-hero{position:relative;padding:28px 8px 8px;overflow:hidden}
-        .dtm-hero:after{content:"";position:absolute;width:360px;height:260px;right:0;top:0;background:radial-gradient(circle,rgba(92,67,220,.13),transparent 68%);pointer-events:none}
-        .dtm-badge{display:inline-flex;align-items:center;padding:8px 14px;border:1px solid #dce5ff;border-radius:999px;background:#eef3ff;color:#3157c7;font-size:13px;font-weight:800;letter-spacing:.04em}
-        .dtm-title{margin:16px 0 4px;font-size:clamp(42px,5vw,64px);line-height:1;font-weight:800;color:#08172d}
-        .dtm-subtitle{margin:0;color:#718096;font-size:20px;font-weight:500}
-        .dtm-description{margin:12px 0 0;color:#334155;font-size:16px}
-        .dtm-test-navigation{display:flex;align-items:center;gap:9px;overflow-x:auto;margin:30px 0 24px;padding:6px;background:rgba(255,255,255,.94);border:1px solid #e0e6ef;border-radius:17px;box-shadow:0 8px 26px rgba(30,64,175,.055);scrollbar-width:none}
-        .dtm-test-navigation::-webkit-scrollbar{display:none}
-        .dtm-test-navigation a{min-width:48px;height:46px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #dfe5ed;border-radius:999px;background:#fff;color:#59677b;text-decoration:none;font-weight:700;transition:.15s}
-        .dtm-test-navigation a.active{background:#11118b;border-color:#11118b;color:#fff;box-shadow:0 8px 18px rgba(17,17,139,.22)}
-        .dtm-test-navigation a:hover:not(.active){border-color:#cfd8e6;background:#fff}
-        .dtm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-        .dtm-card{position:relative;min-height:230px;padding:24px;background:#fff;border:1px solid #e2e7ef;border-radius:22px;box-shadow:0 10px 30px rgba(15,23,42,.055);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease}
-        .dtm-card:after{content:"";position:absolute;right:-50px;bottom:-65px;width:170px;height:150px;border-radius:50%;background:var(--dtm-soft,#eef3ff);opacity:.8;pointer-events:none}
-        .dtm-card:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(15,23,42,.09)}
-        .dtm-card__top{position:relative;z-index:1;display:flex;align-items:center;gap:15px}
-        .dtm-icon{width:58px;height:58px;min-width:58px;display:grid;place-items:center;border-radius:15px;background:var(--dtm-soft,#eeeaff);font-size:29px}
-        .dtm-card:nth-child(2n){--dtm-soft:#eaf4ff}.dtm-card:nth-child(3n){--dtm-soft:#e8faf2}.dtm-card:nth-child(4n){--dtm-soft:#fff1e7}.dtm-card:nth-child(5n){--dtm-soft:#f4edff}
-        .dtm-card h2{margin:0 0 5px;color:#111c3a;font-size:23px;line-height:1.15}
-        .dtm-card p{margin:0;color:#7b8798;font-size:15px}
-        .dtm-card>a{position:relative;z-index:2;margin-top:25px;min-height:52px;padding:0 22px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:#4f3bea;color:#fff;text-decoration:none;font-weight:800;font-size:16px;box-shadow:0 10px 22px rgba(79,59,234,.22);transition:.15s}
-        .dtm-card:nth-child(2n)>a{background:#287be0}.dtm-card:nth-child(3n)>a{background:#18b875}.dtm-card:nth-child(4n)>a{background:#ff7a00}
-        .dtm-card>a:hover{filter:brightness(.96);transform:translateY(-1px)}
-        @media(max-width:1000px){.dtm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-        @media(max-width:620px){.dtm-page{padding:24px 14px 55px}.dtm-hero{padding-top:12px}.dtm-subtitle{font-size:17px}.dtm-description{font-size:14px}.dtm-grid{grid-template-columns:1fr;gap:14px}.dtm-card{min-height:205px;padding:20px}.dtm-card h2{font-size:21px}.dtm-test-navigation{margin-top:22px}}
+        .dtm-category-filters{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:30px 0 28px;padding:7px;background:rgba(255,255,255,.94);border:1px solid #e0e6ef;border-radius:17px;box-shadow:0 8px 26px rgba(30,64,175,.055)}
+        .dtm-category-filter{min-height:48px;padding:0 22px;border:1px solid #dfe5ed;border-radius:999px;background:#fff;color:#59677b;font:700 14px Poppins,sans-serif;cursor:pointer;transition:.18s}
+        .dtm-category-filter:hover{border-color:#c7d1df;background:#f8fafc}
+        .dtm-category-filter.active{background:#11118b;border-color:#11118b;color:#fff;box-shadow:0 8px 18px rgba(17,17,139,.18)}
+        .dtm-filter-empty{display:none;grid-column:1/-1;padding:32px;text-align:center;border:1px dashed #d8dfeb;border-radius:18px;background:#fff;color:#718096}
+        @media(max-width:620px){.dtm-category-filters{justify-content:stretch;gap:6px;padding:5px}.dtm-category-filter{flex:1 1 0;min-width:0;padding:0 8px;font-size:11px}}
     </style>
 </head>
 <body>
@@ -62,23 +42,45 @@
     <section class="dtm-hero">
         <span class="dtm-badge">NETIJA • DTM</span>
         <h1 class="dtm-title">DTM</h1>
-        <p class="dtm-subtitle">Выбери тест и начни подготовку</p>
-        <p class="dtm-description">Практикуйся, анализируй результаты и повышай свой результат!</p>
+        <p class="dtm-subtitle">Выбери направление и вариант теста.</p>
     </section>
 
-    <nav class="dtm-test-navigation" aria-label="Навигация по DTM тестам">
-        <a class="dtm-nav-all active" href="#dtm-tests">Все</a>
-        <a href="#dtm-test-1">1</a><a href="#dtm-test-2">2</a><a href="#dtm-test-3">3</a><a href="#dtm-test-4">4</a><a href="#dtm-test-5">5</a><a href="#dtm-test-6">6</a><a href="#dtm-test-7">7</a>
-    </nav>
+    <div class="dtm-category-filters" role="tablist" aria-label="Направление DTM">
+        <button class="dtm-category-filter active" type="button" data-category="math">Математика</button>
+        <button class="dtm-category-filter" type="button" data-category="math-english">Математика + английский</button>
+        <button class="dtm-category-filter" type="button" data-category="iq">IQ</button>
+    </div>
 
     <section class="dtm-grid" id="dtm-tests">
-        <article class="dtm-card" id="dtm-test-1"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 1</h2><p>20 вопросов • Вариант 7</p></div></div><a href="DTM-test.html?variant=variant-7">Пройти тест →</a></article>
-        <article class="dtm-card" id="dtm-test-2"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 2</h2><p>20 вопросов • Вариант 8</p></div></div><a href="DTM-test.html?variant=variant-8">Пройти тест →</a></article>
-        <article class="dtm-card" id="dtm-test-3"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 3</h2><p>20 вопросов • Вариант 9</p></div></div><a href="DTM-test.html?variant=variant-9">Пройти тест →</a></article>
-        <article class="dtm-card" id="dtm-test-4"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 4</h2><p>20 вопросов • Вариант 10</p></div></div><a href="DTM-test.html?variant=variant-10">Пройти тест →</a></article>
-        <article class="dtm-card" id="dtm-test-5"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 5</h2><p>20 вопросов • Вариант 12</p></div></div><a href="DTM-test.html?variant=variant-12">Пройти тест →</a></article>
-        <article class="dtm-card" id="dtm-test-6"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 6</h2><p>30 вопросов • №1982496</p></div></div><a href="DTM-test.html?variant=variant-1982496">Пройти тест →</a></article>
-        <article class="dtm-card" id="dtm-test-7"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 7</h2><p>20 вопросов • 20-05-2024</p></div></div><a href="DTM-test.html?variant=variant-2024">Пройти тест →</a></article>
+        <article class="dtm-card" data-category="math">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 1</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-7">Пройти тест →</a>
+        </article>
+        <article class="dtm-card" data-category="math">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 2</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-8">Пройти тест →</a>
+        </article>
+        <article class="dtm-card" data-category="math">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 3</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-9">Пройти тест →</a>
+        </article>
+        <article class="dtm-card" data-category="math">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 4</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-10">Пройти тест →</a>
+        </article>
+        <article class="dtm-card" data-category="math">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 5</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-12">Пройти тест →</a>
+        </article>
+        <article class="dtm-card" data-category="math">
+            <div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 6</h2><p>30 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-1982496">Пройти тест →</a>
+        </article>
+        <article class="dtm-card" data-category="math">
+            <div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 7</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-2024">Пройти тест →</a>
+        </article>
+        <div class="dtm-filter-empty" id="dtmFilterEmpty">В этом направлении тесты пока не добавлены.</div>
     </section>
 </main>
 
@@ -87,10 +89,20 @@
 <script src="js/premium-header.js"></script>
 <script>
 (() => {
-    const links = document.querySelectorAll('.dtm-test-navigation a');
-    links.forEach(link => link.addEventListener('click', () => {
-        links.forEach(item => item.classList.remove('active'));
-        link.classList.add('active');
+    const filters = document.querySelectorAll('.dtm-category-filter');
+    const cards = document.querySelectorAll('.dtm-card');
+    const empty = document.getElementById('dtmFilterEmpty');
+    filters.forEach(filter => filter.addEventListener('click', () => {
+        filters.forEach(item => item.classList.remove('active'));
+        filter.classList.add('active');
+        const category = filter.dataset.category;
+        let visible = 0;
+        cards.forEach(card => {
+            const show = card.dataset.category === category;
+            card.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        empty.style.display = visible ? 'none' : 'block';
     }));
 })();
 </script>
