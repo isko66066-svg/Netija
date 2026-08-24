@@ -10,6 +10,8 @@
     }
 
     const answers = Array(questions.length).fill(null);
+    let reviewed = false;
+
     const titleMap = {
         "variant-7": "ДТМ тест 1",
         "variant-8": "ДТМ тест 2",
@@ -17,8 +19,7 @@
         "variant-10": "ДТМ тест 4",
         "variant-12": "ДТМ тест 5",
         "variant-1982496": "ДТМ тест 6",
-        "variant-2024": "ДТМ тест 7",
-        "variant-1": "ДТМ тест 8"
+        "variant-2024": "ДТМ тест 7"
     };
 
     function render() {
@@ -44,35 +45,56 @@
                             <span><i class="unanswered"></i> Ответ не дан</span>
                         </div>
                         <div class="dtm-question-nav" id="questionNav">
-                            ${questions.map((_, i) => `<button type="button" class="dtm-nav-number" data-question="${i}">${i + 1}</button>`).join("")}
+                            ${questions.map((_, i) => renderNavNumber(i)).join("")}
                         </div>
-                        <button type="button" class="dtm-finish" id="finishTest">Завершить тест</button>
+                        <button type="button" class="dtm-finish ${reviewed ? "reviewed" : ""}" id="finishTest">${reviewed ? "Результаты показаны" : "Завершить тест"}</button>
                     </div>
                 </aside>
             </div>
         `;
         bindEvents();
         updateNavigation(0);
+        typesetMath();
+    }
+
+    function renderNavNumber(index) {
+        const q = questions[index];
+        const answer = answers[index];
+        let state = "";
+        if (reviewed && q.correct) {
+            state = answer === q.correct ? "review-correct" : answer ? "review-wrong" : "";
+        } else if (answer) {
+            state = "answered";
+        }
+        return `<button type="button" class="dtm-nav-number ${state}" data-question="${index}">${index + 1}</button>`;
     }
 
     function renderQuestion(q, index) {
         const selected = answers[index];
-        const knownKey = q.correct !== null && q.correct !== undefined;
+        const knownKey = q.correct !== null && q.correct !== undefined && q.correct !== "";
         const options = ["A", "B", "C", "D"].filter(k => q.options?.[k] !== undefined);
         return `
             <section class="dtm-question-card" id="dtm-question-${index}">
                 <div class="dtm-question-number">${index + 1}</div>
                 <div class="dtm-question-body">
-                    <div class="dtm-question-text">${escapeHtml(q.text)}</div>
+                    <div class="dtm-question-text">${renderMath(q.text)}</div>
                     ${q.image ? `<img class="dtm-question-image" src="${escapeHtml(q.image)}" alt="Схема к заданию ${index + 1}">` : ""}
                     <div class="dtm-options">
-                        ${options.map(k => `
-                            <button type="button" class="dtm-option ${selected === k ? "selected" : ""}" data-question="${index}" data-answer="${k}">
-                                <span class="dtm-option-letter">${k}</span>
-                                <span>${escapeHtml(q.options[k])}</span>
-                            </button>
-                        `).join("")}
+                        ${options.map(k => {
+                            let state = selected === k ? "selected" : "";
+                            if (reviewed && knownKey) {
+                                if (k === q.correct) state = "dtm-review-correct";
+                                else if (selected === k && selected !== q.correct) state = "dtm-review-wrong";
+                            }
+                            return `
+                                <button type="button" class="dtm-option ${state}" data-question="${index}" data-answer="${k}" ${reviewed ? "disabled" : ""}>
+                                    <span class="dtm-option-letter">${k}</span>
+                                    <span>${renderMath(q.options[k])}</span>
+                                </button>
+                            `;
+                        }).join("")}
                     </div>
+                    ${reviewed && knownKey ? `<p class="dtm-review-badge">Правильный ответ: ${escapeHtml(q.correct)}</p>` : ""}
                     ${!knownKey ? '<p class="dtm-missing-key">Ключ ответа для этого задания пока не внесён.</p>' : ""}
                 </div>
             </section>
@@ -80,7 +102,7 @@
     }
 
     function bindEvents() {
-        root.querySelectorAll("[data-answer]").forEach(btn => {
+        root.querySelectorAll(".dtm-option:not([disabled])").forEach(btn => {
             btn.addEventListener("click", () => {
                 const index = Number(btn.dataset.question);
                 answers[index] = btn.dataset.answer;
@@ -90,20 +112,34 @@
                 updateNavigation(index);
             });
         });
-        root.querySelectorAll("[data-question]").forEach(btn => {
-            if (btn.classList.contains("dtm-option")) return;
+
+        root.querySelectorAll(".dtm-nav-number").forEach(btn => {
             btn.addEventListener("click", () => scrollToQuestion(Number(btn.dataset.question)));
         });
-        document.getElementById("finishTest")?.addEventListener("click", showResult);
+
+        document.getElementById("finishTest")?.addEventListener("click", () => {
+            if (reviewed) return;
+            reviewed = true;
+            const current = getCurrentQuestion();
+            render();
+            scrollToQuestion(current);
+        });
+
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) updateNavigation(Number(entry.target.dataset.index));
             });
         }, { rootMargin: "-20% 0px -65% 0px", threshold: 0 });
+
         root.querySelectorAll(".dtm-question-card").forEach((card, index) => {
             card.dataset.index = index;
             observer.observe(card);
         });
+    }
+
+    function getCurrentQuestion() {
+        const active = root.querySelector(".dtm-nav-number.current");
+        return active ? Number(active.dataset.question) : 0;
     }
 
     function scrollToQuestion(index) {
@@ -116,38 +152,21 @@
         const counter = document.getElementById("answeredCount");
         if (counter) counter.textContent = answered;
         root.querySelectorAll(".dtm-nav-number").forEach((btn, index) => {
-            btn.classList.toggle("answered", Boolean(answers[index]));
             btn.classList.toggle("current", index === currentIndex);
+            if (!reviewed) btn.classList.toggle("answered", Boolean(answers[index]));
         });
     }
 
-    function showResult() {
-        const knownQuestions = questions.filter(q => q.correct);
-        const score = knownQuestions.reduce((sum, q) => {
-            const originalIndex = questions.indexOf(q);
-            return sum + (answers[originalIndex] === q.correct ? 1 : 0);
-        }, 0);
-        const answered = answers.filter(Boolean).length;
-        const missing = questions.length - knownQuestions.length;
-        const percentage = knownQuestions.length ? Math.round(score / knownQuestions.length * 100) : 0;
-        root.innerHTML = `
-            <section class="dtm-result">
-                <div class="dtm-exam-kicker">NETIJA • DTM</div>
-                <h2>Тест завершён 🎉</h2>
-                <div class="dtm-score">${score} / ${knownQuestions.length}</div>
-                <p>Отвечено: ${answered} из ${questions.length}</p>
-                ${missing ? `<p>Для ${missing} вопросов ключ ещё не внесён, поэтому они не учитываются в балле.</p>` : `<p>${percentage}% правильных ответов</p>`}
-                <div class="dtm-result-actions">
-                    <button class="dtm-btn dtm-btn--next" id="restart">Пройти заново</button>
-                    <a class="dtm-link secondary" href="DTM.html">К тестам DTM</a>
-                </div>
-            </section>
-        `;
-        document.getElementById("restart")?.addEventListener("click", () => {
-            answers.fill(null);
-            render();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        });
+    function renderMath(value) {
+        return escapeHtml(value ?? "")
+            .replace(/\\\((.*?)\\\)/gs, "\\($1\\)")
+            .replace(/\\\[(.*?)\\\]/gs, "\\[$1\\]");
+    }
+
+    function typesetMath() {
+        if (window.MathJax?.typesetPromise) {
+            MathJax.typesetPromise([root]).catch(error => console.error("MathJax:", error));
+        }
     }
 
     function escapeHtml(value) {
