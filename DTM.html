@@ -4,61 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netija — DTM</title>
-    <link rel="stylesheet" href="style.css?v=20260822">
+    <link rel="stylesheet" href="style.css?v=20260824">
     <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-<header class="header"><div class="header__container"><nav class="header__nav">
-<a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a>
-<ul class="header__list"><li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li><li class="header__list-item"><a class="header__list-link active" href="DTM.html">DTM</a></li><li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li></ul>
-<div class="site-header__account"><a class="premium-nav-link" href="premium.html">👑 Premium</a><div class="sign__button" id="googleSignInButton"></div><div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div><button class="burger" id="burgerBtn" type="button" aria-label="Меню"><span></span><span></span><span></span></button></div>
-</nav></div></header>
+<header class="header">
+    <div class="header__container">
+        <nav class="header__nav">
+            <a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a>
+            <ul class="header__list">
+                <li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li>
+                <li class="header__list-item"><a class="header__list-link active" href="DTM.html">DTM</a></li>
+                <li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li>
+            </ul>
+            <div class="site-header__account">
+                <a class="premium-nav-link" href="premium.html">👑 Premium</a>
+                <div class="sign__button" id="googleSignInButton"></div>
+                <div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div>
+                <button class="burger" id="burgerBtn" type="button" aria-label="Меню"><span></span><span></span><span></span></button>
+            </div>
+        </nav>
+    </div>
+</header>
 
 <main class="dtm-page">
     <section class="dtm-hero">
         <span class="dtm-badge">NETIJA • DTM</span>
         <h1 class="dtm-title">DTM</h1>
-        <p class="dtm-subtitle">Выбери направление и вариант теста.</p>
+        <p class="dtm-subtitle">Выбери тест и начни подготовку</p>
+        <p class="dtm-description">Практикуйся, анализируй результаты и повышай свой результат!</p>
     </section>
 
-    <div class="dtm-filters" role="tablist" aria-label="Направление DTM">
-        <button class="dtm-filter active" type="button" data-filter="math">Математика</button>
-        <button class="dtm-filter" type="button" data-filter="math-english">Математика + английский</button>
-        <button class="dtm-filter" type="button" data-filter="iq">IQ</button>
-    </div>
+    <nav class="dtm-test-navigation" aria-label="Навигация по DTM тестам">
+        <a class="dtm-nav-all active" href="#dtm-tests">Все</a>
+        <a href="#dtm-test-1">1</a>
+        <a href="#dtm-test-2">2</a>
+        <a href="#dtm-test-3">3</a>
+        <a href="#dtm-test-4">4</a>
+        <a href="#dtm-test-5">5</a>
+        <a href="#dtm-test-6">6</a>
+        <a href="#dtm-test-7">7</a>
+        <a href="#dtm-test-8">8</a>
+    </nav>
 
-    <section class="dtm-grid" id="dtmGrid">
-        <article class="dtm-card" data-category="math"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 7</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-7">Пройти тест</a></article>
-        <article class="dtm-card" data-category="math"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 8</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-8">Пройти тест</a></article>
-        <article class="dtm-card" data-category="math"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 9</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-9">Пройти тест</a></article>
-        <article class="dtm-card" data-category="math"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 10</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-10">Пройти тест</a></article>
-        <article class="dtm-card" data-category="math"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 12</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-12">Пройти тест</a></article>
-        <article class="dtm-card" data-category="math"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 1982496</h2><p>30 вопросов • 2019</p></div></div><a href="DTM-test.html?variant=variant-1982496">Пройти тест</a></article>
-        <article class="dtm-card" data-category="math"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>Вариант 2024</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-2024">Пройти тест</a></article>
+    <section class="dtm-grid" id="dtm-tests">
+        <article class="dtm-card" id="dtm-test-1">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 1</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-7">Пройти тест</a>
+        </article>
+        <article class="dtm-card" id="dtm-test-2">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 2</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-8">Пройти тест</a>
+        </article>
+        <article class="dtm-card" id="dtm-test-3">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 3</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-9">Пройти тест</a>
+        </article>
+        <article class="dtm-card" id="dtm-test-4">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 4</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-10">Пройти тест</a>
+        </article>
+        <article class="dtm-card" id="dtm-test-5">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 5</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-12">Пройти тест</a>
+        </article>
+        <article class="dtm-card" id="dtm-test-6">
+            <div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 6</h2><p>30 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-1982496">Пройти тест</a>
+        </article>
+        <article class="dtm-card" id="dtm-test-7">
+            <div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 7</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-2024">Пройти тест</a>
+        </article>
+        <article class="dtm-card" id="dtm-test-8">
+            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 8</h2><p>20 вопросов</p></div></div>
+            <a href="DTM-test.html?variant=variant-1">Пройти тест</a>
+        </article>
     </section>
-
-    <div class="dtm-empty" id="dtmEmpty"><strong>Тесты скоро появятся</strong><span>Мы добавим варианты для этого направления.</span></div>
 </main>
 
-<script src="js/auth.js"></script><script src="js/menu.js"></script><script src="js/premium-header.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/premium-header.js"></script>
 <script>
 (() => {
-    const filters = document.querySelectorAll('.dtm-filter');
-    const cards = document.querySelectorAll('.dtm-card');
-    const empty = document.getElementById('dtmEmpty');
-    filters.forEach(filter => filter.addEventListener('click', () => {
-        const category = filter.dataset.filter;
-        filters.forEach(item => item.classList.toggle('active', item === filter));
-        let visible = 0;
-        cards.forEach(card => {
-            const show = card.dataset.category === category;
-            card.classList.toggle('hidden', !show);
-            if (show) visible++;
-        });
-        empty.classList.toggle('show', visible === 0);
+    const links = document.querySelectorAll('.dtm-test-navigation a');
+    links.forEach(link => link.addEventListener('click', () => {
+        links.forEach(item => item.classList.remove('active'));
+        link.classList.add('active');
     }));
 })();
 </script>
