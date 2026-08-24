@@ -298,7 +298,7 @@ var questions = [
         "id": 40,
         "type": "open_ended",
         "question": "На рисунке дана область, ограниченная функциями из оригинального задания.",
-        "image": "/images/23-feb2025_1/40.jpeg",
+        "image": "/images/23-feb2025_1/40.png",
         "subQuestions": [
             {"id":"a","text":"Найдите значение $x+y$.","correctAnswer":"12"},
             {"id":"b","text":"Найдите площадь заштрихованной области.","correctAnswer":"13"}
