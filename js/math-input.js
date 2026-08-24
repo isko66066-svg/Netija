@@ -359,7 +359,8 @@
         submit.addEventListener('click', prepareEquivalentAnswers, true);
     }
 
-    window.NetijaMathInput = { enhance, equivalent };
+    window.NetijaMathInput = { enhance, equivalent, evaluateExpression };
+
     document.addEventListener('netija:quizRendered', () => {
         enhance();
         attachSubmitFix();
