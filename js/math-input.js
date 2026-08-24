@@ -86,34 +86,200 @@
             .toLowerCase();
     }
 
-    function fraction(value) {
+    function takeBraces(text, start) {
+        if (text[start] !== '{') return null;
+        let depth = 0;
+        for (let i = start; i < text.length; i++) {
+            if (text[i] === '{') depth++;
+            if (text[i] === '}') {
+                depth--;
+                if (depth === 0) return { value: text.slice(start + 1, i), end: i + 1 };
+            }
+        }
+        return null;
+    }
+
+    function latexToExpression(value) {
         let text = normalize(value)
             .replace(/^\$+|\$+$/g, '')
-            .replace(/\\(?:d?frac)\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2')
-            .replace(/\\left|\\right/g, '');
+            .replace(/\\left|\\right/g, '')
+            .replace(/\\,|\\;/g, '')
+            .replace(/\\times/g, '*')
+            .replace(/\\cdot/g, '*')
+            .replace(/\\div/g, '/')
+            .replace(/\\pi/g, 'pi')
+            .replace(/π/g, 'pi')
+            .replace(/×/g, '*')
+            .replace(/÷/g, '/')
+            .replace(/−/g, '-');
 
-        const match = text.match(/^\(?([+-]?\d+)\)?\/\(?([+-]?\d+)\)?$/);
-        if (!match || match[2] === '0') return null;
+        text = text.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+/g, chars => {
+            const map = {'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-','⁺':'+'};
+            return '^' + chars.split('').map(c => map[c]).join('');
+        });
 
-        let a = BigInt(match[1]);
-        let b = BigInt(match[2]);
-        if (b < 0n) { a = -a; b = -b; }
+        let guard = 0;
+        while (/\\(?:d?frac|sqrt)/.test(text) && guard++ < 100) {
+            let replaced = false;
 
-        let x = a < 0n ? -a : a;
-        let y = b;
-        while (y) [x, y] = [y, x % y];
+            const fracIndex = text.search(/\\(?:d?frac)/);
+            if (fracIndex !== -1) {
+                const command = text.slice(fracIndex).match(/^\\(?:d?frac)/)[0];
+                const first = takeBraces(text, fracIndex + command.length);
+                if (first) {
+                    const second = takeBraces(text, first.end);
+                    if (second) {
+                        text = text.slice(0, fracIndex) + `(${first.value})/(${second.value})` + text.slice(second.end);
+                        replaced = true;
+                    }
+                }
+            }
 
-        return [a / x, b / x];
+            const sqrtIndex = text.search(/\\sqrt/);
+            if (sqrtIndex !== -1) {
+                let pos = sqrtIndex + 5;
+                let indexPart = null;
+                if (text[pos] === '[') {
+                    const close = text.indexOf(']', pos + 1);
+                    if (close !== -1) {
+                        indexPart = text.slice(pos + 1, close);
+                        pos = close + 1;
+                    }
+                }
+                const radicand = takeBraces(text, pos);
+                if (radicand) {
+                    const replacement = indexPart ? `root(${indexPart},(${radicand.value}))` : `sqrt((${radicand.value}))`;
+                    text = text.slice(0, sqrtIndex) + replacement + text.slice(radicand.end);
+                    replaced = true;
+                }
+            }
+
+            if (!replaced) break;
+        }
+
+        return text
+            .replace(/√\s*\(([^()]*)\)/g, 'sqrt($1)')
+            .replace(/√\s*([\d.]+)/g, 'sqrt($1)')
+            .replace(/[{}]/g, '')
+            .replace(/\^\(([^()]*)\)/g, '^($1)');
+    }
+
+    function evaluateExpression(value) {
+        const source = latexToExpression(value);
+        if (!source) return null;
+
+        const tokens = [];
+        const tokenPattern = /\s*(sqrt|root|pi|\d+(?:\.\d+)?|[(),+\-*/^])/gy;
+        let pos = 0;
+        while (pos < source.length) {
+            tokenPattern.lastIndex = pos;
+            const match = tokenPattern.exec(source);
+            if (!match || match.index !== pos) return null;
+            tokens.push(match[1]);
+            pos = tokenPattern.lastIndex;
+        }
+
+        let index = 0;
+        const peek = () => tokens[index];
+        const consume = () => tokens[index++];
+        const startsFactor = token => token === '(' || token === 'sqrt' || token === 'root' || token === 'pi' || /^\d/.test(token || '');
+
+        function primary() {
+            const token = peek();
+            if (token === '+') { consume(); return primary(); }
+            if (token === '-') { consume(); const value = primary(); return value === null ? null : -value; }
+            if (token === '(') {
+                consume();
+                const value = expression();
+                if (consume() !== ')') return null;
+                return value;
+            }
+            if (token === 'pi') { consume(); return Math.PI; }
+            if (token === 'sqrt') {
+                consume();
+                if (consume() !== '(') return null;
+                const value = expression();
+                if (consume() !== ')') return null;
+                return value !== null && value >= 0 ? Math.sqrt(value) : null;
+            }
+            if (token === 'root') {
+                consume();
+                if (consume() !== '(') return null;
+                const degree = expression();
+                if (consume() !== ',') return null;
+                const value = expression();
+                if (consume() !== ')') return null;
+                if (degree === null || value === null || degree === 0) return null;
+                if (value < 0 && Math.abs(degree % 2) !== 1) return null;
+                return value < 0 ? -Math.pow(-value, 1 / degree) : Math.pow(value, 1 / degree);
+            }
+            if (/^\d/.test(token || '')) { consume(); return Number(token); }
+            return null;
+        }
+
+        function power() {
+            let left = primary();
+            if (left === null) return null;
+            if (peek() === '^') {
+                consume();
+                const right = power();
+                if (right === null) return null;
+                left = Math.pow(left, right);
+            }
+            return left;
+        }
+
+        function term() {
+            let left = power();
+            if (left === null) return null;
+            while (true) {
+                const op = peek();
+                if (op === '*' || op === '/') {
+                    consume();
+                    const right = power();
+                    if (right === null || (op === '/' && right === 0)) return null;
+                    left = op === '*' ? left * right : left / right;
+                    continue;
+                }
+                if (startsFactor(op)) {
+                    const right = power();
+                    if (right === null) return null;
+                    left *= right;
+                    continue;
+                }
+                break;
+            }
+            return left;
+        }
+
+        function expression() {
+            let left = term();
+            if (left === null) return null;
+            while (peek() === '+' || peek() === '-') {
+                const op = consume();
+                const right = term();
+                if (right === null) return null;
+                left = op === '+' ? left + right : left - right;
+            }
+            return left;
+        }
+
+        const result = expression();
+        return index === tokens.length && Number.isFinite(result) ? result : null;
     }
 
     function equivalent(a, b) {
-        const left = fraction(a);
-        const right = fraction(b);
-        if (left && right) return left[0] === right[0] && left[1] === right[1];
+        const left = normalize(a);
+        const right = normalize(b);
+        if (!left || !right) return false;
+        if (left === right) return true;
 
-        const na = Number(normalize(a));
-        const nb = Number(normalize(b));
-        return Number.isFinite(na) && Number.isFinite(nb) && Math.abs(na - nb) < 1e-9;
+        const na = evaluateExpression(left);
+        const nb = evaluateExpression(right);
+        if (na !== null && nb !== null) {
+            return Math.abs(na - nb) <= 1e-9 * Math.max(1, Math.abs(na), Math.abs(nb));
+        }
+        return false;
     }
 
     function prepareEquivalentAnswers() {
@@ -128,10 +294,6 @@
                 );
 
                 if (input && input.value.trim() && equivalent(input.value, sub.correctAnswer)) {
-                    // Перед основной проверкой quiz.js заменяем эквивалентную
-                    // запись на ТОЧНОЕ эталонное значение из базы ответов.
-                    // Например: 8/3, (8)/(3) и $\\frac{8}{3}$ будут
-                    // приведены к одной и той же строке, которую проверяет quiz.js.
                     input.value = String(sub.correctAnswer);
                 }
             });
@@ -194,9 +356,6 @@
         const submit = document.getElementById('submitBtn');
         if (!submit || submit.dataset.mathAnswerFixAttached === '1') return;
         submit.dataset.mathAnswerFixAttached = '1';
-
-        // Capture-фаза: этот обработчик должен сработать ДО обработчика
-        // submitTest() из quiz.js.
         submit.addEventListener('click', prepareEquivalentAnswers, true);
     }
 
