@@ -9,53 +9,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        .dtm-page{max-width:1200px;margin:0 auto;padding:44px 22px 70px}.dtm-hero{margin-bottom:28px}.dtm-badge{display:inline-flex;padding:7px 12px;border-radius:999px;background:#eef3ff;color:#3157c7;font-size:12px;font-weight:700;letter-spacing:.04em}.dtm-title{font-size:clamp(34px,5vw,58px);line-height:1.05;margin:14px 0 10px;color:#08172d}.dtm-subtitle{margin:0;color:#64748b;font-size:16px}.dtm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.dtm-card{background:#fff;border:1px solid #e8edf5;border-radius:22px;padding:24px;box-shadow:0 12px 35px rgba(15,23,42,.07);display:flex;flex-direction:column;min-height:190px}.dtm-card__top{display:flex;align-items:center;gap:14px}.dtm-icon{width:52px;height:52px;border-radius:16px;background:#edf2ff;display:grid;place-items:center;font-size:26px}.dtm-card h2{margin:0;font-size:20px;color:#0f172a}.dtm-card p{color:#64748b;margin:6px 0 20px}.dtm-card a{margin-top:auto;text-decoration:none;background:#08172d;color:#fff;border-radius:13px;padding:12px 16px;text-align:center;font-weight:700}.dtm-card a:hover{opacity:.92}@media(max-width:700px){.dtm-page{padding:28px 15px 50px}.dtm-grid{grid-template-columns:1fr}.dtm-card{min-height:0}}
+    </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header__container">
-            <nav class="header__nav">
-                <a class="site-header__logo" href="index.html" aria-label="Netija">
-                    <img class="logo" src="./images/logo.svg" alt="Netija">
-                </a>
-
-                <ul class="header__list">
-                    <li class="header__list-item">
-                        <a class="header__list-link" href="index.html">Главная страница</a>
-                    </li>
-                    <li class="header__list-item">
-                        <a class="header__list-link active" href="DTM.html">Дтм</a>
-                    </li>
-                    <li class="header__list-item">
-                        <a class="header__list-link" href="natcert.html">Национальный сертификат</a>
-                    </li>
-                </ul>
-
-                <div class="site-header__account">
-                    <a class="premium-nav-link" href="premium.html">👑 Premium</a>
-
-                    <div class="sign__button" id="googleSignInButton"></div>
-
-                    <div id="userProfile" class="user-profile" style="display: none;">
-                        <img id="userAvatar" class="user-profile__avatar" src="" alt="">
-                        <span id="userName" class="user-profile__name"></span>
-                    </div>
-
-                    <button class="burger" id="burgerBtn" type="button" aria-label="Меню">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                </div>
-            </nav>
-        </div>
-    </header>
-
-    <main id="main">
-        <!-- DTM раздел будет добавлен здесь. -->
-    </main>
-
-    <script src="js/auth.js"></script>
-    <script src="js/menu.js"></script>
-    <script src="js/premium-header.js"></script>
-</body>
-</html>
+<header class="header"><div class="header__container"><nav class="header__nav">
+<a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a>
+<ul class="header__list"><li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li><li class="header__list-item"><a class="header__list-link active" href="DTM.html">Дтм</a></li><li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li></ul>
+<div class="site-header__account"><a class="premium-nav-link" href="premium.html">👑 Premium</a><div class="sign__button" id="googleSignInButton"></div><div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div><button class="burger" id="burgerBtn" type="button" aria-label="Меню"><span></span><span></span><span></span></button></div>
+</nav></div></header>
+<main class="dtm-page"><section class="dtm-hero"><span class="dtm-badge">NETIJA • DTM</span><h1 class="dtm-title">Математика DTM</h1><p class="dtm-subtitle">Выбери вариант и начинай решать тест.</p></section>
+<section class="dtm-grid">
+<article class="dtm-card"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 7</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-7">Пройти тест</a></article>
+<article class="dtm-card"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 8</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-8">Пройти тест</a></article>
+<article class="dtm-card"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 9</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-9">Пройти тест</a></article>
+<article class="dtm-card"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 10</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-10">Пройти тест</a></article>
+<article class="dtm-card"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 12</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-12">Пройти тест</a></article>
+<article class="dtm-card"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>Вариант 1982496</h2><p>30 вопросов • 2019</p></div></div><a href="DTM-test.html?variant=variant-1982496">Пройти тест</a></article>
+<article class="dtm-card"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>Вариант 2024</h2><p>20 вопросов</p></div></div><a href="DTM-test.html?variant=variant-2024">Пройти тест</a></article>
+</section></main>
+<script src="js/auth.js"></script><script src="js/menu.js"></script><script src="js/premium-header.js"></script>
+</body></html>
