@@ -9,8 +9,39 @@
         return;
     }
 
+    const user = (() => {
+        try { return JSON.parse(localStorage.getItem("netija_user") || "null"); }
+        catch { return null; }
+    })();
+    const userKey = user?.sub || user?.email || user?.id || "guest";
+    const storageKey = `netija_dtm_progress_${userKey}_${variant}`;
+
+    function loadProgress() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
+            return saved && typeof saved === "object"
+                ? { answers: saved.answers || {}, reviewed: Boolean(saved.reviewed) }
+                : { answers: {}, reviewed: false };
+        } catch {
+            return { answers: {}, reviewed: false };
+        }
+    }
+
+    function saveProgress() {
+        const answerMap = {};
+        answers.forEach((answer, index) => {
+            if (answer) answerMap[index] = answer;
+        });
+        localStorage.setItem(storageKey, JSON.stringify({ answers: answerMap, reviewed }));
+    }
+
+    const saved = loadProgress();
     const answers = Array(questions.length).fill(null);
-    let reviewed = false;
+    Object.entries(saved.answers).forEach(([index, answer]) => {
+        const i = Number(index);
+        if (Number.isInteger(i) && i >= 0 && i < answers.length) answers[i] = answer;
+    });
+    let reviewed = saved.reviewed;
 
     const titleMap = {
         "variant-7": "ДТМ тест 1",
@@ -53,7 +84,7 @@
             </div>
         `;
         bindEvents();
-        updateNavigation(0);
+        updateNavigation(getCurrentQuestion());
         typesetMath();
     }
 
@@ -105,10 +136,13 @@
         root.querySelectorAll(".dtm-option:not([disabled])").forEach(btn => {
             btn.addEventListener("click", () => {
                 const index = Number(btn.dataset.question);
-                answers[index] = btn.dataset.answer;
+                const answer = btn.dataset.answer;
+                answers[index] = answer;
+
                 const card = document.getElementById(`dtm-question-${index}`);
-                card.querySelectorAll("[data-answer]").forEach(option => option.classList.remove("selected"));
+                card?.querySelectorAll("[data-answer]").forEach(option => option.classList.remove("selected"));
                 btn.classList.add("selected");
+                saveProgress();
                 updateNavigation(index);
             });
         });
@@ -120,6 +154,7 @@
         document.getElementById("finishTest")?.addEventListener("click", () => {
             if (reviewed) return;
             reviewed = true;
+            saveProgress();
             const current = getCurrentQuestion();
             render();
             scrollToQuestion(current);
@@ -157,11 +192,65 @@
         });
     }
 
-    function renderMath(value) {
-        let text = escapeHtml(value ?? "");
-        text = text.replace(/(\d+)\s*\/\s*(\d+(?:[.,]\d+)?)/g, "\\($1\\over\\,$2\\)");
-        text = text.replace(/√\s*([A-Za-zА-Яа-я0-9]+(?:[²³⁴⁵⁶⁷⁸⁹])?)/g, "\\(\\sqrt{$1}\\)");
+    function hasCyrillic(value) {
+        return /[А-Яа-яЁё]/.test(value);
+    }
+
+    function looksLikeMath(value) {
+        return /(?:[=<>≤≥≠≈]|√|∛|∜|π|∞|[a-zA-Zα-ωΑ-Ω][²³⁴⁵⁶⁷⁸⁹⁰⁻⁺]?|\d+\s*\/\s*[\dA-Za-zα-ωΑ-Ω]|\^|·|×|÷|±|\b(?:sin|cos|tg|ctg|log|ln)\b)/.test(value);
+    }
+
+    function toTex(value) {
+        let text = String(value)
+            .replaceAll("−", "-")
+            .replaceAll("×", "\\times ")
+            .replaceAll("·", "\\cdot ")
+            .replaceAll("÷", "\\div ")
+            .replaceAll("≤", "\\le ")
+            .replaceAll("≥", "\\ge ")
+            .replaceAll("≠", "\\ne ")
+            .replaceAll("≈", "\\approx ")
+            .replaceAll("∞", "\\infty ")
+            .replaceAll("π", "\\pi ")
+            .replaceAll("tg", "\\tan ")
+            .replaceAll("ctg", "\\cot ")
+            .replaceAll("sin", "\\sin ")
+            .replaceAll("cos", "\\cos ")
+            .replaceAll("log", "\\log ")
+            .replaceAll("ln", "\\ln ");
+
+        const superscripts = {"⁰":"^0","¹":"^1","²":"^2","³":"^3","⁴":"^4","⁵":"^5","⁶":"^6","⁷":"^7","⁸":"^8","⁹":"^9","⁻":"^-"};
+        Object.entries(superscripts).forEach(([from, to]) => { text = text.replaceAll(from, to); });
+        text = text.replace(/√\s*([^\s+\-)=<>]+(?:\([^)]*\))?)/g, "\\sqrt{$1}");
+        text = text.replace(/∛\s*([^\s+\-)=<>]+(?:\([^)]*\))?)/g, "\\sqrt[3]{$1}");
+        text = text.replace(/∜\s*([^\s+\-)=<>]+(?:\([^)]*\))?)/g, "\\sqrt[4]{$1}");
+        text = text.replace(/(\d+(?:[.,]\d+)?|[A-Za-zα-ωΑ-Ω])\s*\/\s*(\d+(?:[.,]\d+)?|[A-Za-zα-ωΑ-Ω])/g, "\\frac{$1}{$2}");
+        text = text.replaceAll(",", ".");
         return text;
+    }
+
+    function renderMath(value) {
+        const raw = String(value ?? "");
+        if (!raw) return "";
+        if (raw.includes("\\(") || raw.includes("\\[")) return escapeHtml(raw);
+
+        if (!hasCyrillic(raw) && looksLikeMath(raw)) {
+            return `\\(${toTex(raw)}\\)`;
+        }
+
+        const parts = raw.split(/(:\s*)/);
+        if (parts.length >= 3) {
+            const prefix = parts.shift();
+            const separator = parts.shift();
+            const tail = parts.join("");
+            if (looksLikeMath(tail)) {
+                return `${escapeHtml(prefix + separator)}\\(${toTex(tail)}\\)`;
+            }
+        }
+
+        let escaped = escapeHtml(raw);
+        escaped = escaped.replace(/(√[^\s,.;]+|∛[^\s,.;]+|∜[^\s,.;]+|(?:sin|cos|tg|ctg)\s*[^,.;]+(?:=[^,.;]+)?)/g, match => `\\(${toTex(match)}\\)`);
+        return escaped;
     }
 
     function typesetMath() {
