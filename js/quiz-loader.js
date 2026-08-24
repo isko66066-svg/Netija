@@ -112,7 +112,7 @@
             const existing=document.querySelector('script[data-math-input]');
             if (existing) { existing.addEventListener('load',()=>resolve(),{once:true}); existing.addEventListener('error',()=>resolve(),{once:true}); return; }
             const script=document.createElement('script');
-            script.src='js/math-input.js?v=20260824';
+            script.src='js/math-input.js?v=20260824.2';
             script.dataset.mathInput='true';
             script.onload=()=>resolve();
             script.onerror=()=>resolve();
