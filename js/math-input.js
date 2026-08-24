@@ -78,36 +78,61 @@
     }
 
     function normalize(value) {
-        return String(value ?? '').trim().replace(/\s+/g, '').replace(/,/g, '.').replace(/⁄/g, '/').toLowerCase();
+        return String(value ?? '')
+            .trim()
+            .replace(/\s+/g, '')
+            .replace(/,/g, '.')
+            .replace(/⁄/g, '/')
+            .toLowerCase();
     }
 
     function fraction(value) {
-        const text = normalize(value).replace(/^\$+|\$+$/g, '');
+        let text = normalize(value)
+            .replace(/^\$+|\$+$/g, '')
+            .replace(/\\(?:d?frac)\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2')
+            .replace(/\\left|\\right/g, '');
+
         const match = text.match(/^\(?([+-]?\d+)\)?\/\(?([+-]?\d+)\)?$/);
         if (!match || match[2] === '0') return null;
+
         let a = BigInt(match[1]);
         let b = BigInt(match[2]);
         if (b < 0n) { a = -a; b = -b; }
-        let x = a < 0n ? -a : a, y = b;
+
+        let x = a < 0n ? -a : a;
+        let y = b;
         while (y) [x, y] = [y, x % y];
+
         return [a / x, b / x];
     }
 
     function equivalent(a, b) {
-        const left = fraction(a), right = fraction(b);
+        const left = fraction(a);
+        const right = fraction(b);
         if (left && right) return left[0] === right[0] && left[1] === right[1];
-        const na = Number(normalize(a)), nb = Number(normalize(b));
+
+        const na = Number(normalize(a));
+        const nb = Number(normalize(b));
         return Number.isFinite(na) && Number.isFinite(nb) && Math.abs(na - nb) < 1e-9;
     }
 
     function prepareEquivalentAnswers() {
         if (!Array.isArray(window.questions)) return;
+
         window.questions.forEach(q => {
             if (q.type !== 'open_ended' || !Array.isArray(q.subQuestions)) return;
+
             q.subQuestions.forEach(sub => {
-                const input = document.querySelector(`input[data-question-id="${q.id}"][data-sub-id="${sub.id}"]`);
+                const input = document.querySelector(
+                    `input[data-question-id="${q.id}"][data-sub-id="${sub.id}"]`
+                );
+
                 if (input && input.value.trim() && equivalent(input.value, sub.correctAnswer)) {
-                    input.value = String(sub.correctAnswer);
+                    // Перед основной проверкой quiz.js заменяем эквивалентную
+                    // запись на эталонную. Например: (8)/(3) -> 8/3.
+                    input.value = String(sub.correctAnswer)
+                        .replace(/^\$+|\$+$/g, '')
+                        .replace(/\\(?:d?frac)\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2');
                 }
             });
         });
@@ -149,7 +174,9 @@
         const updatePreview = () => {
             const value = toLatex(input.value);
             preview.innerHTML = value ? `\\(${value}\\)` : '';
-            if (value && window.MathJax?.typesetPromise) window.MathJax.typesetPromise([preview]).catch(() => {});
+            if (value && window.MathJax?.typesetPromise) {
+                window.MathJax.typesetPromise([preview]).catch(() => {});
+            }
         };
 
         input.addEventListener('input', updatePreview);
@@ -167,12 +194,23 @@
         const submit = document.getElementById('submitBtn');
         if (!submit || submit.dataset.mathAnswerFixAttached === '1') return;
         submit.dataset.mathAnswerFixAttached = '1';
+
+        // Capture-фаза: этот обработчик должен сработать ДО обработчика
+        // submitTest() из quiz.js.
         submit.addEventListener('click', prepareEquivalentAnswers, true);
     }
 
     window.NetijaMathInput = { enhance, equivalent };
-    document.addEventListener('netija:quizRendered', () => { enhance(); attachSubmitFix(); });
+    document.addEventListener('netija:quizRendered', () => {
+        enhance();
+        attachSubmitFix();
+    });
+
     enhance();
     attachSubmitFix();
-    new MutationObserver(() => { enhance(); attachSubmitFix(); }).observe(document.body, { childList: true, subtree: true });
+
+    new MutationObserver(() => {
+        enhance();
+        attachSubmitFix();
+    }).observe(document.body, { childList: true, subtree: true });
 })();
