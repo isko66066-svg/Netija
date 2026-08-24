@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netija — DTM</title>
+    <link rel="stylesheet" href="style.css?v=20260822">
+    <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header__container">
+            <nav class="header__nav">
+                <a class="site-header__logo" href="index.html" aria-label="Netija">
+                    <img class="logo" src="./images/logo.svg" alt="Netija">
+                </a>
+
+                <ul class="header__list">
+                    <li class="header__list-item">
+                        <a class="header__list-link" href="index.html">Главная страница</a>
+                    </li>
+                    <li class="header__list-item">
+                        <a class="header__list-link active" href="DTM.html">Дтм</a>
+                    </li>
+                    <li class="header__list-item">
+                        <a class="header__list-link" href="natcert.html">Национальный сертификат</a>
+                    </li>
+                </ul>
+
+                <div class="site-header__account">
+                    <a class="premium-nav-link" href="premium.html">👑 Premium</a>
+
+                    <div class="sign__button" id="googleSignInButton"></div>
+
+                    <div id="userProfile" class="user-profile" style="display: none;">
+                        <img id="userAvatar" class="user-profile__avatar" src="" alt="">
+                        <span id="userName" class="user-profile__name"></span>
+                    </div>
+
+                    <button class="burger" id="burgerBtn" type="button" aria-label="Меню">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        <!-- DTM раздел будет добавлен здесь. -->
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/premium-header.js"></script>
+</body>
+</html>
