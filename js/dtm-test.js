@@ -23,7 +23,6 @@
     }
 
     const savedAnswers = readJSON(progressKey, {});
-    const bestResult = readJSON(resultKey, null);
     const answers = Array(questions.length).fill(null);
     Object.entries(savedAnswers).forEach(([index, answer]) => {
         const i = Number(index);
@@ -31,7 +30,7 @@
     });
 
     let finished = false;
-    let lastResult = null;
+    let allowLeave = false;
 
     function saveAnswers() {
         const data = {};
@@ -43,8 +42,6 @@
         const score = questions.reduce((total, q, index) => total + (q.correct && answers[index] === q.correct ? 1 : 0), 0);
         const answered = answers.filter(Boolean).length;
         const result = { score, total: questions.length, answered, date: Date.now() };
-        lastResult = result;
-
         const previous = readJSON(resultKey, null);
         if (!previous || score > Number(previous.score || 0)) {
             localStorage.setItem(resultKey, JSON.stringify(result));
@@ -58,6 +55,7 @@
     };
 
     function render() {
+        allowLeave = false;
         root.innerHTML = `
             <div class="dtm-exam-head">
                 <div>
@@ -116,18 +114,53 @@
             updateNavigation(index);
         }));
 
-        document.getElementById("finishTest")?.addEventListener("click", finishTest);
+        document.getElementById("finishTest")?.addEventListener("click", () => {
+            showConfirm("Вы точно хотите завершить этот тест?", finishTest);
+        });
+    }
+
+    function showConfirm(message, onConfirm) {
+        document.querySelector(".dtm-confirm-overlay")?.remove();
+        const overlay = document.createElement("div");
+        overlay.className = "dtm-confirm-overlay";
+        overlay.innerHTML = `<div class="dtm-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="dtmConfirmTitle">
+            <div class="dtm-confirm-icon">⚠️</div>
+            <h3 id="dtmConfirmTitle">${escapeHtml(message)}</h3>
+            <p>После завершения результат будет сохранён, а текущий тест можно будет пройти заново.</p>
+            <div class="dtm-confirm-actions">
+                <button type="button" class="dtm-confirm-cancel">Отмена</button>
+                <button type="button" class="dtm-confirm-ok">Завершить</button>
+            </div>
+        </div>`;
+        document.body.appendChild(overlay);
+
+        const close = () => overlay.remove();
+        overlay.querySelector(".dtm-confirm-cancel")?.addEventListener("click", close);
+        overlay.querySelector(".dtm-confirm-ok")?.addEventListener("click", () => {
+            close();
+            onConfirm();
+        });
+        overlay.addEventListener("click", event => {
+            if (event.target === overlay) close();
+        });
+        document.addEventListener("keydown", function esc(event) {
+            if (event.key === "Escape") {
+                close();
+                document.removeEventListener("keydown", esc);
+            }
+        });
     }
 
     function finishTest() {
+        allowLeave = true;
         const result = saveResult();
-        finished = true;
+        const bestResult = readJSON(resultKey, result);
         root.innerHTML = `<div class="dtm-result">
             <div class="dtm-exam-kicker">NETIJA • DTM</div><h2>Тест завершён 🎉</h2>
             <div class="dtm-result-score">${result.score} / ${result.total}</div>
             <p>Отвечено: ${result.answered} из ${result.total}</p>
             <p>${Math.round(result.score / result.total * 100)}% правильных ответов</p>
-            ${bestResult && result.score < bestResult.score ? `<p class="dtm-best-result">Лучший результат: ${bestResult.score} / ${bestResult.total}</p>` : `<p class="dtm-best-result">Лучший результат: ${result.score} / ${result.total}</p>`}
+            <p class="dtm-best-result">Лучший результат: ${bestResult.score} / ${bestResult.total}</p>
             <div class="dtm-result-actions"><button type="button" id="retryTest">Пройти заново</button><a href="DTM.html">К тестам DTM</a></div>
         </div>`;
         document.getElementById("retryTest")?.addEventListener("click", () => {
@@ -162,8 +195,30 @@
         return `\\(${text}\\)`;
     }
 
+    function installLeaveProtection() {
+        window.addEventListener("beforeunload", event => {
+            if (allowLeave || finished) return;
+            event.preventDefault();
+            event.returnValue = "Вы точно хотите выйти из этого теста?";
+            return event.returnValue;
+        });
+
+        document.addEventListener("click", event => {
+            const link = event.target.closest("a[href]");
+            if (!link || allowLeave || finished) return;
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#") || link.target === "_blank" || href.startsWith("javascript:")) return;
+            event.preventDefault();
+            showConfirm("Вы точно хотите выйти из этого теста?", () => {
+                allowLeave = true;
+                window.location.href = href;
+            });
+        }, true);
+    }
+
     function typesetMath() { if (window.MathJax?.typesetPromise) MathJax.typesetPromise([root]).catch(console.error); }
     function escapeHtml(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
 
+    installLeaveProtection();
     render();
 })();
