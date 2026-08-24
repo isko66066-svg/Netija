@@ -1,24 +1,17 @@
 /* =========================================================
-   МОБИЛЬНЫЙ РЕЖИМ ТЕСТА
-   Карта вопросов находится сверху и остаётся компактной.
-   Панель таймера и завершения теста остаётся снизу.
+   МОБИЛЬНЫЙ / ПЛАНШЕТНЫЙ РЕЖИМ ТЕСТА
+   Карта вопросов сверху и компактная.
+   Таймер и завершение теста остаются снизу.
    ========================================================= */
 
-@media (max-width: 900px) {
-    .exam-page {
-        padding-bottom: 120px !important;
-    }
+@media (max-width: 1200px) {
+    .exam-page { padding-bottom: 120px !important; }
 
-    .site-notification {
-        display: none !important;
-    }
-
+    .site-notification,
     .header #googleSignInButton,
     .header .sign__button,
     .site-header #googleSignInButton,
-    .site-header .sign__button {
-        display: none !important;
-    }
+    .site-header .sign__button { display: none !important; }
 
     .exam-layout {
         display: flex !important;
@@ -26,51 +19,40 @@
         gap: 12px !important;
     }
 
-    /* Карта вопросов теперь ПЕРЕД тестом. */
     .questions-sidebar {
         position: static !important;
         order: 1 !important;
         width: 100% !important;
         max-height: none !important;
-        padding: 10px 11px !important;
+        padding: 9px 10px !important;
         margin: 0 !important;
         background: #fff !important;
         border: 1px solid #e4e9ef !important;
         border-radius: 12px !important;
-        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05) !important;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, .05) !important;
         overflow: visible !important;
     }
 
-    .questions-area {
-        order: 2 !important;
-    }
+    .questions-area { order: 2 !important; }
 
     .questions-sidebar > h2 {
-        margin: 0 0 7px !important;
-        font-size: 15px !important;
+        margin: 0 0 6px !important;
+        font-size: 14px !important;
         line-height: 1.2 !important;
     }
 
     .questions-sidebar > .question-legend {
         display: flex !important;
         flex-wrap: wrap !important;
-        gap: 5px 9px !important;
-        margin: 0 0 7px !important;
-        font-size: 10px !important;
+        gap: 4px 8px !important;
+        margin: 0 0 6px !important;
+        font-size: 9px !important;
         line-height: 1.2 !important;
     }
 
-    .question-status {
-        gap: 4px !important;
-        white-space: nowrap !important;
-    }
+    .question-status { gap: 3px !important; white-space: nowrap !important; }
+    .status-dot { width: 6px !important; height: 6px !important; }
 
-    .status-dot {
-        width: 7px !important;
-        height: 7px !important;
-    }
-
-    /* Компактная карта вопросов сверху. */
     .questions-sidebar > .question-grid {
         display: grid !important;
         grid-template-columns: repeat(10, minmax(0, 1fr)) !important;
@@ -81,14 +63,13 @@
     .question-number {
         width: 100% !important;
         min-width: 0 !important;
-        height: 29px !important;
+        height: 28px !important;
         padding: 0 !important;
-        border-radius: 7px !important;
-        font-size: 11px !important;
+        border-radius: 6px !important;
+        font-size: 10px !important;
         line-height: 1 !important;
     }
 
-    /* Только панель управления остаётся фиксированной снизу. */
     .exam-sidebar-controls {
         position: fixed !important;
         left: 10px !important;
@@ -97,101 +78,36 @@
         z-index: 2000 !important;
         display: grid !important;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-        align-items: stretch !important;
         gap: 8px !important;
         margin: 0 !important;
         padding: 8px !important;
-        background: rgba(255, 255, 255, 0.97) !important;
+        background: rgba(255,255,255,.97) !important;
         border: 1px solid #e2e8f0 !important;
         border-radius: 16px !important;
-        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.16) !important;
+        box-shadow: 0 8px 30px rgba(15,23,42,.16) !important;
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
     }
 
-    .sidebar-timer {
-        min-width: 0 !important;
-        min-height: 54px !important;
-        margin: 0 !important;
-        padding: 8px 10px !important;
-        border-radius: 11px !important;
-    }
+    .sidebar-timer { min-width: 0 !important; min-height: 54px !important; margin: 0 !important; padding: 8px 10px !important; border-radius: 11px !important; }
+    .sidebar-timer strong { font-size: 17px !important; }
+    .sidebar-timer small { font-size: 10px !important; }
+    .finish-test { min-width: 0 !important; min-height: 54px !important; margin: 0 !important; padding: 10px 8px !important; border-radius: 11px !important; font-size: 13px !important; }
 
-    .sidebar-timer strong {
-        font-size: 17px !important;
-    }
-
-    .sidebar-timer small {
-        font-size: 10px !important;
-    }
-
-    .finish-test {
-        min-width: 0 !important;
-        min-height: 54px !important;
-        margin: 0 !important;
-        padding: 10px 8px !important;
-        border-radius: 11px !important;
-        font-size: 13px !important;
-    }
-
-    .questions-area #resultBox {
-        width: 100% !important;
-        margin: 18px 0 0 !important;
-        scroll-margin-top: 20px !important;
-    }
+    .questions-area #resultBox { width: 100% !important; margin: 18px 0 0 !important; scroll-margin-top: 20px !important; }
 }
 
 @media (max-width: 480px) {
-    .exam-sidebar-controls {
-        left: 8px !important;
-        right: 8px !important;
-        gap: 6px !important;
-        padding: 7px !important;
-    }
-
-    .questions-sidebar {
-        padding: 9px 10px !important;
-        border-radius: 11px !important;
-    }
-
-    .questions-sidebar > .question-grid {
-        grid-template-columns: repeat(10, minmax(0, 1fr)) !important;
-        gap: 4px !important;
-    }
-
-    .question-number {
-        height: 28px !important;
-        font-size: 10px !important;
-        border-radius: 6px !important;
-    }
-
-    .sidebar-timer strong {
-        font-size: 16px !important;
-    }
-
-    .finish-test {
-        font-size: 12px !important;
-    }
+    .exam-sidebar-controls { left: 8px !important; right: 8px !important; gap: 6px !important; padding: 7px !important; }
+    .questions-sidebar { padding: 8px 9px !important; border-radius: 11px !important; }
+    .questions-sidebar > .question-grid { grid-template-columns: repeat(10, minmax(0,1fr)) !important; gap: 3px !important; }
+    .question-number { height: 27px !important; font-size: 10px !important; border-radius: 6px !important; }
+    .sidebar-timer strong { font-size: 16px !important; }
+    .finish-test { font-size: 12px !important; }
 }
 
-/* =========================================================
-   DESKTOP
-   Здесь ничего из мобильного порядка не применяется.
-   ========================================================= */
-
-@media (min-width: 901px) {
-    .questions-area {
-        display: flex !important;
-        flex-direction: column !important;
-    }
-
-    .questions-area #quizContainer {
-        order: 1 !important;
-    }
-
-    .questions-area #resultBox {
-        order: 2 !important;
-        width: 100% !important;
-        margin: 18px 0 0 !important;
-    }
+@media (min-width: 1201px) {
+    .questions-area { display: flex !important; flex-direction: column !important; }
+    .questions-area #quizContainer { order: 1 !important; }
+    .questions-area #resultBox { order: 2 !important; width: 100% !important; margin: 18px 0 0 !important; }
 }
