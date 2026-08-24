@@ -1,23 +1,18 @@
 /* =========================================================
    МОБИЛЬНЫЙ РЕЖИМ ТЕСТА
-   На телефоне карта вопросов находится в самом низу теста.
-   Таймер и кнопка завершения остаются доступными снизу.
+   Карта вопросов находится сверху и остаётся компактной.
+   Панель таймера и завершения теста остаётся снизу.
    ========================================================= */
 
 @media (max-width: 900px) {
-    /* Оставляем место снизу, чтобы фиксированная панель
-       не закрывала последний вопрос и карту вопросов. */
     .exam-page {
         padding-bottom: 120px !important;
     }
 
-    /* Убираем значок уведомлений между Premium и аватаром. */
     .site-notification {
         display: none !important;
     }
 
-    /* Убираем Google Sign-In иконку из шапки теста.
-       Вход по-прежнему доступен через мобильное меню. */
     .header #googleSignInButton,
     .header .sign__button,
     .site-header #googleSignInButton,
@@ -25,74 +20,85 @@
         display: none !important;
     }
 
-    /*
-       Порядок на телефоне:
-       1. Все вопросы
-       2. Результат
-       3. Карта вопросов
-
-       Поэтому sidebar переносится после questions-area.
-    */
     .exam-layout {
         display: flex !important;
         flex-direction: column !important;
-        gap: 14px !important;
+        gap: 12px !important;
     }
 
-    .questions-area {
-        order: 1 !important;
-    }
-
+    /* Карта вопросов теперь ПЕРЕД тестом. */
     .questions-sidebar {
         position: static !important;
-        order: 2 !important;
+        order: 1 !important;
         width: 100% !important;
         max-height: none !important;
-        padding: 14px !important;
+        padding: 10px 11px !important;
         margin: 0 !important;
         background: #fff !important;
         border: 1px solid #e4e9ef !important;
-        border-radius: 13px !important;
-        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05) !important;
         overflow: visible !important;
     }
 
-    /* На телефоне карта вопросов показывается внизу. */
-    .questions-sidebar > h2,
-    .questions-sidebar > .question-legend,
-    .questions-sidebar > .question-grid {
-        display: block !important;
+    .questions-area {
+        order: 2 !important;
     }
 
     .questions-sidebar > h2 {
-        margin: 0 0 12px !important;
-        font-size: 18px !important;
+        margin: 0 0 7px !important;
+        font-size: 15px !important;
+        line-height: 1.2 !important;
     }
 
     .questions-sidebar > .question-legend {
-        margin-bottom: 10px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 5px 9px !important;
+        margin: 0 0 7px !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
     }
 
-    /* Сетка вопросов внизу страницы. */
-    .question-grid {
-        grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
-        gap: 6px !important;
-        margin: 12px 0 0 !important;
+    .question-status {
+        gap: 4px !important;
+        white-space: nowrap !important;
     }
 
-    /* Нижняя панель управления тестом остаётся фиксированной. */
+    .status-dot {
+        width: 7px !important;
+        height: 7px !important;
+    }
+
+    /* Компактная карта вопросов сверху. */
+    .questions-sidebar > .question-grid {
+        display: grid !important;
+        grid-template-columns: repeat(10, minmax(0, 1fr)) !important;
+        gap: 4px !important;
+        margin: 0 !important;
+    }
+
+    .question-number {
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 29px !important;
+        padding: 0 !important;
+        border-radius: 7px !important;
+        font-size: 11px !important;
+        line-height: 1 !important;
+    }
+
+    /* Только панель управления остаётся фиксированной снизу. */
     .exam-sidebar-controls {
         position: fixed !important;
         left: 10px !important;
         right: 10px !important;
         bottom: calc(10px + env(safe-area-inset-bottom)) !important;
         z-index: 2000 !important;
-
         display: grid !important;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
         align-items: stretch !important;
         gap: 8px !important;
-
         margin: 0 !important;
         padding: 8px !important;
         background: rgba(255, 255, 255, 0.97) !important;
@@ -128,7 +134,6 @@
         font-size: 13px !important;
     }
 
-    /* Результат всегда находится перед картой вопросов. */
     .questions-area #resultBox {
         width: 100% !important;
         margin: 18px 0 0 !important;
@@ -136,12 +141,28 @@
     }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 480px) {
     .exam-sidebar-controls {
         left: 8px !important;
         right: 8px !important;
         gap: 6px !important;
         padding: 7px !important;
+    }
+
+    .questions-sidebar {
+        padding: 9px 10px !important;
+        border-radius: 11px !important;
+    }
+
+    .questions-sidebar > .question-grid {
+        grid-template-columns: repeat(10, minmax(0, 1fr)) !important;
+        gap: 4px !important;
+    }
+
+    .question-number {
+        height: 28px !important;
+        font-size: 10px !important;
+        border-radius: 6px !important;
     }
 
     .sidebar-timer strong {
@@ -151,21 +172,11 @@
     .finish-test {
         font-size: 12px !important;
     }
-
-    .question-grid {
-        grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
-        gap: 5px !important;
-    }
-
-    .question-number {
-        font-size: 11px !important;
-    }
 }
 
 /* =========================================================
    DESKTOP
-   Результат остаётся под всеми вопросами, а карта вопросов
-   находится справа.
+   Здесь ничего из мобильного порядка не применяется.
    ========================================================= */
 
 @media (min-width: 901px) {
