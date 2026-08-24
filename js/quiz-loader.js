@@ -215,7 +215,6 @@
         const legacyIndex = questions.findIndex(
             (question) =>
                 question.type === 'matching' &&
-                String(question.id) === '33-35' &&
                 Array.isArray(question.items) &&
                 question.items.length === 3
         );
