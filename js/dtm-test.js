@@ -94,7 +94,7 @@
                             `;
                         }).join("")}
                     </div>
-                    ${reviewed && knownKey ? `<p class="dtm-review-badge">Правильный ответ: ${escapeHtml(q.correct)}</p>` : ""}
+                    ${reviewed && knownKey ? `<p class="dtm-review-badge">Правильный ответ: ${escapeHtml(q.correct)} — ${renderMath(q.options[q.correct])}</p>` : ""}
                     ${!knownKey ? '<p class="dtm-missing-key">Ключ ответа для этого задания пока не внесён.</p>' : ""}
                 </div>
             </section>
@@ -158,9 +158,10 @@
     }
 
     function renderMath(value) {
-        return escapeHtml(value ?? "")
-            .replace(/\\\((.*?)\\\)/gs, "\\($1\\)")
-            .replace(/\\\[(.*?)\\\]/gs, "\\[$1\\]");
+        let text = escapeHtml(value ?? "");
+        text = text.replace(/(\d+)\s*\/\s*(\d+(?:[.,]\d+)?)/g, "\\($1\\over\\,$2\\)");
+        text = text.replace(/√\s*([A-Za-zА-Яа-я0-9]+(?:[²³⁴⁵⁶⁷⁸⁹])?)/g, "\\(\\sqrt{$1}\\)");
+        return text;
     }
 
     function typesetMath() {
