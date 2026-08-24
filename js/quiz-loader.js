@@ -206,6 +206,44 @@
             return false;
         }
     }
+
+    function normalizeLegacyMatchingQuestions() {
+        if (typeof questions === 'undefined' || !Array.isArray(questions)) {
+            return;
+        }
+
+        const legacyIndex = questions.findIndex(
+            (question) =>
+                question.type === 'matching' &&
+                String(question.id) === '33-35' &&
+                Array.isArray(question.items) &&
+                question.items.length === 3
+        );
+
+        if (legacyIndex === -1) {
+            return;
+        }
+
+        const legacyQuestion = questions[legacyIndex];
+        const normalizedQuestions = legacyQuestion.items.map((item, index) => ({
+            id: item.id,
+            type: 'matching',
+            question: '',
+            context: index === 0 ? legacyQuestion.context || '' : '',
+            image: index === 0 ? legacyQuestion.image || null : null,
+            optionsPool: { ...legacyQuestion.optionsPool },
+            items: [
+                {
+                    id: item.id,
+                    text: item.text,
+                    correctAnswer: item.correctAnswer
+                }
+            ]
+        }));
+
+        questions.splice(legacyIndex, 1, ...normalizedQuestions);
+    }
+
     function applyMatchingQuestions() {
         if (typeof questions === 'undefined' || !Array.isArray(questions)) {
             return;
@@ -383,6 +421,7 @@
         script.dataset.questionsLoader = 'true';
 
         script.onload = function () {
+            normalizeLegacyMatchingQuestions();
             applyMatchingQuestions();
             addMatchingVisualFix();
 
