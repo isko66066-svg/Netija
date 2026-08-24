@@ -7,6 +7,23 @@
         ['+', '+'], ['−', '−'], ['×', '×'], ['÷', '÷'], ['⌫', null, null, 'delete']
     ];
 
+    function addStyles() {
+        if (document.getElementById('netija-math-input-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'netija-math-input-styles';
+        style.textContent = `
+            .math-answer-editor{width:100%;margin-top:8px}
+            .math-answer-input{width:100%!important;box-sizing:border-box!important;min-height:48px!important;padding:11px 14px!important;border:1px solid #d7dee8!important;border-radius:10px!important;font-size:18px!important;line-height:1.35!important;background:#fff!important;color:#172033!important;outline:none!important}
+            .math-answer-input:focus,.math-answer-editor.is-focused .math-answer-input{border-color:#3b82f6!important;box-shadow:0 0 0 3px rgba(59,130,246,.10)!important}
+            .math-answer-preview{min-height:28px;padding:5px 8px 2px;font-size:18px;color:#172033;overflow-x:auto}
+            .math-answer-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:5px}
+            .math-key{appearance:none;border:0;min-width:38px;height:32px;padding:0 9px;border-radius:9px;background:#eef1f5;color:#172033;font-size:15px;font-weight:600;line-height:1;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+            .math-key:hover{background:#e3e8ee}.math-key:active{transform:translateY(1px)}.math-key-delete{background:#f4e8e8;font-size:16px}
+            @media(max-width:600px){.math-answer-input{min-height:46px!important;font-size:17px!important}.math-answer-toolbar{gap:4px}.math-key{min-width:36px;height:34px;padding:0 8px;font-size:15px;border-radius:8px}}
+        `;
+        document.head.appendChild(style);
+    }
+
     function fire(input) {
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -49,6 +66,42 @@
             .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]/g, c => `^{${{'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-','⁺':'+'}[c]}}`);
     }
 
+    function normalize(value) {
+        return String(value ?? '').trim().replace(/\s+/g, '').replace(/,/g, '.').replace(/⁄/g, '/').toLowerCase();
+    }
+
+    function fraction(value) {
+        const text = normalize(value).replace(/^\$+|\$+$/g, '');
+        const match = text.match(/^\(?([+-]?\d+)\)?\/\(?([+-]?\d+)\)?$/);
+        if (!match || match[2] === '0') return null;
+        let a = BigInt(match[1]);
+        let b = BigInt(match[2]);
+        if (b < 0n) { a = -a; b = -b; }
+        let x = a < 0n ? -a : a, y = b;
+        while (y) [x, y] = [y, x % y];
+        return [a / x, b / x];
+    }
+
+    function equivalent(a, b) {
+        const left = fraction(a), right = fraction(b);
+        if (left && right) return left[0] === right[0] && left[1] === right[1];
+        const na = Number(normalize(a)), nb = Number(normalize(b));
+        return Number.isFinite(na) && Number.isFinite(nb) && Math.abs(na - nb) < 1e-9;
+    }
+
+    function prepareEquivalentAnswers() {
+        if (!Array.isArray(window.questions)) return;
+        window.questions.forEach(q => {
+            if (q.type !== 'open_ended' || !Array.isArray(q.subQuestions)) return;
+            q.subQuestions.forEach(sub => {
+                const input = document.querySelector(`input[data-question-id="${q.id}"][data-sub-id="${sub.id}"]`);
+                if (input && input.value.trim() && equivalent(input.value, sub.correctAnswer)) {
+                    input.value = String(sub.correctAnswer);
+                }
+            });
+        });
+    }
+
     function enhanceInput(input) {
         if (!input || input.dataset.mathKeyboard === '1') return;
         input.dataset.mathKeyboard = '1';
@@ -89,15 +142,26 @@
         };
 
         input.addEventListener('input', updatePreview);
+        input.addEventListener('focus', () => wrapper.classList.add('is-focused'));
+        input.addEventListener('blur', () => wrapper.classList.remove('is-focused'));
         updatePreview();
     }
 
     function enhance() {
+        addStyles();
         document.querySelectorAll('.sub-question-input').forEach(enhanceInput);
     }
 
-    window.NetijaMathInput = { enhance };
-    document.addEventListener('netija:quizRendered', enhance);
+    function attachSubmitFix() {
+        const submit = document.getElementById('submitBtn');
+        if (!submit || submit.dataset.mathAnswerFixAttached === '1') return;
+        submit.dataset.mathAnswerFixAttached = '1';
+        submit.addEventListener('click', prepareEquivalentAnswers, true);
+    }
+
+    window.NetijaMathInput = { enhance, equivalent };
+    document.addEventListener('netija:quizRendered', () => { enhance(); attachSubmitFix(); });
     enhance();
-    new MutationObserver(enhance).observe(document.body, { childList: true, subtree: true });
+    attachSubmitFix();
+    new MutationObserver(() => { enhance(); attachSubmitFix(); }).observe(document.body, { childList: true, subtree: true });
 })();
