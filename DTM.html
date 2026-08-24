@@ -15,80 +15,49 @@
         .dtm-category-filter:hover{border-color:#c7d1df;background:#f8fafc}
         .dtm-category-filter.active{background:#11118b;border-color:#11118b;color:#fff;box-shadow:0 8px 18px rgba(17,17,139,.18)}
         .dtm-filter-empty{display:none;grid-column:1/-1;padding:32px;text-align:center;border:1px dashed #d8dfeb;border-radius:18px;background:#fff;color:#718096}
+        .dtm-card-result{margin:4px 0 16px;font-size:14px;font-weight:600;color:#315bd6}
+        .dtm-card-result span{color:#718096;font-weight:500;margin-left:6px}
         @media(max-width:620px){.dtm-category-filters{justify-content:stretch;gap:6px;padding:5px}.dtm-category-filter{flex:1 1 0;min-width:0;padding:0 8px;font-size:11px}}
     </style>
 </head>
 <body>
-<header class="header">
-    <div class="header__container">
-        <nav class="header__nav">
-            <a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a>
-            <ul class="header__list">
-                <li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li>
-                <li class="header__list-item"><a class="header__list-link active" href="DTM.html">DTM</a></li>
-                <li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li>
-            </ul>
-            <div class="site-header__account">
-                <a class="premium-nav-link" href="premium.html">👑 Premium</a>
-                <div class="sign__button" id="googleSignInButton"></div>
-                <div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div>
-                <button class="burger" id="burgerBtn" type="button" aria-label="Меню"><span></span><span></span><span></span></button>
-            </div>
-        </nav>
-    </div>
-</header>
-
-<main class="dtm-page">
-    <section class="dtm-hero">
-        <span class="dtm-badge">NETIJA • DTM</span>
-        <h1 class="dtm-title">DTM</h1>
-        <p class="dtm-subtitle">Выбери направление и вариант теста.</p>
-    </section>
-
-    <div class="dtm-category-filters" role="tablist" aria-label="Направление DTM">
-        <button class="dtm-category-filter active" type="button" data-category="math">Математика</button>
-        <button class="dtm-category-filter" type="button" data-category="math-english">Математика + английский</button>
-        <button class="dtm-category-filter" type="button" data-category="iq">IQ</button>
-    </div>
-
-    <section class="dtm-grid" id="dtm-tests">
-        <article class="dtm-card" data-category="math">
-            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 1</h2><p>20 вопросов</p></div></div>
-            <a href="DTM-test.html?variant=variant-7">Пройти тест →</a>
-        </article>
-        <article class="dtm-card" data-category="math">
-            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 2</h2><p>20 вопросов</p></div></div>
-            <a href="DTM-test.html?variant=variant-8">Пройти тест →</a>
-        </article>
-        <article class="dtm-card" data-category="math">
-            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 3</h2><p>20 вопросов</p></div></div>
-            <a href="DTM-test.html?variant=variant-9">Пройти тест →</a>
-        </article>
-        <article class="dtm-card" data-category="math">
-            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 4</h2><p>20 вопросов</p></div></div>
-            <a href="DTM-test.html?variant=variant-10">Пройти тест →</a>
-        </article>
-        <article class="dtm-card" data-category="math">
-            <div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 5</h2><p>20 вопросов</p></div></div>
-            <a href="DTM-test.html?variant=variant-12">Пройти тест →</a>
-        </article>
-        <article class="dtm-card" data-category="math">
-            <div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 6</h2><p>30 вопросов</p></div></div>
-            <a href="DTM-test.html?variant=variant-1982496">Пройти тест →</a>
-        </article>
-        <article class="dtm-card" data-category="math">
-            <div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 7</h2><p>20 вопросов</p></div></div>
-            <a href="DTM-test.html?variant=variant-2024">Пройти тест →</a>
-        </article>
-        <div class="dtm-filter-empty" id="dtmFilterEmpty">В этом направлении тесты пока не добавлены.</div>
-    </section>
-</main>
-
-<script src="js/auth.js"></script>
-<script src="js/menu.js"></script>
-<script src="js/premium-header.js"></script>
+<header class="header"><div class="header__container"><nav class="header__nav">
+<a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a>
+<ul class="header__list"><li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li><li class="header__list-item"><a class="header__list-link active" href="DTM.html">DTM</a></li><li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li></ul>
+<div class="site-header__account"><a class="premium-nav-link" href="premium.html">👑 Premium</a><div class="sign__button" id="googleSignInButton"></div><div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div><button class="burger" id="burgerBtn" type="button" aria-label="Меню"><span></span><span></span><span></span></button></div>
+</nav></div></header>
+<main class="dtm-page"><section class="dtm-hero"><span class="dtm-badge">NETIJA • DTM</span><h1 class="dtm-title">DTM</h1><p class="dtm-subtitle">Выбери направление и вариант теста.</p></section>
+<div class="dtm-category-filters" role="tablist" aria-label="Направление DTM"><button class="dtm-category-filter active" type="button" data-category="math">Математика</button><button class="dtm-category-filter" type="button" data-category="math-english">Математика + английский</button><button class="dtm-category-filter" type="button" data-category="iq">IQ</button></div>
+<section class="dtm-grid" id="dtm-tests">
+<article class="dtm-card" data-category="math" data-variant="variant-7"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 1</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-7">Пройти тест →</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-8"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 2</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-8">Пройти тест →</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-9"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 3</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-9">Пройти тест →</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-10"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 4</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-10">Пройти тест →</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-12"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 5</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-12">Пройти тест →</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-1982496"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 6</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-1982496">Пройти тест →</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-2024"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 7</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-2024">Пройти тест →</a></article>
+<div class="dtm-filter-empty" id="dtmFilterEmpty">В этом направлении тесты пока не добавлены.</div></section></main>
+<script src="js/auth.js"></script><script src="js/menu.js"></script><script src="js/premium-header.js"></script>
 <script>
 (() => {
+    const getUserKey = () => {
+        try { const user = JSON.parse(localStorage.getItem('netija_user') || 'null'); return user?.sub || user?.email || user?.id || 'guest'; }
+        catch { return 'guest'; }
+    };
+    const userKey = getUserKey();
+    document.querySelectorAll('.dtm-card').forEach(card => {
+        const variant = card.dataset.variant;
+        try {
+            const result = JSON.parse(localStorage.getItem(`netija_dtm_best_${userKey}_${variant}`) || 'null');
+            const el = card.querySelector('.dtm-card-result');
+            if (result && el) {
+                const percent = Math.round((Number(result.score) / Number(result.total)) * 100);
+                el.innerHTML = `Лучший результат: ${result.score} / ${result.total}<span>(${percent}%)</span>`;
+                el.hidden = false;
+            }
+        } catch {}
+    });
+
     const filters = document.querySelectorAll('.dtm-category-filter');
     const cards = document.querySelectorAll('.dtm-card');
     const empty = document.getElementById('dtmFilterEmpty');
@@ -97,14 +66,9 @@
         filter.classList.add('active');
         const category = filter.dataset.category;
         let visible = 0;
-        cards.forEach(card => {
-            const show = card.dataset.category === category;
-            card.style.display = show ? '' : 'none';
-            if (show) visible++;
-        });
+        cards.forEach(card => { const show = card.dataset.category === category; card.style.display = show ? '' : 'none'; if (show) visible++; });
         empty.style.display = visible ? 'none' : 'block';
     }));
 })();
 </script>
-</body>
-</html>
+</body></html>
