@@ -251,3 +251,197 @@ window.addEventListener('beforeunload', function (event) {
     setTimeout(apply, 50);
     setTimeout(apply, 300);
 })();
+
+// National certificate: custom finish-test confirmation styled like the DTM modal.
+(function installNatcertFinishConfirm() {
+    let modal = null;
+    let bypassNextSubmit = false;
+
+    function addStyles() {
+        if (document.getElementById('netija-natcert-confirm-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'netija-natcert-confirm-styles';
+        style.textContent = `
+            .netija-confirm-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 99999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+                background: rgba(15, 23, 42, .42);
+                backdrop-filter: blur(7px);
+                -webkit-backdrop-filter: blur(7px);
+                animation: netijaConfirmFade .16s ease-out;
+            }
+            .netija-confirm-modal {
+                width: min(528px, 100%);
+                box-sizing: border-box;
+                padding: 34px 36px 36px;
+                background: #fff;
+                border-radius: 24px;
+                box-shadow: 0 24px 70px rgba(15,23,42,.22), 0 4px 18px rgba(15,23,42,.08);
+                text-align: center;
+                animation: netijaConfirmPop .18s ease-out;
+            }
+            .netija-confirm-icon {
+                width: 64px;
+                height: 64px;
+                margin: 0 auto 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 20px;
+                background: #fff4e5;
+                font-size: 31px;
+            }
+            .netija-confirm-title {
+                margin: 0;
+                color: #172033;
+                font-size: 28px;
+                line-height: 1.18;
+                font-weight: 800;
+                letter-spacing: -.45px;
+            }
+            .netija-confirm-text {
+                max-width: 440px;
+                margin: 20px auto 0;
+                color: #718096;
+                font-size: 17px;
+                line-height: 1.55;
+                font-weight: 500;
+            }
+            .netija-confirm-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-top: 28px;
+            }
+            .netija-confirm-button {
+                min-height: 58px;
+                border: 0;
+                border-radius: 14px;
+                padding: 0 20px;
+                font: inherit;
+                font-size: 17px;
+                font-weight: 750;
+                cursor: pointer;
+                transition: transform .12s ease, filter .12s ease;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .netija-confirm-button:active { transform: scale(.985); }
+            .netija-confirm-cancel {
+                background: #edf3f8;
+                color: #44546a;
+            }
+            .netija-confirm-finish {
+                background: #ff4d52;
+                color: #fff;
+            }
+            .netija-confirm-button:hover { filter: brightness(.98); }
+            @keyframes netijaConfirmFade { from { opacity: 0; } to { opacity: 1; } }
+            @keyframes netijaConfirmPop { from { opacity: 0; transform: translateY(7px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+            @media (max-width: 600px) {
+                .netija-confirm-overlay { padding: 16px; }
+                .netija-confirm-modal { padding: 28px 20px 22px; border-radius: 22px; }
+                .netija-confirm-icon { width: 58px; height: 58px; margin-bottom: 17px; font-size: 28px; }
+                .netija-confirm-title { font-size: 24px; }
+                .netija-confirm-text { margin-top: 15px; font-size: 15px; }
+                .netija-confirm-actions { gap: 10px; margin-top: 22px; }
+                .netija-confirm-button { min-height: 52px; padding: 0 12px; font-size: 15px; border-radius: 13px; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    function closeModal() {
+        if (!modal) return;
+        modal.remove();
+        modal = null;
+    }
+
+    function openModal(submitBtn) {
+        if (modal) return;
+        addStyles();
+
+        modal = document.createElement('div');
+        modal.className = 'netija-confirm-overlay';
+        modal.innerHTML = `
+            <div class="netija-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="netija-confirm-title">
+                <div class="netija-confirm-icon" aria-hidden="true">⚠️</div>
+                <h2 id="netija-confirm-title" class="netija-confirm-title">Вы точно хотите завершить этот тест?</h2>
+                <p class="netija-confirm-text">После завершения результат будет сохранён, а текущий тест можно будет пройти заново.</p>
+                <div class="netija-confirm-actions">
+                    <button type="button" class="netija-confirm-button netija-confirm-cancel">Отмена</button>
+                    <button type="button" class="netija-confirm-button netija-confirm-finish">Завершить</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        document.body.style.overflow = 'hidden';
+
+        const restoreScroll = () => {
+            document.body.style.overflow = '';
+        };
+
+        modal.querySelector('.netija-confirm-cancel').addEventListener('click', () => {
+            closeModal();
+            restoreScroll();
+            submitBtn.focus({ preventScroll: true });
+        });
+
+        modal.querySelector('.netija-confirm-finish').addEventListener('click', () => {
+            closeModal();
+            restoreScroll();
+            bypassNextSubmit = true;
+
+            const originalConfirm = window.confirm;
+            window.confirm = () => true;
+            try {
+                submitBtn.click();
+            } finally {
+                window.confirm = originalConfirm;
+            }
+        });
+
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+                restoreScroll();
+            }
+        });
+
+        const cancelButton = modal.querySelector('.netija-confirm-cancel');
+        if (cancelButton) cancelButton.focus({ preventScroll: true });
+    }
+
+    function attach() {
+        const submitBtn = document.getElementById('submitBtn');
+        if (!submitBtn || submitBtn.dataset.netijaConfirmAttached === '1') return;
+        submitBtn.dataset.netijaConfirmAttached = '1';
+
+        // Capture phase runs before quiz.js's native window.confirm().
+        submitBtn.addEventListener('click', function (event) {
+            if (bypassNextSubmit) {
+                bypassNextSubmit = false;
+                return;
+            }
+            if (window.quizSubmitted === true) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            openModal(submitBtn);
+        }, true);
+    }
+
+    function init() {
+        addStyles();
+        attach();
+    }
+
+    init();
+    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('netija:quizRendered', init);
+    new MutationObserver(init).observe(document.documentElement, { childList: true, subtree: true });
+})();
