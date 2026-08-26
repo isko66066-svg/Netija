@@ -85,7 +85,6 @@
     const raw = String(value ?? "");
     if (!raw) return "";
 
-    // Explicit TeX supplied by a question is left intact.
     if (raw.includes("\\(") || raw.includes("\\[") || raw.includes("$$")) {
       return escapeHtml(raw);
     }
@@ -126,7 +125,9 @@
     const params = new URLSearchParams(location.search);
     const variant = params.get("variant") || "variant-7";
     const questions = window.DTM_QUESTIONS?.[variant];
-    if (!Array.isArray(questions)) return;
+    if (!Array.isArray(questions)) return false;
+
+    let changed = false;
 
     questions.forEach((q, index) => {
       const card = document.getElementById(`dtm-question-${index}`);
@@ -136,6 +137,7 @@
       if (text && text.dataset.dtmSmartMath !== "1") {
         text.innerHTML = smartMath(q.text);
         text.dataset.dtmSmartMath = "1";
+        changed = true;
       }
 
       const optionSpans = card.querySelectorAll(".dtm-option > span:last-child");
@@ -146,13 +148,16 @@
         if (q.options && q.options[key] !== undefined) {
           span.innerHTML = smartMath(q.options[key]);
           span.dataset.dtmSmartMath = "1";
+          changed = true;
         }
       });
     });
 
-    if (window.MathJax?.typesetPromise) {
+    if (changed && window.MathJax?.typesetPromise) {
       MathJax.typesetPromise([document.getElementById("dtmTest")]).catch(console.error);
     }
+
+    return changed;
   }
 
   const observer = new MutationObserver(() => {
