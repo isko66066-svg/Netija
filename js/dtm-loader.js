@@ -10,16 +10,44 @@
     function load(src) {
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = `${src}?v=20260826-5`;
+            script.src = `${src}?v=20260826-6`;
             script.onload = resolve;
             script.onerror = reject;
             document.body.appendChild(script);
         });
     }
 
+    function installNavigationFix() {
+        if (window.__netijaDtmNavigationFix) return;
+        window.__netijaDtmNavigationFix = true;
+
+        document.addEventListener('click', event => {
+            const button = event.target.closest('.dtm-nav-number');
+            if (!button) return;
+
+            const index = Number(button.dataset.question);
+            const target = document.getElementById(`dtm-question-${index}`);
+            if (!target) return;
+
+            // The old handler used smooth scrollIntoView(). On Safari this can
+            // fight with MathJax layout/reflow and freeze the whole page.
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            const headerOffset = 90;
+            const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+            window.scrollTo(0, Math.max(0, top));
+
+            document.querySelectorAll('.dtm-nav-number').forEach((nav, navIndex) => {
+                nav.classList.toggle('current', navIndex === index);
+            });
+        }, true);
+    }
+
     load(`js/dtm-questions/${selected}.js`)
-        .then(() => load('js/dtm-test.js?v=20260826-5'))
-        .then(() => load('js/dtm-mixed-title.js?v=20260826-1'))
+        .then(() => load('js/dtm-test.js'))
+        .then(() => load('js/dtm-mixed-title.js'))
+        .then(() => installNavigationFix())
         .catch(error => {
             console.error('DTM loader:', error);
             const root = document.getElementById('dtmTest');
