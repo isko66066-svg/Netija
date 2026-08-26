@@ -184,15 +184,85 @@
     function renderMath(value) {
         const raw = String(value ?? "");
         if (!raw) return "";
-        if (raw.includes("\\(") || raw.includes("\\[")) return escapeHtml(raw);
-        const hasMath = /[=<>≤≥≠≈√∛∜π^²³⁴⁵⁶⁷⁸⁹]|\d+\s*\/\s*[\dA-Za-z]|\b(sin|cos|tg|ctg|log|ln)\b|[·×÷]/i.test(raw);
-        if (!hasMath) return escapeHtml(raw);
-        let text = raw.replaceAll("−", "-").replaceAll("×", "\\times ").replaceAll("·", "\\cdot ").replaceAll("÷", "\\div ").replaceAll("≤", "\\le ").replaceAll("≥", "\\ge ").replaceAll("≠", "\\ne ").replaceAll("≈", "\\approx ").replaceAll("∞", "\\infty ").replaceAll("π", "\\pi ").replaceAll("tg", "\\tan ").replaceAll("ctg", "\\cot ").replaceAll("sin", "\\sin ").replaceAll("cos", "\\cos ").replaceAll("log", "\\log ").replaceAll("ln", "\\ln ");
-        const superscripts = {"⁰":"^0","¹":"^1","²":"^2","³":"^3","⁴":"^4","⁵":"^5","⁶":"^6","⁷":"^7","⁸":"^8","⁹":"^9"};
-        Object.entries(superscripts).forEach(([a,b]) => text = text.replaceAll(a,b));
-        text = text.replace(/√\s*([^\s+\-)=<>]+(?:\([^)]*\))?)/g, "\\sqrt{$1}").replace(/∛\s*([^\s+\-)=<>]+(?:\([^)]*\))?)/g, "\\sqrt[3]{$1}").replace(/∜\s*([^\s+\-)=<>]+(?:\([^)]*\))?)/g, "\\sqrt[4]{$1}");
-        text = text.replace(/(\d+(?:[.,]\d+)?|[A-Za-z])\s*\/\s*(\d+(?:[.,]\d+)?|[A-Za-z])/g, "\\frac{$1}{$2}");
-        return `\\(${text}\\)`;
+
+        if (raw.includes("\\(") || raw.includes("\\[") || raw.includes("$$")) {
+            return escapeHtml(raw);
+        }
+
+        const tokens = raw.split(/(\s+)/);
+        const output = [];
+        let mathBuffer = [];
+
+        const flushMath = () => {
+            if (!mathBuffer.length) return;
+            const math = mathBuffer.join("").trim();
+            if (math) output.push(`\\(${escapeHtml(toLatex(math))}\\)`);
+            mathBuffer = [];
+        };
+
+        for (const token of tokens) {
+            if (/^\s+$/.test(token)) {
+                if (mathBuffer.length) mathBuffer.push(token);
+                else output.push(token);
+                continue;
+            }
+
+            if (isMathToken(token)) {
+                mathBuffer.push(token);
+            } else {
+                flushMath();
+                output.push(escapeHtml(token));
+            }
+        }
+        flushMath();
+
+        return output.join("");
+    }
+
+    function isMathToken(token) {
+        const clean = token.replace(/[.,!?;:]$/g, "");
+        if (!clean) return false;
+
+        if (/[=<>≤≥≠≈√∛∜^²³⁴⁵⁶⁷⁸⁹|()[\]{}\/·×÷∞π]/.test(clean)) return true;
+        if (/^[A-Za-zα-ωΑ-Ω][₀₁₂₃₄₅₆₇₈₉]*$/.test(clean)) return true;
+        if (/^(sin|cos|tg|ctg|log|ln)\b/i.test(clean)) return true;
+        if (/^[−+\-]?\d+(?:[.,]\d+)?(?:[%²³⁴⁵⁶⁷⁸⁹])?$/.test(clean)) return true;
+        if (/^[−+\-]?\d.*[A-Za-z=+\-*/^()]/.test(clean)) return true;
+        return false;
+    }
+
+    function toLatex(value) {
+        return String(value ?? "")
+            .replaceAll("−", "-")
+            .replaceAll("×", "\\times ")
+            .replaceAll("·", "\\cdot ")
+            .replaceAll("÷", "\\div ")
+            .replaceAll("≤", "\\le ")
+            .replaceAll("≥", "\\ge ")
+            .replaceAll("≠", "\\ne ")
+            .replaceAll("≈", "\\approx ")
+            .replaceAll("∞", "\\infty ")
+            .replaceAll("π", "\\pi ")
+            .replaceAll("tg", "\\tan ")
+            .replaceAll("ctg", "\\cot ")
+            .replaceAll("sin", "\\sin ")
+            .replaceAll("cos", "\\cos ")
+            .replaceAll("log", "\\log ")
+            .replaceAll("ln", "\\ln ")
+            .replaceAll("⁰", "^0")
+            .replaceAll("¹", "^1")
+            .replaceAll("²", "^2")
+            .replaceAll("³", "^3")
+            .replaceAll("⁴", "^4")
+            .replaceAll("⁵", "^5")
+            .replaceAll("⁶", "^6")
+            .replaceAll("⁷", "^7")
+            .replaceAll("⁸", "^8")
+            .replaceAll("⁹", "^9")
+            .replace(/√\s*([^\s+\-)=<>]+(?:\([^)]*\))?)/g, "\\sqrt{$1}")
+            .replace(/∛\s*([^\s+\-)=<>]+(?:\([^)]*\))?)/g, "\\sqrt[3]{$1}")
+            .replace(/∜\s*([^\s+\-)=<>]+(?:\([^)]*\))?)/g, "\\sqrt[4]{$1}")
+            .replace(/(\d+(?:[.,]\d+)?|[A-Za-z])\s*\/\s*(\d+(?:[.,]\d+)?|[A-Za-z])/g, "\\frac{$1}{$2}");
     }
 
     function installLeaveProtection() {
@@ -216,8 +286,20 @@
         }, true);
     }
 
-    function typesetMath() { if (window.MathJax?.typesetPromise) MathJax.typesetPromise([root]).catch(console.error); }
-    function escapeHtml(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
+    function typesetMath() {
+        if (window.MathJax?.typesetPromise) {
+            MathJax.typesetPromise([root]).catch(console.error);
+        }
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
 
     installLeaveProtection();
     render();
