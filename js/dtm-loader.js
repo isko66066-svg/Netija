@@ -10,7 +10,7 @@
     function load(src) {
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = `${src}?v=20260826-6`;
+            script.src = `${src}?v=20260826-7`;
             script.onload = resolve;
             script.onerror = reject;
             document.body.appendChild(script);
@@ -29,14 +29,12 @@
             const target = document.getElementById(`dtm-question-${index}`);
             if (!target) return;
 
-            // The old handler used smooth scrollIntoView(). On Safari this can
-            // fight with MathJax layout/reflow and freeze the whole page.
             event.preventDefault();
             event.stopImmediatePropagation();
 
             const headerOffset = 90;
             const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
-            window.scrollTo(0, Math.max(0, top));
+            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 
             document.querySelectorAll('.dtm-nav-number').forEach((nav, navIndex) => {
                 nav.classList.toggle('current', navIndex === index);
