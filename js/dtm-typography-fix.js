@@ -160,12 +160,43 @@
     return changed;
   }
 
+  // DTM navigation used smooth scrollIntoView(). With a large MathJax-heavy
+  // test Safari can repeatedly recalculate layout during the animation and
+  // make the whole page appear frozen. Handle the navigation in capture phase
+  // and perform one immediate scroll instead.
+  function installNavigationFix() {
+    if (document.documentElement.dataset.dtmNavigationFix === "1") return;
+    document.documentElement.dataset.dtmNavigationFix = "1";
+
+    document.addEventListener("click", event => {
+      const button = event.target.closest(".dtm-nav-number[data-question]");
+      if (!button) return;
+
+      const index = Number(button.dataset.question);
+      if (!Number.isInteger(index) || index < 0) return;
+
+      const card = document.getElementById(`dtm-question-${index}`);
+      if (!card) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      const top = Math.max(0, card.getBoundingClientRect().top + window.scrollY - 16);
+      window.scrollTo(0, top);
+
+      document.querySelectorAll(".dtm-nav-number").forEach((navButton, navIndex) => {
+        navButton.classList.toggle("current", navIndex === index);
+      });
+    }, true);
+  }
+
   const observer = new MutationObserver(() => {
     if (window.DTM_QUESTIONS) applyFix();
   });
 
   function start() {
     installStyles();
+    installNavigationFix();
     const root = document.getElementById("dtmTest");
     if (!root) return;
     observer.observe(root, { childList: true, subtree: true });
