@@ -1,84 +1,58 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netija — DTM</title>
-    <link rel="stylesheet" href="style.css?v=20260824">
-    <link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <style>
-        .dtm-category-filters{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:30px 0 28px;padding:7px;background:rgba(255,255,255,.94);border:1px solid #e0e6ef;border-radius:17px;box-shadow:0 8px 26px rgba(30,64,175,.055)}
-        .dtm-category-filter{min-height:48px;padding:0 22px;border:1px solid #dfe5ed;border-radius:999px;background:#fff;color:#59677b;font:700 14px Poppins,sans-serif;cursor:pointer;transition:.18s}
-        .dtm-category-filter:hover{border-color:#c7d1df;background:#f8fafc}
-        .dtm-category-filter.active{background:#11118b;border-color:#11118b;color:#fff;box-shadow:0 8px 18px rgba(17,17,139,.18)}
-        .dtm-filter-empty{display:none;grid-column:1/-1;padding:32px;text-align:center;border:1px dashed #d8dfeb;border-radius:18px;background:#fff;color:#718096}
-        .dtm-card-result{margin:4px 0 16px;font-size:14px;font-weight:600;color:#315bd6}
-        .dtm-card-result span{color:#718096;font-weight:500;margin-left:6px}
-        @media(max-width:620px){.dtm-category-filters{justify-content:stretch;gap:6px;padding:5px}.dtm-category-filter{flex:1 1 0;min-width:0;padding:0 8px;font-size:11px}}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netija — DTM</title>
+<link rel="stylesheet" href="style.css?v=20260826-dtm">
+<link rel="shortcut icon" href="./images/favicon.svg" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{--dtm-purple:#6538df;--dtm-blue:#2f78e8;--dtm-green:#29c84a;--dtm-orange:#ff951d;--dtm-pink:#e91e73;--dtm-text:#111a35;--dtm-muted:#71809a}
+.dtm-page{min-height:calc(100vh - 58px);background:linear-gradient(180deg,#fbfbff 0%,#f7f8ff 100%);padding-bottom:70px}
+.dtm-hero{position:relative;min-height:285px;max-width:1440px;margin:0 auto;padding:42px 48px 22px;display:flex;flex-direction:column;align-items:center;text-align:center;overflow:hidden;background:radial-gradient(circle at 18% 50%,rgba(190,180,255,.18),transparent 28%),radial-gradient(circle at 86% 45%,rgba(165,145,255,.16),transparent 30%)}
+.dtm-hero:before,.dtm-hero:after{content:"";position:absolute;border-radius:50%;pointer-events:none}.dtm-hero:before{width:190px;height:190px;left:6%;top:35px;background:rgba(238,236,255,.5);filter:blur(1px)}.dtm-hero:after{width:260px;height:120px;right:5%;bottom:5px;background:rgba(232,228,255,.5);transform:rotate(-12deg)}
+.dtm-badge{position:relative;z-index:2;padding:9px 20px;border:1px solid #ded7fa;border-radius:999px;background:rgba(255,255,255,.68);color:#6740cf;font-size:15px;font-weight:700;box-shadow:0 4px 16px rgba(95,63,210,.06)}
+.dtm-title{position:relative;z-index:2;margin:18px 0 4px;font-size:82px;line-height:1;font-weight:800;letter-spacing:-4px;background:linear-gradient(135deg,#6533db,#793bd9 48%,#5934c9);-webkit-background-clip:text;background-clip:text;color:transparent}
+.dtm-subtitle{position:relative;z-index:2;margin:8px 0 0;color:#71809a;font-size:19px;font-weight:500}
+.dtm-hero-art{position:absolute;z-index:1;right:25px;bottom:-20px;width:360px;height:250px;opacity:.98;filter:drop-shadow(0 20px 25px rgba(88,64,180,.13))}
+.dtm-hero-art .paper{fill:#fff;stroke:#b7a7ed;stroke-width:5}.dtm-hero-art .clip{fill:#7160df}.dtm-hero-art .line{stroke:#c4b9f5;stroke-width:8;stroke-linecap:round}.dtm-hero-art .check{fill:#fff;stroke:#7966e6;stroke-width:5}.dtm-hero-art .pencil{fill:#c82bc7}.dtm-hero-art .dtm-label{fill:#6844df}.dtm-hero-art .spark{fill:#8d63e8}
+.dtm-category-filters{position:relative;z-index:5;max-width:1435px;margin:0 auto 30px;padding:12px;display:flex;justify-content:center;gap:10px;background:rgba(255,255,255,.96);border:1px solid #e7e9f0;border-radius:20px;box-shadow:0 8px 26px rgba(25,35,70,.055)}
+.dtm-category-filter{min-height:58px;padding:0 30px;border:1px solid #e2e4eb;border-radius:999px;background:#fff;color:#17213b;font:700 17px Poppins,sans-serif;cursor:pointer;transition:.2s ease;display:inline-flex;align-items:center;justify-content:center;gap:11px}.dtm-category-filter:before{font-size:23px;line-height:1}.dtm-category-filter[data-category="math"]:before{content:"▣"}.dtm-category-filter[data-category="math-english"]:before{content:"▤"}.dtm-category-filter[data-category="iq"]:before{content:"♧"}.dtm-category-filter:hover{transform:translateY(-1px);border-color:#c9c4eb}.dtm-category-filter.active{color:#fff;border-color:#6538df;background:linear-gradient(135deg,#6335db,#7047e5);box-shadow:0 9px 20px rgba(101,56,223,.23)}
+.dtm-grid{max-width:1435px;margin:0 auto;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.dtm-card{--accent:var(--dtm-purple);--soft:#f0ebff;position:relative;min-height:255px;padding:26px 30px 24px;display:flex;flex-direction:column;background:#fff;border:1px solid #e7e9ef;border-radius:21px;box-shadow:0 8px 24px rgba(25,35,70,.055);overflow:hidden;transition:.22s ease}.dtm-card:nth-child(3n+2){--accent:var(--dtm-blue);--soft:#edf5ff}.dtm-card:nth-child(3n){--accent:var(--dtm-green);--soft:#edfff0}.dtm-card:nth-child(6n+4){--accent:var(--dtm-orange);--soft:#fff3e5}.dtm-card:nth-child(6n+5){--accent:var(--dtm-pink);--soft:#fff0f7}.dtm-card:nth-child(6n){--accent:#16b97b;--soft:#eafaf3}.dtm-card:after{content:"☆";position:absolute;right:25px;top:21px;color:#8994a8;font-size:28px;font-weight:400}.dtm-card:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(25,35,70,.10);border-color:#d9dce5}
+.dtm-card__top{display:flex;align-items:center;gap:20px}.dtm-icon{position:relative;width:84px;height:84px;flex:0 0 84px;border-radius:20px;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:0;overflow:hidden}.dtm-icon:before{content:"";position:absolute;width:45px;height:58px;border:6px solid var(--accent);border-radius:4px;transform:rotate(-45deg);opacity:.9}.dtm-icon:after{content:"";position:absolute;width:28px;height:4px;background:var(--accent);border-radius:4px;transform:rotate(-45deg) translate(2px,-10px);box-shadow:0 10px 0 var(--accent),0 20px 0 var(--accent);opacity:.78}.dtm-card__top h2{margin:0;color:var(--dtm-text);font-size:25px;line-height:1.2;font-weight:800;letter-spacing:-.5px}.dtm-card__top p{margin:9px 0 0;color:#7b879a;font-size:16px;font-weight:500}.dtm-card-result{margin:18px 0 15px;color:var(--accent);font-size:15px;font-weight:700}.dtm-card-result span{margin-left:8px;color:#7b879a;font-weight:500}.dtm-card>a{margin-top:auto;min-height:56px;padding:0 25px;display:flex;align-items:center;justify-content:center;position:relative;border-radius:17px;background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent),white 18%));color:#fff;font-size:17px;font-weight:700;box-shadow:0 8px 18px color-mix(in srgb,var(--accent),transparent 76%);transition:.2s ease}.dtm-card>a:after{content:"→";position:absolute;right:23px;font-size:28px;font-weight:400}.dtm-card>a:hover{transform:translateY(-2px);filter:brightness(1.04)}
+.dtm-filter-empty{display:none;grid-column:1/-1;padding:40px;text-align:center;border:1px dashed #d9ddea;border-radius:20px;background:#fff;color:#71809a}
+@media(max-width:900px){.dtm-hero{min-height:255px;padding-left:25px;padding-right:25px}.dtm-hero-art{right:-15px;width:290px;height:205px;opacity:.55}.dtm-title{font-size:70px}.dtm-grid{grid-template-columns:repeat(2,minmax(0,1fr));padding:0 20px}.dtm-category-filters{margin-left:20px;margin-right:20px}.dtm-category-filter{font-size:14px;padding:0 18px}}
+@media(max-width:620px){.dtm-hero{min-height:225px;padding-top:30px}.dtm-badge{font-size:12px;padding:8px 15px}.dtm-title{font-size:58px;letter-spacing:-3px}.dtm-subtitle{font-size:14px}.dtm-hero-art{right:-50px;bottom:-15px;width:245px;height:175px;opacity:.35}.dtm-category-filters{margin:0 12px 20px;padding:6px;gap:5px;overflow:auto;justify-content:flex-start}.dtm-category-filter{flex:0 0 auto;min-height:47px;padding:0 14px;font-size:11px;gap:6px}.dtm-category-filter:before{font-size:17px}.dtm-grid{grid-template-columns:1fr;padding:0 12px;gap:14px}.dtm-card{min-height:235px;padding:21px}.dtm-card__top{gap:14px}.dtm-icon{width:68px;height:68px;flex-basis:68px;border-radius:17px}.dtm-card__top h2{font-size:20px}.dtm-card__top p{font-size:13px}.dtm-card>a{min-height:51px;font-size:15px}}
+</style>
 </head>
 <body>
-<header class="header"><div class="header__container"><nav class="header__nav">
-<a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a>
-<ul class="header__list"><li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li><li class="header__list-item"><a class="header__list-link active" href="DTM.html">DTM</a></li><li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li></ul>
-<div class="site-header__account"><a class="premium-nav-link" href="premium.html">👑 Premium</a><div class="sign__button" id="googleSignInButton"></div><div id="userProfile" class="user-profile" style="display:none;"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div><button class="burger" id="burgerBtn" type="button" aria-label="Меню"><span></span><span></span><span></span></button></div>
-</nav></div></header>
-<main class="dtm-page"><section class="dtm-hero"><span class="dtm-badge">NETIJA • DTM</span><h1 class="dtm-title">DTM</h1><p class="dtm-subtitle">Выбери направление и вариант теста.</p></section>
+<header class="header"><div class="header__container"><nav class="header__nav"><a class="site-header__logo" href="index.html" aria-label="Netija"><img class="logo" src="./images/logo.svg" alt="Netija"></a><ul class="header__list"><li class="header__list-item"><a class="header__list-link" href="index.html">Главная страница</a></li><li class="header__list-item"><a class="header__list-link active" href="DTM.html">DTM</a></li><li class="header__list-item"><a class="header__list-link" href="natcert.html">Национальный сертификат</a></li></ul><div class="site-header__account"><a class="premium-nav-link" href="premium.html">👑 Premium</a><div class="sign__button" id="googleSignInButton"></div><div id="userProfile" class="user-profile" style="display:none"><img id="userAvatar" class="user-profile__avatar" src="" alt=""><span id="userName" class="user-profile__name"></span></div><button class="burger" id="burgerBtn" type="button" aria-label="Меню"><span></span><span></span><span></span></button></div></nav></div></header>
+<main class="dtm-page">
+<section class="dtm-hero"><span class="dtm-badge">NETIJA • DTM</span><h1 class="dtm-title">DTM</h1><p class="dtm-subtitle">Выбери направление и вариант теста.</p><svg class="dtm-hero-art" viewBox="0 0 420 300" aria-hidden="true"><path class="spark" d="M42 72l7 16 16 7-16 7-7 16-7-16-16-7 16-7zM360 42l6 13 13 6-13 6-6 13-6-13-13-6 13-6zM318 198l6 13 13 6-13 6-6 13-6-13-13-6 13-6z"/><rect class="paper" x="170" y="48" width="155" height="205" rx="16" transform="rotate(5 170 48)"/><rect class="clip" x="216" y="28" width="64" height="35" rx="11" transform="rotate(5 216 28)"/><rect class="check" x="193" y="92" width="17" height="17" rx="3"/><rect class="check" x="190" y="138" width="17" height="17" rx="3"/><rect class="check" x="187" y="184" width="17" height="17" rx="3"/><path class="line" d="M223 100h65M220 146h65M217 192h65"/><rect class="dtm-label" x="292" y="83" width="92" height="48" rx="13" transform="rotate(7 292 83)"/><text x="311" y="114" fill="#fff" font-size="25" font-family="Poppins" font-weight="800" transform="rotate(7 311 114)">DTM</text><path class="pencil" d="M118 220l119-103 22 25-119 103-27 7z"/><path fill="#f3a3e9" d="M237 117l22 25-13 11-22-25z"/><path fill="#743de0" d="M108 245l-7 27 27-7z"/></svg></section>
 <div class="dtm-category-filters" role="tablist" aria-label="Направление DTM"><button class="dtm-category-filter active" type="button" data-category="math">Математика</button><button class="dtm-category-filter" type="button" data-category="math-english">Математика + английский</button><button class="dtm-category-filter" type="button" data-category="iq">IQ</button></div>
 <section class="dtm-grid" id="dtm-tests">
-<article class="dtm-card" data-category="math" data-variant="variant-7"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 1</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-7">Пройти тест</a></article>
-<article class="dtm-card" data-category="math" data-variant="variant-8"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 2</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-8">Пройти тест</a></article>
-<article class="dtm-card" data-category="math" data-variant="variant-9"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 3</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-9">Пройти тест</a></article>
-<article class="dtm-card" data-category="math" data-variant="variant-10"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 4</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-10">Пройти тест</a></article>
-<article class="dtm-card" data-category="math" data-variant="variant-12"><div class="dtm-card__top"><div class="dtm-icon">📐</div><div><h2>ДТМ тест 5</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-12">Пройти тест</a></article>
-<article class="dtm-card" data-category="math" data-variant="variant-1982496"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 6</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-1982496">Пройти тест</a></article>
-<article class="dtm-card" data-category="math" data-variant="variant-2024"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>ДТМ тест 7</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-2024">Пройти тест →</a></article>
-
-<article class="dtm-card" data-category="math-english" data-variant="me-1"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>Test 1</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-1">Пройти тест</a></article>
-<article class="dtm-card" data-category="math-english" data-variant="me-2"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>Test 2</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-2">Пройти тест</a></article>
-<article class="dtm-card" data-category="math-english" data-variant="me-3"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>Test 3</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-3">Пройти тест</a></article>
-<article class="dtm-card" data-category="math-english" data-variant="me-4"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>Test 4</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-4">Пройти тест</a></article>
-<article class="dtm-card" data-category="math-english" data-variant="me-5"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>Test 5</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-5">Пройти тест</a></article>
-<article class="dtm-card" data-category="math-english" data-variant="me-6"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>Test 6</h2><p>40 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-6">Пройти тест</a></article>
-<article class="dtm-card" data-category="math-english" data-variant="me-7"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>Test 7</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-7">Пройти тест</a></article>
-<article class="dtm-card" data-category="math-english" data-variant="me-8"><div class="dtm-card__top"><div class="dtm-icon">📚</div><div><h2>Test 8</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-8">Пройти тест</a></article>
-
-<div class="dtm-filter-empty" id="dtmFilterEmpty">В этом направлении тесты пока не добавлены.</div></section></main>
+<article class="dtm-card" data-category="math" data-variant="variant-7"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>ДТМ тест 1</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-7">Пройти тест</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-8"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>ДТМ тест 2</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-8">Пройти тест</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-9"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>ДТМ тест 3</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-9">Пройти тест</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-10"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>ДТМ тест 4</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-10">Пройти тест</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-12"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>ДТМ тест 5</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-12">Пройти тест</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-1982496"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>ДТМ тест 6</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-1982496">Пройти тест</a></article>
+<article class="dtm-card" data-category="math" data-variant="variant-2024"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>ДТМ тест 7</h2><p>20 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=variant-2024">Пройти тест</a></article>
+<article class="dtm-card" data-category="math-english" data-variant="me-1"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>Test 1</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-1">Пройти тест</a></article>
+<article class="dtm-card" data-category="math-english" data-variant="me-2"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>Test 2</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-2">Пройти тест</a></article>
+<article class="dtm-card" data-category="math-english" data-variant="me-3"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>Test 3</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-3">Пройти тест</a></article>
+<article class="dtm-card" data-category="math-english" data-variant="me-4"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>Test 4</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-4">Пройти тест</a></article>
+<article class="dtm-card" data-category="math-english" data-variant="me-5"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>Test 5</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-5">Пройти тест</a></article>
+<article class="dtm-card" data-category="math-english" data-variant="me-6"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>Test 6</h2><p>40 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-6">Пройти тест</a></article>
+<article class="dtm-card" data-category="math-english" data-variant="me-7"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>Test 7</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-7">Пройти тест</a></article>
+<article class="dtm-card" data-category="math-english" data-variant="me-8"><div class="dtm-card__top"><div class="dtm-icon"></div><div><h2>Test 8</h2><p>30 вопросов</p></div></div><div class="dtm-card-result" hidden></div><a href="DTM-test.html?variant=me-8">Пройти тест</a></article>
+<div class="dtm-filter-empty" id="dtmFilterEmpty">В этом направлении тесты пока не добавлены.</div>
+</section></main>
 <script src="js/auth.js"></script><script src="js/menu.js"></script><script src="js/premium-header.js"></script>
 <script>
-(() => {
-    const getUserKey = () => {
-        try { const user = JSON.parse(localStorage.getItem('netija_user') || 'null'); return user?.sub || user?.email || user?.id || 'guest'; }
-        catch { return 'guest'; }
-    };
-    const userKey = getUserKey();
-    document.querySelectorAll('.dtm-card').forEach(card => {
-        const variant = card.dataset.variant;
-        try {
-            const result = JSON.parse(localStorage.getItem(`netija_dtm_best_${userKey}_${variant}`) || 'null');
-            const el = card.querySelector('.dtm-card-result');
-            if (result && el) {
-                const percent = Math.round((Number(result.score) / Number(result.total)) * 100);
-                el.innerHTML = `Лучший результат: ${result.score} / ${result.total}<span>(${percent}%)</span>`;
-                el.hidden = false;
-            }
-        } catch {}
-    });
-
-    const filters = document.querySelectorAll('.dtm-category-filter');
-    const cards = document.querySelectorAll('.dtm-card');
-    const empty = document.getElementById('dtmFilterEmpty');
-    filters.forEach(filter => filter.addEventListener('click', () => {
-        filters.forEach(item => item.classList.remove('active'));
-        filter.classList.add('active');
-        const category = filter.dataset.category;
-        let visible = 0;
-        cards.forEach(card => { const show = card.dataset.category === category; card.style.display = show ? '' : 'none'; if (show) visible++; });
-        empty.style.display = visible ? 'none' : 'block';
-    }));
-})();
+(()=>{const userKey=(()=>{try{const u=JSON.parse(localStorage.getItem('netija_user')||'null');return u?.sub||u?.email||u?.id||'guest'}catch{return'guest'}})();document.querySelectorAll('.dtm-card').forEach(card=>{const v=card.dataset.variant;try{const r=JSON.parse(localStorage.getItem(`netija_dtm_best_${userKey}_${v}`)||'null'),el=card.querySelector('.dtm-card-result');if(r&&el){const p=Math.round(Number(r.score)/Number(r.total)*100);el.innerHTML=`Лучший результат: ${r.score} / ${r.total}<span>(${p}%)</span>`;el.hidden=false}}catch{}});const filters=document.querySelectorAll('.dtm-category-filter'),cards=document.querySelectorAll('.dtm-card'),empty=document.getElementById('dtmFilterEmpty');filters.forEach(f=>f.addEventListener('click',()=>{filters.forEach(x=>x.classList.remove('active'));f.classList.add('active');const c=f.dataset.category;let n=0;cards.forEach(card=>{const show=card.dataset.category===c;card.style.display=show?'':'none';if(show)n++});empty.style.display=n?'none':'block'}));})();
 </script>
 </body></html>
