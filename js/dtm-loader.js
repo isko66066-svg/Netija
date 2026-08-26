@@ -10,7 +10,7 @@
     function load(src) {
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = `${src}?v=20260826-4`;
+            script.src = `${src}?v=20260826-5`;
             script.onload = resolve;
             script.onerror = reject;
             document.body.appendChild(script);
@@ -18,7 +18,8 @@
     }
 
     load(`js/dtm-questions/${selected}.js`)
-        .then(() => load('js/dtm-test.js?v=20260826-4'))
+        .then(() => load('js/dtm-test.js?v=20260826-5'))
+        .then(() => load('js/dtm-mixed-title.js?v=20260826-1'))
         .catch(error => {
             console.error('DTM loader:', error);
             const root = document.getElementById('dtmTest');
