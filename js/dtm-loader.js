@@ -7,7 +7,7 @@
     function load(src) {
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = `${src}?v=20260824`;
+            script.src = `${src}?v=20260826-3`;
             script.onload = resolve;
             script.onerror = reject;
             document.body.appendChild(script);
