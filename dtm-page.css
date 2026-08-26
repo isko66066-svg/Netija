@@ -18,3 +18,15 @@
 .dtm-filter-empty{display:none;grid-column:1/-1;padding:52px 25px;text-align:center;border:1px dashed #d8dce6;border-radius:18px;background:#fff;color:#7b8493}.dtm-filter-empty strong{display:block;margin-bottom:6px;color:#344054;font-size:16px}
 @media(max-width:980px){.dtm-hero{min-height:285px}.dtm-hero-art{right:-30px;opacity:.45}.dtm-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:900px}.dtm-category-filters{margin-left:24px;margin-right:24px}.dtm-category-filter{font-size:13px;padding:0 14px}}
 @media(max-width:620px){.dtm-page{padding-bottom:50px}.dtm-hero{min-height:235px;padding:31px 18px 28px}.dtm-badge{font-size:10px;padding:7px 12px}.dtm-title{font-size:58px;letter-spacing:-3px}.dtm-subtitle{font-size:13px}.dtm-hero-art{width:235px;height:170px;right:-65px;bottom:-20px;opacity:.22}.dtm-category-filters{margin:-18px 12px 22px;padding:6px;gap:5px;border-radius:15px;overflow:auto;justify-content:flex-start}.dtm-category-filter{flex:0 0 auto;min-height:44px;padding:0 13px;font-size:11px}.dtm-category-filter:before{font-size:13px;margin-right:5px}.dtm-grid{grid-template-columns:1fr;padding:0 12px;gap:13px}.dtm-card{min-height:220px;padding:19px;border-radius:18px}.dtm-icon{width:62px;height:62px;flex-basis:62px;border-radius:16px}.dtm-card__top{gap:12px}.dtm-card__top h2{font-size:18px}.dtm-card__top p{font-size:11px}.dtm-card>a{min-height:47px;font-size:12px}}
+
+/* DTM visual polish: decorative ovals stay in the card corners. */
+.dtm-card:after{content:"";position:absolute;z-index:0;right:-74px;top:18px;width:250px;height:150px;border-radius:50%;background:var(--soft);opacity:.92;transform:rotate(-8deg);pointer-events:none}
+.dtm-card:before{z-index:2}
+.dtm-card__top,.dtm-card-result,.dtm-card>a{position:relative;z-index:3}
+.dtm-icon{z-index:3}
+
+/* The hero illustration is intentionally more visible and slightly opened into the hero area. */
+.dtm-hero-art{z-index:0;right:8px;bottom:-24px;width:390px;height:275px;opacity:.88;filter:drop-shadow(0 22px 30px rgba(77,55,180,.15))}
+.dtm-badge,.dtm-title,.dtm-subtitle{position:relative;z-index:2}
+@media(max-width:980px){.dtm-hero-art{right:-24px;bottom:-24px;opacity:.68}}
+@media(max-width:620px){.dtm-hero-art{width:250px;height:182px;right:-54px;bottom:-18px;opacity:.42}}
